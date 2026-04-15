@@ -1,6 +1,6 @@
 {
   "name": "@m13v/seo-components",
-  "version": "0.8.1",
+  "version": "0.8.2",
   "description": "39 animated React components for programmatic SEO pages. Remotion video, Magic UI style animations, trust signals, JSON-LD helpers. Teal/cyan brand, light-theme only.",
   "type": "module",
   "main": "./src/index.ts",

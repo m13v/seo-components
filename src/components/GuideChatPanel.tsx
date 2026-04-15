@@ -39,11 +39,10 @@ function onPosthogLoaded(fn: () => void) {
 /*  Slug extraction                                                    */
 /* ------------------------------------------------------------------ */
 
-function slugFromPath(pathname: string | null, pattern?: RegExp): string {
-  if (!pathname) return "";
-  const re = pattern ?? /^\/t\/([^/]+)/;
-  const m = pathname.match(re);
-  return m ? m[1] : "";
+/** Derive a slug from any pathname. "/" returns "" (hidden). */
+function slugFromPath(pathname: string | null): string {
+  if (!pathname || pathname === "/") return "";
+  return pathname.replace(/^\/+/, "").replace(/\/+$/g, "").replace(/\//g, "-");
 }
 
 /* ------------------------------------------------------------------ */
@@ -305,8 +304,8 @@ export interface GuideChatPanelProps {
   app?: string;
   /** API endpoint for the guide chat. Defaults to "/api/guide-chat" */
   apiEndpoint?: string;
-  /** Regex to extract slug from pathname. Must have one capture group. Defaults to /^\\/t\\/([^/]+)/ */
-  slugPattern?: RegExp;
+  /** Paths where the chat panel should be hidden. Same prop as SitemapSidebar's hideOnPaths. */
+  hideOnPaths?: string[];
   /** Panel header label. Defaults to "page assistant" */
   label?: string;
 }
@@ -314,20 +313,21 @@ export interface GuideChatPanelProps {
 export function GuideChatPanel({
   app = "default",
   apiEndpoint = "/api/guide-chat",
-  slugPattern,
+  hideOnPaths,
   label = "page assistant",
 }: GuideChatPanelProps) {
   const pathname = usePathname();
-  const slug = slugFromPath(pathname, slugPattern);
+  const slug = slugFromPath(pathname);
+  const hidden = !slug || (hideOnPaths?.includes(pathname) ?? false);
 
   useEffect(() => {
-    if (!slug) return;
+    if (hidden) return;
     onPosthogLoaded(() =>
       capture("guide_chat_panel_viewed", { app, slug }),
     );
-  }, [slug, app]);
+  }, [hidden, slug, app]);
 
-  if (!slug) return null;
+  if (hidden) return null;
 
   return (
     <aside className="hidden lg:flex flex-col sticky top-0 h-screen w-80 xl:w-96 bg-white border-l border-zinc-200">

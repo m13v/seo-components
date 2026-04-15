@@ -1,0 +1,24 @@
+/* @m13v/seo-components: import this file in your globals.css to scan component classes */
+/* Usage: @import "@seo/components/src/styles.css"; */
+@source ".";
+
+/*
+ * Accent color tokens. Override in your globals.css to match your brand.
+ * Example for amber brand:
+ *   :root {
+ *     --seo-accent: #f59e0b;
+ *     --seo-accent-light: #fbbf24;
+ *     --seo-accent-dark: #d97706;
+ *     --seo-accent-rgb: 245, 158, 11;
+ *     --seo-accent-gradient-from: #f59e0b;
+ *     --seo-accent-gradient-to: #d97706;
+ *   }
+ */
+:root {
+  --seo-accent: #14b8a6;
+  --seo-accent-light: #2dd4bf;
+  --seo-accent-dark: #0d9488;
+  --seo-accent-rgb: 20, 184, 166;
+  --seo-accent-gradient-from: #06b6d4;
+  --seo-accent-gradient-to: #14b8a6;
+}

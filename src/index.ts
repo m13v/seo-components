@@ -1,0 +1,81 @@
+// JSON-LD structured data helpers
+export {
+  breadcrumbListSchema,
+  faqPageSchema,
+  articleSchema,
+  howToSchema,
+} from "./lib/json-ld";
+export type {
+  BreadcrumbItem,
+  FaqItem,
+  ArticleSchemaInput,
+  HowToStepInput,
+} from "./lib/json-ld";
+
+// Trust-signal components
+export { Breadcrumbs } from "./components/Breadcrumbs";
+export type { BreadcrumbCrumb } from "./components/Breadcrumbs";
+export { ArticleMeta } from "./components/ArticleMeta";
+export { ProofBand } from "./components/ProofBand";
+export { FaqSection } from "./components/FaqSection";
+export { InlineTestimonial } from "./components/InlineTestimonial";
+export { ComparisonTable } from "./components/ComparisonTable";
+export type { ComparisonRow } from "./components/ComparisonTable";
+
+// Content display components
+export { AnimatedCodeBlock } from "./components/AnimatedCodeBlock";
+export { TerminalOutput } from "./components/TerminalOutput";
+export { FlowDiagram } from "./components/FlowDiagram";
+export { SequenceDiagram } from "./components/SequenceDiagram";
+export { CodeComparison } from "./components/CodeComparison";
+export { AnimatedChecklist } from "./components/AnimatedChecklist";
+export { AnimatedSection } from "./components/AnimatedSection";
+export { AnimatedMetric } from "./components/AnimatedMetric";
+export { MetricsRow } from "./components/MetricsRow";
+
+// CTA components
+export { InlineCta } from "./components/InlineCta";
+export { StickyBottomCta } from "./components/StickyBottomCta";
+
+// Proof / social proof
+export { ProofBanner } from "./components/ProofBanner";
+
+// Rich layout components
+export { BentoGrid } from "./components/BentoGrid";
+export type { BentoCard } from "./components/BentoGrid";
+export { BeforeAfter } from "./components/BeforeAfter";
+export { AnimatedDemo } from "./components/AnimatedDemo";
+export { GlowCard } from "./components/GlowCard";
+export { ParallaxSection } from "./components/ParallaxSection";
+export { StepTimeline } from "./components/StepTimeline";
+export { MotionSequence } from "./components/MotionSequence";
+
+// Remotion video + Lottie
+export { RemotionClip, ConceptReveal } from "./components/RemotionClip";
+export { LottiePlayer } from "./components/LottiePlayer";
+
+// Sitemap sidebar + heading anchors
+export { SitemapSidebar } from "./components/SitemapSidebar";
+export type { SitemapSidebarProps } from "./components/SitemapSidebar";
+export { HeadingAnchors } from "./components/HeadingAnchors";
+
+// Guide chat (AI page assistant) — client-safe
+export { GuideChatPanel } from "./components/GuideChatPanel";
+export type { GuideChatPanelProps } from "./components/GuideChatPanel";
+
+// Server utilities: import from "@seo/components/server" instead
+// (walkPages, createGuideChatHandler, logAiUsage, discoverGuides, etc.)
+
+// Magic UI style components
+export { Marquee } from "./components/Marquee";
+export { AnimatedBeam } from "./components/AnimatedBeam";
+export { OrbitingCircles } from "./components/OrbitingCircles";
+export { NumberTicker } from "./components/NumberTicker";
+export { ShimmerButton } from "./components/ShimmerButton";
+export { GradientText } from "./components/GradientText";
+export { BackgroundGrid } from "./components/BackgroundGrid";
+export { MorphingText } from "./components/MorphingText";
+export { Particles } from "./components/Particles";
+export { ShineBorder } from "./components/ShineBorder";
+export { TextShimmer } from "./components/TextShimmer";
+export { TypingAnimation } from "./components/TypingAnimation";

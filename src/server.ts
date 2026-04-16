@@ -20,6 +20,9 @@ export type { GuideContext, BuildSystemPromptOptions } from "./lib/guide-context
 
 export { getSupabaseAdmin } from "./lib/supabase-admin";
 
+export { createNewsletterHandler } from "./lib/newsletter-route";
+export type { NewsletterConfig } from "./lib/newsletter-route";
+
 // Style injector — server-only component that inlines the prebuilt Tailwind
 // CSS for the sidebar/chat/heading components as a <style> tag.
 // Use in your root layout <head> to avoid consumer-side PostCSS conflicts.

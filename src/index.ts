@@ -63,6 +63,10 @@ export { HeadingAnchors } from "./components/HeadingAnchors";
 export { GuideChatPanel } from "./components/GuideChatPanel";
 export type { GuideChatPanelProps } from "./components/GuideChatPanel";
 
+// Newsletter signup (sticky footer email capture)
+export { NewsletterSignup } from "./components/NewsletterSignup";
+export type { NewsletterSignupProps } from "./components/NewsletterSignup";
+
 // Server utilities: import from "@seo/components/server" instead
 // (walkPages, createGuideChatHandler, logAiUsage, discoverGuides, etc.)
 

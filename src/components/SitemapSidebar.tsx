@@ -76,8 +76,10 @@ export function SitemapSidebar({
   const [query, setQuery] = useState("");
   const [mobileOpen, setMobileOpen] = useState(false);
   const [activeSection, setActiveSection] = useState<string | null>(null);
+  const [hasExternalBrand, setHasExternalBrand] = useState(false);
   const activeRef = useRef<HTMLAnchorElement | null>(null);
   const navRef = useRef<HTMLElement | null>(null);
+  const sidebarRef = useRef<HTMLElement | null>(null);
 
   const filtered = query
     ? pages.filter(
@@ -105,6 +107,19 @@ export function SitemapSidebar({
     return () => cancelAnimationFrame(raf);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [pathname]);
+
+  // Hide sidebar brand header if a navbar with a home link already exists on the page.
+  useEffect(() => {
+    const navs = document.querySelectorAll("nav");
+    for (const nav of navs) {
+      if (sidebarRef.current?.contains(nav)) continue;
+      const homeLink = nav.querySelector('a[href="/"]');
+      if (homeLink) {
+        setHasExternalBrand(true);
+        return;
+      }
+    }
+  }, []);
 
   // Track which H2 section is currently in view.
   useEffect(() => {
@@ -197,9 +212,10 @@ export function SitemapSidebar({
 
       {/* Sidebar */}
       <aside
+        ref={sidebarRef}
         className={`
-          fixed lg:sticky top-0 left-0 z-40 h-screen
-          w-72 bg-white border-r border-zinc-200
+          fixed lg:sticky top-0 left-0 z-40 h-screen shrink-0
+          w-72 bg-white dark:bg-zinc-950 border-r border-zinc-200 dark:border-zinc-800
           flex flex-col
           transition-transform duration-200 ease-out
           lg:translate-x-0
@@ -207,20 +223,22 @@ export function SitemapSidebar({
         `}
       >
         {/* Header */}
-        <div className="p-4 border-b border-zinc-100">
-          <a href={homeHref} className="flex items-baseline gap-0 mb-4">
-            {brandLogo ?? (
-              <>
-                <span className="font-mono font-bold text-lg tracking-tight text-zinc-900">
-                  {brandName}
-                </span>
-                <span
-                  className="w-1.5 h-1.5 rounded-full ml-0.5 mb-0.5 inline-block"
-                  style={{ backgroundColor: "var(--seo-accent, #14b8a6)" }}
-                />
-              </>
-            )}
-          </a>
+        <div className="p-4 border-b border-zinc-100 dark:border-zinc-800">
+          {!hasExternalBrand && (
+            <a href={homeHref} className="flex items-baseline gap-0 mb-4">
+              {brandLogo ?? (
+                <>
+                  <span className="font-mono font-bold text-lg tracking-tight text-zinc-900 dark:text-zinc-100">
+                    {brandName}
+                  </span>
+                  <span
+                    className="w-1.5 h-1.5 rounded-full ml-0.5 mb-0.5 inline-block"
+                    style={{ backgroundColor: "var(--seo-accent, #14b8a6)" }}
+                  />
+                </>
+              )}
+            </a>
+          )}
           <div className="relative">
             <svg
               className="absolute left-2.5 top-1/2 -translate-y-1/2 text-zinc-400"
@@ -241,7 +259,7 @@ export function SitemapSidebar({
               placeholder="Search pages..."
               value={query}
               onChange={(e) => setQuery(e.target.value)}
-              className="w-full pl-8 pr-3 py-2 text-sm border border-zinc-200 rounded-lg bg-zinc-50 placeholder:text-zinc-400 focus:outline-none focus:ring-2 focus:border-transparent transition"
+              className="w-full pl-8 pr-3 py-2 text-sm border border-zinc-200 dark:border-zinc-800 rounded-lg bg-zinc-50 dark:bg-zinc-900 text-zinc-900 dark:text-zinc-100 placeholder:text-zinc-400 dark:placeholder:text-zinc-500 focus:outline-none focus:ring-2 focus:border-transparent transition"
               style={
                 {
                   "--tw-ring-color":
@@ -255,14 +273,14 @@ export function SitemapSidebar({
         {/* Page list */}
         <nav ref={navRef} className="flex-1 overflow-y-auto p-3">
           {filtered.length === 0 && (
-            <p className="text-sm text-zinc-400 px-3 py-4">No pages found</p>
+            <p className="text-sm text-zinc-400 dark:text-zinc-500 px-3 py-4">No pages found</p>
           )}
 
           {Array.from(groups.entries()).map(([category, categoryPages]) => (
             <div key={category} className="mb-4">
               {/* Category header (only show if more than one category) */}
               {groups.size > 1 && (
-                <div className="px-3 py-1.5 text-xs font-semibold text-zinc-400 uppercase tracking-wider">
+                <div className="px-3 py-1.5 text-xs font-semibold text-zinc-400 dark:text-zinc-500 uppercase tracking-wider">
                   {getCategoryLabel(category, categoryLabels)}
                 </div>
               )}
@@ -277,8 +295,8 @@ export function SitemapSidebar({
                       onClick={() => setMobileOpen(false)}
                       className={`block px-3 py-2.5 rounded-lg transition-colors ${
                         isActive
-                          ? "text-zinc-900 font-medium"
-                          : "text-zinc-600 hover:bg-zinc-50 hover:text-zinc-900"
+                          ? "text-zinc-900 dark:text-zinc-100 font-medium"
+                          : "text-zinc-600 dark:text-zinc-400 hover:bg-zinc-50 dark:hover:bg-zinc-900 hover:text-zinc-900 dark:hover:text-zinc-100"
                       }`}
                       style={
                         isActive
@@ -294,7 +312,7 @@ export function SitemapSidebar({
                         {page.title}
                       </span>
                       {page.datePublished && (
-                        <span className="text-[11px] text-zinc-400 mt-0.5 block">
+                        <span className="text-[11px] text-zinc-400 dark:text-zinc-500 mt-0.5 block">
                           {page.datePublished}
                         </span>
                       )}
@@ -302,7 +320,7 @@ export function SitemapSidebar({
 
                     {/* Subsections for the active page */}
                     {isActive && page.sections.length > 0 && (
-                      <ul className="mt-1 mb-2 ml-3 border-l border-zinc-200 space-y-0.5">
+                      <ul className="mt-1 mb-2 ml-3 border-l border-zinc-200 dark:border-zinc-800 space-y-0.5">
                         {page.sections.map((section) => {
                           const isSectionActive =
                             activeSection === section.id;
@@ -316,7 +334,7 @@ export function SitemapSidebar({
                                 className={`block pl-3 pr-2 py-1.5 -ml-px border-l-2 text-[13px] leading-snug transition-colors ${
                                   isSectionActive
                                     ? "font-medium"
-                                    : "border-transparent text-zinc-500 hover:text-zinc-900 hover:border-zinc-300"
+                                    : "border-transparent text-zinc-500 dark:text-zinc-500 hover:text-zinc-900 dark:hover:text-zinc-100 hover:border-zinc-300 dark:hover:border-zinc-700"
                                 }`}
                                 style={
                                   isSectionActive
@@ -344,7 +362,7 @@ export function SitemapSidebar({
         </nav>
 
         {/* Footer */}
-        <div className="p-4 border-t border-zinc-100">
+        <div className="p-4 border-t border-zinc-100 dark:border-zinc-800">
           <a
             href={homeHref}
             className="text-sm font-medium transition-colors"

@@ -42,7 +42,9 @@ function onPosthogLoaded(fn: () => void) {
 /** Derive a slug from any pathname. "/" returns "" (hidden). */
 function slugFromPath(pathname: string | null): string {
   if (!pathname || pathname === "/") return "";
-  return pathname.replace(/^\/+/, "").replace(/\/+$/g, "").replace(/\//g, "-");
+  // Return cleaned pathname (e.g. "/solutions/sap" -> "solutions/sap")
+  // The server matches by href or last-segment slug.
+  return pathname.replace(/^\/+/, "").replace(/\/+$/g, "");
 }
 
 /* ------------------------------------------------------------------ */
@@ -330,10 +332,10 @@ export function GuideChatPanel({
   if (hidden) return null;
 
   return (
-    <aside className="hidden lg:flex flex-col sticky top-0 h-screen w-80 xl:w-96 bg-white border-l border-zinc-200">
-      <div className="flex items-center gap-2 px-4 py-3 border-b border-zinc-100">
+    <aside className="hidden lg:flex flex-col sticky top-0 h-screen shrink-0 w-80 xl:w-96 bg-white dark:bg-zinc-950 border-l border-zinc-200 dark:border-zinc-800">
+      <div className="flex items-center gap-2 px-4 py-3 border-b border-zinc-100 dark:border-zinc-800">
         <span className="w-1.5 h-1.5 rounded-full bg-teal-500 inline-block" />
-        <span className="font-mono text-xs tracking-tight text-zinc-900">
+        <span className="font-mono text-xs tracking-tight text-zinc-900 dark:text-zinc-100">
           {label}
         </span>
       </div>
@@ -401,12 +403,12 @@ function SummarySection({
   if (summary.loading) {
     return (
       <div className="mb-4 space-y-2 animate-pulse">
-        <div className="h-3 bg-zinc-100 rounded w-3/4" />
-        <div className="h-3 bg-zinc-100 rounded w-full" />
-        <div className="h-3 bg-zinc-100 rounded w-5/6" />
-        <div className="mt-3 h-8 bg-zinc-50 rounded w-full" />
-        <div className="h-8 bg-zinc-50 rounded w-full" />
-        <div className="h-8 bg-zinc-50 rounded w-full" />
+        <div className="h-3 bg-zinc-100 dark:bg-zinc-800 rounded w-3/4" />
+        <div className="h-3 bg-zinc-100 dark:bg-zinc-800 rounded w-full" />
+        <div className="h-3 bg-zinc-100 dark:bg-zinc-800 rounded w-5/6" />
+        <div className="mt-3 h-8 bg-zinc-50 dark:bg-zinc-900 rounded w-full" />
+        <div className="h-8 bg-zinc-50 dark:bg-zinc-900 rounded w-full" />
+        <div className="h-8 bg-zinc-50 dark:bg-zinc-900 rounded w-full" />
       </div>
     );
   }
@@ -415,7 +417,7 @@ function SummarySection({
 
   return (
     <div className="mb-4 space-y-3">
-      <div className="rounded-lg px-3 py-2.5 bg-zinc-50 border border-zinc-100 text-[13px] text-zinc-900 font-mono leading-relaxed whitespace-pre-wrap">
+      <div className="rounded-lg px-3 py-2.5 bg-zinc-50 dark:bg-zinc-900 border border-zinc-100 dark:border-zinc-800 text-[13px] text-zinc-900 dark:text-zinc-100 font-mono leading-relaxed whitespace-pre-wrap">
         {summary.text}
       </div>
       {summary.questions.length > 0 && (
@@ -463,7 +465,7 @@ function QuestionChips({
         <button
           key={i}
           onClick={() => send(q, i)}
-          className="w-full text-left px-3 py-2 rounded-lg border border-zinc-200 bg-white hover:border-teal-300 hover:text-teal-700 transition-colors text-[12px] font-mono text-zinc-600 leading-snug"
+          className="w-full text-left px-3 py-2 rounded-lg border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 hover:border-teal-300 dark:hover:border-teal-700 hover:text-teal-700 dark:hover:text-teal-300 transition-colors text-[12px] font-mono text-zinc-600 dark:text-zinc-400 leading-snug"
         >
           {q}
         </button>
@@ -479,7 +481,7 @@ function QuestionChips({
 function UserMessage() {
   return (
     <MessagePrimitive.Root className="mb-3 flex justify-end">
-      <div className="max-w-[85%] rounded-lg px-3 py-2 bg-teal-50 border border-teal-100 text-[13px] text-zinc-900 font-mono whitespace-pre-wrap">
+      <div className="max-w-[85%] rounded-lg px-3 py-2 bg-teal-50 dark:bg-teal-950 border border-teal-100 dark:border-teal-900 text-[13px] text-zinc-900 dark:text-zinc-100 font-mono whitespace-pre-wrap">
         <MessagePrimitive.Parts />
       </div>
     </MessagePrimitive.Root>
@@ -489,7 +491,7 @@ function UserMessage() {
 function AssistantMessage() {
   return (
     <MessagePrimitive.Root className="mb-3 flex justify-start">
-      <div className="max-w-[90%] rounded-lg px-3 py-2 bg-zinc-50 border border-zinc-100 text-[13px] text-zinc-900 font-mono leading-relaxed whitespace-pre-wrap">
+      <div className="max-w-[90%] rounded-lg px-3 py-2 bg-zinc-50 dark:bg-zinc-900 border border-zinc-100 dark:border-zinc-800 text-[13px] text-zinc-900 dark:text-zinc-100 font-mono leading-relaxed whitespace-pre-wrap">
         <MessagePrimitive.Parts />
       </div>
     </MessagePrimitive.Root>
@@ -499,11 +501,11 @@ function AssistantMessage() {
 function TypingIndicator() {
   return (
     <div className="mb-3 flex justify-start">
-      <div className="rounded-lg px-3 py-2 bg-zinc-50 border border-zinc-100 text-[13px] text-zinc-400 font-mono">
+      <div className="rounded-lg px-3 py-2 bg-zinc-50 dark:bg-zinc-900 border border-zinc-100 dark:border-zinc-800 text-[13px] text-zinc-400 dark:text-zinc-600 font-mono">
         <span className="inline-flex gap-1">
-          <span className="w-1 h-1 bg-zinc-400 rounded-full animate-pulse" />
-          <span className="w-1 h-1 bg-zinc-400 rounded-full animate-pulse [animation-delay:150ms]" />
-          <span className="w-1 h-1 bg-zinc-400 rounded-full animate-pulse [animation-delay:300ms]" />
+          <span className="w-1 h-1 bg-zinc-400 dark:bg-zinc-600 rounded-full animate-pulse" />
+          <span className="w-1 h-1 bg-zinc-400 dark:bg-zinc-600 rounded-full animate-pulse [animation-delay:150ms]" />
+          <span className="w-1 h-1 bg-zinc-400 dark:bg-zinc-600 rounded-full animate-pulse [animation-delay:300ms]" />
         </span>
       </div>
     </div>
@@ -512,14 +514,14 @@ function TypingIndicator() {
 
 function Composer() {
   return (
-    <ComposerPrimitive.Root className="flex items-end gap-2 rounded-lg border border-zinc-200 bg-white focus-within:border-teal-300 focus-within:ring-2 focus-within:ring-teal-500/20 transition">
+    <ComposerPrimitive.Root className="flex items-end gap-2 rounded-lg border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 focus-within:border-teal-300 dark:focus-within:border-teal-700 focus-within:ring-2 focus-within:ring-teal-500/20 transition">
       <ComposerPrimitive.Input
         placeholder="ask a question..."
-        className="flex-1 bg-transparent px-3 py-2 text-[13px] font-mono text-zinc-900 placeholder:text-zinc-400 focus:outline-none resize-none max-h-32"
+        className="flex-1 bg-transparent px-3 py-2 text-[13px] font-mono text-zinc-900 dark:text-zinc-100 placeholder:text-zinc-400 dark:placeholder:text-zinc-500 focus:outline-none resize-none max-h-32"
         rows={1}
       />
       <ComposerPrimitive.Send
-        className="m-1 p-1.5 rounded-md bg-teal-600 text-white hover:bg-teal-700 disabled:bg-zinc-300 disabled:cursor-not-allowed transition-colors"
+        className="m-1 p-1.5 rounded-md bg-teal-600 text-white hover:bg-teal-700 disabled:bg-zinc-300 dark:disabled:bg-zinc-700 disabled:cursor-not-allowed transition-colors"
         aria-label="Send"
       >
         <svg

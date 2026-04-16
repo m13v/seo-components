@@ -16,10 +16,23 @@ export function getGuideContext(
   contentDir?: string,
 ): GuideContext | null {
   const dir = contentDir ?? path.join(process.cwd(), "src/app/(content)/t");
-  const guide = discoverGuides(dir).find((g) => g.slug === slug);
+  const guides = discoverGuides(dir);
+  // Match by last-segment slug or full href path (e.g. "solutions/sap" -> "/solutions/sap")
+  const hrefFromSlug = "/" + slug;
+  const guide = guides.find(
+    (g) => g.slug === slug || g.href === hrefFromSlug,
+  );
   if (!guide) return null;
 
-  const pagePath = path.join(dir, slug, "page.tsx");
+  // Derive appDir from contentDir to locate page files by their full href
+  const relDir = path.relative(process.cwd(), dir);
+  const relParts = relDir.split(path.sep);
+  const appIdx = relParts.indexOf("app");
+  const appDir =
+    appIdx >= 0
+      ? path.join(process.cwd(), ...relParts.slice(0, appIdx + 1))
+      : dir;
+  const pagePath = path.join(appDir, guide.href, "page.tsx");
   let rawSource = "";
   try {
     rawSource = fs.readFileSync(pagePath, "utf-8");

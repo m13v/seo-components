@@ -19,7 +19,7 @@ function slugify(text: string): string {
  * This keeps the sidebar ToC clickable without requiring every page
  * author to add id attributes manually.
  */
-export function HeadingAnchors() {
+export function HeadingAnchors({ children }: { children?: React.ReactNode } = {}) {
   const pathname = usePathname();
 
   useEffect(() => {
@@ -55,5 +55,5 @@ export function HeadingAnchors() {
     }
   }, [pathname]);
 
-  return null;
+  return children ? <>{children}</> : null;
 }

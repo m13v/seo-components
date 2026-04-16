@@ -19,3 +19,8 @@ export { getGuideContext, buildGuideIndex, buildSystemPrompt } from "./lib/guide
 export type { GuideContext, BuildSystemPromptOptions } from "./lib/guide-context";
 
 export { getSupabaseAdmin } from "./lib/supabase-admin";
+
+// Style injector — server-only component that inlines the prebuilt Tailwind
+// CSS for the sidebar/chat/heading components as a <style> tag.
+// Use in your root layout <head> to avoid consumer-side PostCSS conflicts.
+export { SeoComponentsStyles } from "./components/SeoComponentsStyles";

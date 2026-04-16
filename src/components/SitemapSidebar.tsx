@@ -77,6 +77,7 @@ export function SitemapSidebar({
   const [mobileOpen, setMobileOpen] = useState(false);
   const [activeSection, setActiveSection] = useState<string | null>(null);
   const [hasExternalBrand, setHasExternalBrand] = useState(false);
+  const [desktopCollapsed, setDesktopCollapsed] = useState(false);
   const activeRef = useRef<HTMLAnchorElement | null>(null);
   const navRef = useRef<HTMLElement | null>(null);
   const sidebarRef = useRef<HTMLElement | null>(null);
@@ -120,6 +121,21 @@ export function SitemapSidebar({
       }
     }
   }, []);
+
+  // Restore desktop collapse state from localStorage.
+  useEffect(() => {
+    try {
+      if (localStorage.getItem("seo-sidebar-collapsed") === "true") {
+        setDesktopCollapsed(true);
+      }
+    } catch {}
+  }, []);
+
+  const toggleDesktopCollapse = () => {
+    const next = !desktopCollapsed;
+    setDesktopCollapsed(next);
+    try { localStorage.setItem("seo-sidebar-collapsed", String(next)); } catch {}
+  };
 
   // Track which H2 section is currently in view.
   useEffect(() => {
@@ -215,30 +231,57 @@ export function SitemapSidebar({
         ref={sidebarRef}
         className={`
           fixed lg:sticky top-0 left-0 z-40 h-screen shrink-0
-          w-72 bg-white dark:bg-zinc-950 border-r border-zinc-200 dark:border-zinc-800
+          w-72 ${desktopCollapsed ? "lg:w-12" : ""}
+          bg-white dark:bg-zinc-950 border-r border-zinc-200 dark:border-zinc-800
           flex flex-col
-          transition-transform duration-200 ease-out
+          transition-all duration-200 ease-out overflow-hidden
           lg:translate-x-0
           ${mobileOpen ? "translate-x-0" : "-translate-x-full"}
         `}
       >
+        {/* Collapsed desktop view */}
+        <div className={`hidden ${desktopCollapsed ? "lg:flex" : ""} flex-col items-center pt-3 h-full`}>
+          <button
+            onClick={toggleDesktopCollapse}
+            className="p-2 rounded-md text-zinc-400 hover:text-zinc-900 dark:hover:text-zinc-100 hover:bg-zinc-100 dark:hover:bg-zinc-800 transition-colors"
+            aria-label="Expand sidebar"
+          >
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <polyline points="9 18 15 12 9 6" />
+            </svg>
+          </button>
+        </div>
+
+        {/* Full sidebar content */}
+        <div className={`flex flex-col h-full min-w-0 ${desktopCollapsed ? "lg:hidden" : ""}`}>
         {/* Header */}
         <div className="p-4 border-b border-zinc-100 dark:border-zinc-800">
-          {!hasExternalBrand && (
-            <a href={homeHref} className="flex items-baseline gap-0 mb-4">
-              {brandLogo ?? (
-                <>
-                  <span className="font-mono font-bold text-lg tracking-tight text-zinc-900 dark:text-zinc-100">
-                    {brandName}
-                  </span>
-                  <span
-                    className="w-1.5 h-1.5 rounded-full ml-0.5 mb-0.5 inline-block"
-                    style={{ backgroundColor: "var(--seo-accent, #14b8a6)" }}
-                  />
-                </>
-              )}
-            </a>
-          )}
+          <div className="flex items-center justify-between mb-3">
+            {!hasExternalBrand && (
+              <a href={homeHref} className="flex items-baseline gap-0">
+                {brandLogo ?? (
+                  <>
+                    <span className="font-mono font-bold text-lg tracking-tight text-zinc-900 dark:text-zinc-100">
+                      {brandName}
+                    </span>
+                    <span
+                      className="w-1.5 h-1.5 rounded-full ml-0.5 mb-0.5 inline-block"
+                      style={{ backgroundColor: "var(--seo-accent, #14b8a6)" }}
+                    />
+                  </>
+                )}
+              </a>
+            )}
+            <button
+              onClick={toggleDesktopCollapse}
+              className="hidden lg:flex p-1.5 rounded-md text-zinc-400 hover:text-zinc-900 dark:hover:text-zinc-100 hover:bg-zinc-100 dark:hover:bg-zinc-800 transition-colors ml-auto"
+              aria-label="Collapse sidebar"
+            >
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <polyline points="15 18 9 12 15 6" />
+              </svg>
+            </button>
+          </div>
           <div className="relative">
             <svg
               className="absolute left-2.5 top-1/2 -translate-y-1/2 text-zinc-400"
@@ -370,6 +413,7 @@ export function SitemapSidebar({
           >
             &larr; Back to {brandName}
           </a>
+        </div>
         </div>
       </aside>
     </>

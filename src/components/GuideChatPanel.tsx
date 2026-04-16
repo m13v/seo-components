@@ -322,6 +322,22 @@ export function GuideChatPanel({
   const slug = slugFromPath(pathname);
   const hidden = !slug || (hideOnPaths?.includes(pathname) ?? false);
 
+  const [collapsed, setCollapsed] = useState(false);
+
+  useEffect(() => {
+    try {
+      if (localStorage.getItem("seo-chat-collapsed") === "true") {
+        setCollapsed(true);
+      }
+    } catch {}
+  }, []);
+
+  const toggleCollapse = () => {
+    const next = !collapsed;
+    setCollapsed(next);
+    try { localStorage.setItem("seo-chat-collapsed", String(next)); } catch {}
+  };
+
   useEffect(() => {
     if (hidden) return;
     onPosthogLoaded(() =>
@@ -332,19 +348,45 @@ export function GuideChatPanel({
   if (hidden) return null;
 
   return (
-    <aside className="hidden lg:flex flex-col sticky top-0 h-screen shrink-0 w-80 xl:w-96 bg-white dark:bg-zinc-950 border-l border-zinc-200 dark:border-zinc-800">
-      <div className="flex items-center gap-2 px-4 py-3 border-b border-zinc-100 dark:border-zinc-800">
-        <span className="w-1.5 h-1.5 rounded-full bg-teal-500 inline-block" />
-        <span className="font-mono text-xs tracking-tight text-zinc-900 dark:text-zinc-100">
-          {label}
-        </span>
-      </div>
-      <ChatThread
-        key={slug}
-        slug={slug}
-        apiEndpoint={apiEndpoint}
-        app={app}
-      />
+    <aside className={`hidden xl:flex flex-col sticky top-0 h-screen shrink-0 ${collapsed ? "w-12" : "w-80 2xl:w-96"} bg-white dark:bg-zinc-950 border-l border-zinc-200 dark:border-zinc-800 transition-all duration-200 ease-out overflow-hidden`}>
+      {collapsed ? (
+        <div className="flex flex-col items-center pt-3 h-full">
+          <button
+            onClick={toggleCollapse}
+            className="p-2 rounded-md text-zinc-400 hover:text-zinc-900 dark:hover:text-zinc-100 hover:bg-zinc-100 dark:hover:bg-zinc-800 transition-colors"
+            aria-label="Expand page assistant"
+          >
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <polyline points="15 18 9 12 15 6" />
+            </svg>
+          </button>
+          <span className="w-1.5 h-1.5 rounded-full bg-teal-500 mt-2" />
+        </div>
+      ) : (
+        <>
+          <div className="flex items-center gap-2 px-4 py-3 border-b border-zinc-100 dark:border-zinc-800">
+            <span className="w-1.5 h-1.5 rounded-full bg-teal-500 inline-block" />
+            <span className="font-mono text-xs tracking-tight text-zinc-900 dark:text-zinc-100">
+              {label}
+            </span>
+            <button
+              onClick={toggleCollapse}
+              className="ml-auto p-1.5 rounded-md text-zinc-400 hover:text-zinc-900 dark:hover:text-zinc-100 hover:bg-zinc-100 dark:hover:bg-zinc-800 transition-colors"
+              aria-label="Collapse page assistant"
+            >
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <polyline points="9 18 15 12 9 6" />
+              </svg>
+            </button>
+          </div>
+          <ChatThread
+            key={slug}
+            slug={slug}
+            apiEndpoint={apiEndpoint}
+            app={app}
+          />
+        </>
+      )}
     </aside>
   );
 }

@@ -75,6 +75,8 @@ export interface NewsletterConfig {
   brand: string;
   /** Site URL used in the default email template CTA link */
   siteUrl: string;
+  /** Env var name for the Resend API key (default: "RESEND_API_KEY") */
+  apiKeyEnv?: string;
   /** Override the welcome email subject line */
   welcomeSubject?: string;
   /**
@@ -100,13 +102,14 @@ export function createNewsletterHandler(config: NewsletterConfig) {
     fromEmail,
     brand,
     siteUrl,
+    apiKeyEnv = "RESEND_API_KEY",
     welcomeSubject,
     welcomeHtml,
     onSignup,
   } = config;
 
   return async function POST(req: NextRequest) {
-    const apiKey = process.env.RESEND_API_KEY;
+    const apiKey = process.env[apiKeyEnv];
     if (!apiKey) {
       return new Response(
         JSON.stringify({ error: "Server configuration error" }),

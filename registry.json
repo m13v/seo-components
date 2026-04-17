@@ -1,0 +1,278 @@
+{
+  "version": 1,
+  "header": "### Available components",
+  "groups": [
+    {
+      "key": "trust",
+      "heading": "**Trust signals** (required, see below)",
+      "renderMode": "inline",
+      "trailingNote": "JSON-LD helpers (articleSchema, breadcrumbListSchema, faqPageSchema, howToSchema)."
+    },
+    {
+      "key": "video",
+      "heading": "**⭐ Video + motion graphics (MANDATORY — pick at least one):**",
+      "renderMode": "list"
+    },
+    {
+      "key": "magic-ui",
+      "heading": "**⭐ Magic UI style high-signal components (MANDATORY — pick at least TWO):**",
+      "renderMode": "list"
+    },
+    {
+      "key": "visual",
+      "heading": "**Visual content** (pick at least 3 distinct from here + Rich layout, as below):",
+      "renderMode": "list"
+    },
+    {
+      "key": "rich-layout",
+      "heading": "**Rich layout and animation components:**",
+      "renderMode": "list"
+    },
+    {
+      "key": "cta",
+      "heading": "**CTAs:**",
+      "renderMode": "list"
+    }
+  ],
+  "components": [
+    { "name": "Breadcrumbs", "group": "trust" },
+    { "name": "ArticleMeta", "group": "trust" },
+    { "name": "ProofBand", "group": "trust" },
+    { "name": "FaqSection", "group": "trust" },
+
+    {
+      "name": "RemotionClip",
+      "group": "video",
+      "signature": "(title, subtitle?, captions[], accent?, durationInFrames?)",
+      "description": "real Remotion-powered video clip rendered live in the browser via `@remotion/player`. Uses the built-in `ConceptReveal` composition: a gradient background, animated title/subtitle, and a stack of captions that spring in one by one. **This is the single highest-signal component in this library.** Use for concept intros, product pitches, or angle-defining hero animations. Max 4-6 captions per clip.",
+      "quotaTags": ["video-mandatory"]
+    },
+    {
+      "name": "MotionSequence",
+      "group": "video",
+      "signature": "(title?, frames[], defaultDuration?, loop?)",
+      "description": "timeline animation powered by framer-motion. Plays through a list of frames automatically when scrolled into view, each frame has a duration, title, body, and optional `visual` React node. Feels like an embedded explainer video without adding a video file. Use for \"watch it work\" concept animations or step-by-step conceptual walkthroughs.",
+      "quotaTags": ["video-mandatory"]
+    },
+    {
+      "name": "LottiePlayer",
+      "group": "video",
+      "signature": "(animationData or src)",
+      "description": "Lottie JSON player using `lottie-react`. Use when you have a production-grade motion graphic exported from LottieFiles. Only use if you will create the JSON file in `public/` yourself."
+    },
+
+    {
+      "name": "AnimatedBeam",
+      "group": "magic-ui",
+      "signature": "(from[], hub, to[], title?)",
+      "description": "Magic UI style animated beam diagram with a central hub connecting sources on the left to destinations on the right. Glowing teal beams travel along each connection. Use for \"pipeline,\" \"integration,\" or \"how data flows\" visualizations. **Almost always a good fit if the product receives, processes, and returns something.**",
+      "quotaTags": ["magic-mandatory"]
+    },
+    {
+      "name": "OrbitingCircles",
+      "group": "magic-ui",
+      "signature": "(center, items[], radius?, duration?, reverse?)",
+      "description": "central element with smaller items revolving around it on a dashed orbit ring. Use for ecosystem / integrations / \"works with everything\" showcases.",
+      "quotaTags": ["magic-mandatory"]
+    },
+    {
+      "name": "Marquee",
+      "group": "magic-ui",
+      "signature": "(children, speed?, reverse?, pauseOnHover?, fade?)",
+      "description": "infinite horizontal marquee. Wrap logos, testimonials, feature pills, or mini metric cards. Edges fade softly. Pauses on hover. Use for \"trusted by,\" \"works with,\" or a chip row of competitor names.",
+      "quotaTags": ["magic-mandatory"]
+    },
+    {
+      "name": "NumberTicker",
+      "group": "magic-ui",
+      "signature": "(value, decimals?, prefix?, suffix?)",
+      "description": "spring-animated number that counts up from 0 when it scrolls into view. Use inside any metric section. Example: `<NumberTicker value={94} suffix=\"%\" />`.",
+      "quotaTags": ["magic-mandatory"]
+    },
+    {
+      "name": "ShimmerButton",
+      "group": "magic-ui",
+      "signature": "(children, href?)",
+      "description": "premium pill CTA button with a continuous diagonal light shimmer sweeping across it. Use as the hero CTA.",
+      "quotaTags": ["magic-mandatory"]
+    },
+    {
+      "name": "GradientText",
+      "group": "magic-ui",
+      "signature": "(children, variant?, animate?)",
+      "description": "inline gradient text treatment for hero headings. Cyan → teal gradient, optionally animated. Wraps a meaningful word or phrase.",
+      "quotaTags": ["magic-mandatory"]
+    },
+    {
+      "name": "BackgroundGrid",
+      "group": "magic-ui",
+      "signature": "(children, pattern?, glow?)",
+      "description": "Vercel/Linear style wrapper with a subtle dot or line grid background and a soft radial teal glow. Wrap hero sections, standout callouts, or anchor-fact blocks.",
+      "quotaTags": ["magic-mandatory"]
+    },
+    {
+      "name": "MorphingText",
+      "group": "magic-ui",
+      "signature": "(texts[])",
+      "description": "cycles through an array of strings with blur/opacity morph transitions. Use for hero headings that rotate through benefit phrases or product capabilities."
+    },
+    {
+      "name": "Particles",
+      "group": "magic-ui",
+      "signature": "(color?, quantity?, size?)",
+      "description": "canvas-based floating particle background that follows the mouse cursor. Use as a background layer inside a `BackgroundGrid` or standalone hero wrapper."
+    },
+    {
+      "name": "ShineBorder",
+      "group": "magic-ui",
+      "signature": "(children, color?, borderWidth?, duration?)",
+      "description": "wrapper with an animated rotating radial-gradient border (shine effect). Use around key callout cards, pricing, or feature highlights for a premium look."
+    },
+    {
+      "name": "TextShimmer",
+      "group": "magic-ui",
+      "signature": "(children, duration?, spread?)",
+      "description": "inline text with a sweeping teal shimmer highlight. Use for a single standout phrase, stat, or brand name."
+    },
+    {
+      "name": "TypingAnimation",
+      "group": "magic-ui",
+      "signature": "(text, duration?)",
+      "description": "typewriter effect that reveals text character by character. Use for terminal-style headings, command examples, or \"what you can build\" intros."
+    },
+
+    {
+      "name": "AnimatedCodeBlock",
+      "group": "visual",
+      "signature": "(code, language?, filename?, typingSpeed?)",
+      "description": "syntax-highlighted code with typing animation. Use when showing real code, config, or CLI commands from the product.",
+      "quotaTags": ["visual-rich-mandatory"]
+    },
+    {
+      "name": "TerminalOutput",
+      "group": "visual",
+      "signature": "(lines[], title?)",
+      "description": "terminal session with command/output/success/error lines. Use when showing what happens when you run something.",
+      "quotaTags": ["visual-rich-mandatory"]
+    },
+    {
+      "name": "FlowDiagram",
+      "group": "visual",
+      "signature": "(title, steps[])",
+      "description": "visual step-by-step flow with arrows. Use when explaining a process or architecture.",
+      "quotaTags": ["visual-rich-mandatory"]
+    },
+    {
+      "name": "SequenceDiagram",
+      "group": "visual",
+      "signature": "(title, actors[], messages[])",
+      "description": "SVG sequence diagram with lifelines. Use when showing how components communicate.",
+      "quotaTags": ["visual-rich-mandatory"]
+    },
+    {
+      "name": "CodeComparison",
+      "group": "visual",
+      "signature": "(leftCode, rightCode, leftLabel, rightLabel, title?)",
+      "description": "side-by-side before/after. Use when showing what the product replaces or simplifies.",
+      "quotaTags": ["visual-rich-mandatory"]
+    },
+    {
+      "name": "AnimatedChecklist",
+      "group": "visual",
+      "signature": "(title, items[])",
+      "description": "animated checklist with checkmarks. Use for feature lists or requirement breakdowns.",
+      "quotaTags": ["visual-rich-mandatory"]
+    },
+    {
+      "name": "AnimatedMetric / MetricsRow",
+      "componentNames": ["AnimatedMetric", "MetricsRow"],
+      "group": "visual",
+      "signature": "(metrics[])",
+      "description": "animated number counters. Use when you have real metrics (boot time, build count, response time).",
+      "quotaTags": ["visual-rich-mandatory"]
+    },
+    {
+      "name": "InlineTestimonial",
+      "group": "visual",
+      "signature": "(quote, name, role?, stars?)",
+      "description": "testimonial card. Use when you can reference a real user or credible source.",
+      "quotaTags": ["visual-rich-mandatory"]
+    },
+    {
+      "name": "ComparisonTable",
+      "group": "visual",
+      "signature": "(productName, competitorName, rows[])",
+      "description": "feature comparison grid. Use for versus/alternative pages.",
+      "quotaTags": ["visual-rich-mandatory"]
+    },
+    {
+      "name": "ProofBanner",
+      "group": "visual",
+      "signature": "(quote, source?, metric)",
+      "description": "compact proof with large metric. Use for a standout stat mid-page.",
+      "quotaTags": ["visual-rich-mandatory"]
+    },
+    {
+      "name": "AnimatedSection",
+      "group": "visual",
+      "signature": "(delay?)",
+      "description": "scroll-triggered fade-in wrapper. Use to stagger content reveals."
+    },
+
+    {
+      "name": "BentoGrid",
+      "group": "rich-layout",
+      "signature": "(cards[])",
+      "description": "bento grid layout with varying card sizes (1x1, 2x1, 1x2, 2x2). Cards have title, description, optional accent color and custom content. Use for feature overviews, capability showcases, or \"what you get\" sections. Do NOT pass decorative emoji as the card icon.",
+      "quotaTags": ["visual-rich-mandatory"]
+    },
+    {
+      "name": "BeforeAfter",
+      "group": "rich-layout",
+      "signature": "(before, after, title?)",
+      "description": "animated tab toggle between \"before\" and \"after\" states. Each side has content text and highlight bullets (red X marks for before, green checks for after). Use for workflow comparisons, migration stories, or problem/solution sections.",
+      "quotaTags": ["visual-rich-mandatory"]
+    },
+    {
+      "name": "AnimatedDemo",
+      "group": "rich-layout",
+      "signature": "(title, steps[], code?)",
+      "description": "animated product demo that auto-plays through steps. Shows a dark \"screen\" with step content, progress bar, and step indicators. Optional collapsible code panel showing \"How to build this.\" Use for walkthroughs, feature demos, or \"watch it work\" sections.",
+      "quotaTags": ["visual-rich-mandatory"]
+    },
+    {
+      "name": "GlowCard",
+      "group": "rich-layout",
+      "signature": "(children)",
+      "description": "card with mouse-tracking glow effect (like Linear/Stripe). Glow follows cursor on hover. Use as a wrapper around feature highlights or key content blocks for premium feel.",
+      "quotaTags": ["visual-rich-mandatory"]
+    },
+    {
+      "name": "ParallaxSection",
+      "group": "rich-layout",
+      "signature": "(children, background?, intensity?)",
+      "description": "section with parallax scrolling effect. Background moves at a different speed than foreground content. Use for hero-style visual breaks between content sections.",
+      "quotaTags": ["visual-rich-mandatory"]
+    },
+    {
+      "name": "StepTimeline",
+      "group": "rich-layout",
+      "signature": "(title?, steps[])",
+      "description": "vertical timeline with animated line drawing and staggered step reveals. Each step has a numbered dot, title, description, and optional detail panel. Use for processes, setup guides, or \"how it works\" narratives.",
+      "quotaTags": ["visual-rich-mandatory"]
+    },
+
+    {
+      "name": "InlineCta",
+      "group": "cta",
+      "signature": "(heading, body, linkText?, href?)",
+      "description": "inline CTA block with PostHog tracking."
+    },
+    {
+      "name": "StickyBottomCta",
+      "group": "cta",
+      "signature": "(description, buttonLabel, href)",
+      "description": "fixed bottom bar that appears on scroll. Use instead of (or alongside) InlineCta for variety."
+    }
+  ]
+}

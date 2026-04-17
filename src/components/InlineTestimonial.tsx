@@ -12,7 +12,7 @@ function Stars({ count }: { count: number }) {
       {Array.from({ length: 5 }, (_, i) => (
         <svg
           key={i}
-          className={`w-4 h-4 ${i < count ? "text-teal-600" : "text-zinc-200"}`}
+          className={`w-4 h-4 ${i < count ? "text-teal-600 dark:text-teal-400" : "text-zinc-200"}`}
           fill="currentColor"
           viewBox="0 0 20 20"
           aria-hidden="true"
@@ -33,10 +33,10 @@ export function InlineTestimonial({
 }: InlineTestimonialProps) {
   return (
     <figure
-      className={`p-6 sm:p-8 rounded-2xl bg-zinc-50 border border-zinc-200 ${className}`}
+      className={`p-6 sm:p-8 rounded-2xl bg-zinc-50 dark:bg-zinc-900/50 border border-zinc-200 dark:border-zinc-800 ${className}`}
     >
       <Stars count={stars} />
-      <blockquote className="mt-4 text-lg sm:text-xl leading-relaxed text-zinc-800">
+      <blockquote className="mt-4 text-lg sm:text-xl leading-relaxed text-zinc-800 dark:text-zinc-200">
         &ldquo;{quote}&rdquo;
       </blockquote>
       <figcaption className="mt-5 flex items-center gap-3">
@@ -44,8 +44,8 @@ export function InlineTestimonial({
           {name.charAt(0)}
         </div>
         <div>
-          <div className="text-sm font-medium text-zinc-900">{name}</div>
-          {role && <div className="text-xs text-zinc-500">{role}</div>}
+          <div className="text-sm font-medium text-zinc-900 dark:text-zinc-100">{name}</div>
+          {role && <div className="text-xs text-zinc-500 dark:text-zinc-400">{role}</div>}
         </div>
       </figcaption>
     </figure>

@@ -32,7 +32,7 @@ export function StepTimeline({
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ duration: 0.4, ease: [0.16, 1, 0.3, 1] }}
-          className="text-lg font-semibold text-zinc-900 mb-6"
+          className="text-lg font-semibold text-zinc-900 dark:text-zinc-100 mb-6"
         >
           {title}
         </motion.h3>
@@ -74,12 +74,12 @@ export function StepTimeline({
                   stiffness: 300,
                   damping: 20,
                 }}
-                className="absolute -left-8 top-1 w-6 h-6 rounded-full bg-teal-50 border-2 border-teal-400 flex items-center justify-center"
+                className="absolute -left-8 top-1 w-6 h-6 rounded-full bg-teal-50 dark:bg-teal-900/30 border-2 border-teal-400 flex items-center justify-center"
               >
                 {step.icon ? (
                   <span className="text-xs">{step.icon}</span>
                 ) : (
-                  <span className="text-[10px] font-mono font-bold text-teal-600">
+                  <span className="text-[10px] font-mono font-bold text-teal-600 dark:text-teal-400">
                     {i + 1}
                   </span>
                 )}
@@ -87,14 +87,14 @@ export function StepTimeline({
 
               {/* Content */}
               <div>
-                <h4 className="text-sm font-semibold text-zinc-900 mb-1">
+                <h4 className="text-sm font-semibold text-zinc-900 dark:text-zinc-100 mb-1">
                   {step.title}
                 </h4>
-                <p className="text-sm text-zinc-500 leading-relaxed">
+                <p className="text-sm text-zinc-500 dark:text-zinc-400 leading-relaxed">
                   {step.description}
                 </p>
                 {step.detail && (
-                  <div className="mt-3 rounded-lg border border-zinc-100 bg-zinc-50 p-3 text-sm">
+                  <div className="mt-3 rounded-lg border border-zinc-100 dark:border-zinc-900 bg-zinc-50 dark:bg-zinc-900/50 p-3 text-sm">
                     {step.detail}
                   </div>
                 )}

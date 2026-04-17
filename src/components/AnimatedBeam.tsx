@@ -50,10 +50,10 @@ export function AnimatedBeam({
 
   return (
     <div
-      className={`my-10 rounded-2xl border border-zinc-200 bg-white p-6 ${className}`}
+      className={`my-10 rounded-2xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 p-6 ${className}`}
     >
       {title && (
-        <h3 className="text-sm font-semibold text-zinc-900 mb-4">{title}</h3>
+        <h3 className="text-sm font-semibold text-zinc-900 dark:text-zinc-100 mb-4">{title}</h3>
       )}
       <svg
         viewBox={`0 0 ${width} ${height}`}
@@ -80,7 +80,7 @@ export function AnimatedBeam({
           <path
             key={`from-line-${i}`}
             d={`M ${leftX + 60} ${y} Q ${centerX - 80} ${y}, ${centerX - 40} ${centerY}`}
-            stroke="#e4e4e7"
+            className="stroke-zinc-200 dark:stroke-zinc-700"
             strokeWidth="2"
             fill="none"
           />
@@ -89,7 +89,7 @@ export function AnimatedBeam({
           <path
             key={`to-line-${i}`}
             d={`M ${centerX + 40} ${centerY} Q ${centerX + 80} ${y}, ${rightX - 60} ${y}`}
-            stroke="#e4e4e7"
+            className="stroke-zinc-200 dark:stroke-zinc-700"
             strokeWidth="2"
             fill="none"
           />
@@ -144,8 +144,7 @@ export function AnimatedBeam({
               width="120"
               height="48"
               rx="8"
-              fill="white"
-              stroke="#e4e4e7"
+              className="fill-white dark:fill-zinc-800 stroke-zinc-200 dark:stroke-zinc-700"
               strokeWidth="1.5"
             />
             <foreignObject
@@ -157,6 +156,7 @@ export function AnimatedBeam({
               <div
                 // @ts-expect-error -- xmlns is valid in foreignObject
                 xmlns="http://www.w3.org/1999/xhtml"
+                className="text-zinc-900 dark:text-zinc-100"
                 style={{
                   display: "flex",
                   alignItems: "center",
@@ -167,7 +167,6 @@ export function AnimatedBeam({
                   fontSize: 12,
                   fontWeight: 600,
                   lineHeight: 1.2,
-                  color: "#18181b",
                   overflow: "hidden",
                   wordBreak: "break-word",
                 }}
@@ -237,8 +236,7 @@ export function AnimatedBeam({
               width="120"
               height="48"
               rx="8"
-              fill="white"
-              stroke="#e4e4e7"
+              className="fill-white dark:fill-zinc-800 stroke-zinc-200 dark:stroke-zinc-700"
               strokeWidth="1.5"
             />
             <foreignObject
@@ -250,6 +248,7 @@ export function AnimatedBeam({
               <div
                 // @ts-expect-error -- xmlns is valid in foreignObject
                 xmlns="http://www.w3.org/1999/xhtml"
+                className="text-zinc-900 dark:text-zinc-100"
                 style={{
                   display: "flex",
                   alignItems: "center",
@@ -260,7 +259,6 @@ export function AnimatedBeam({
                   fontSize: 12,
                   fontWeight: 600,
                   lineHeight: 1.2,
-                  color: "#18181b",
                   overflow: "hidden",
                   wordBreak: "break-word",
                 }}

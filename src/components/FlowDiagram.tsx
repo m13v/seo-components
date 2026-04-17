@@ -28,7 +28,7 @@ const icons: Record<string, string> = {
 
 export function FlowDiagram({ title, steps }: FlowDiagramProps) {
   return (
-    <div className="my-10 rounded-2xl border border-zinc-200 bg-white p-6 overflow-x-auto">
+    <div className="my-10 rounded-2xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 p-6 overflow-x-auto">
       <p className="text-xs font-mono uppercase tracking-widest text-emerald-500 mb-5">
         {title}
       </p>
@@ -47,14 +47,14 @@ export function FlowDiagram({ title, steps }: FlowDiagramProps) {
             }}
           >
             <div className="flex flex-col items-center flex-1 min-w-0 max-w-[180px]">
-              <div className="w-11 h-11 rounded-xl bg-white border border-zinc-200 flex items-center justify-center text-lg mb-2">
+              <div className="w-11 h-11 rounded-xl bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 flex items-center justify-center text-lg mb-2">
                 {step.icon ? icons[step.icon] || "\u2022" : `${i + 1}`}
               </div>
-              <p className="text-xs font-medium text-zinc-900 text-center leading-tight">
+              <p className="text-xs font-medium text-zinc-900 dark:text-zinc-100 text-center leading-tight">
                 {step.label}
               </p>
               {step.detail && (
-                <p className="text-[10px] text-zinc-500 text-center leading-tight mt-1">
+                <p className="text-[10px] text-zinc-500 dark:text-zinc-400 text-center leading-tight mt-1">
                   {step.detail}
                 </p>
               )}
@@ -72,7 +72,7 @@ export function FlowDiagram({ title, steps }: FlowDiagramProps) {
                 }}
                 style={{ originX: 0 }}
               >
-                <svg width="32" height="12" viewBox="0 0 32 12" className="text-zinc-500">
+                <svg width="32" height="12" viewBox="0 0 32 12" className="text-zinc-500 dark:text-zinc-400">
                   <line x1="0" y1="6" x2="24" y2="6" stroke="currentColor" strokeWidth="1.5" />
                   <polygon points="24,2 32,6 24,10" fill="currentColor" />
                 </svg>

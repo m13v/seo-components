@@ -38,8 +38,8 @@ export function GlowCard({
       onMouseMove={handleMouseMove}
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
-      className={`relative rounded-2xl border border-zinc-200 bg-white overflow-hidden transition-shadow duration-300 ${
-        isHovered ? "shadow-lg border-teal-200" : ""
+      className={`relative rounded-2xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 overflow-hidden transition-shadow duration-300 ${
+        isHovered ? "shadow-lg border-teal-200 dark:border-teal-800" : ""
       } ${className}`}
     >
       {/* Glow overlay */}

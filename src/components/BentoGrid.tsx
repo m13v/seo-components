@@ -42,18 +42,18 @@ export function BentoGrid({ cards, className = "" }: BentoGridProps) {
           }}
           className={`${SIZE_CLASSES[card.size || "1x1"]} rounded-2xl border ${
             card.accent
-              ? "border-teal-200 bg-gradient-to-br from-teal-50 to-cyan-50"
-              : "border-zinc-200 bg-zinc-50"
+              ? "border-teal-200 dark:border-teal-800 bg-gradient-to-br from-teal-50 dark:from-teal-900/20 to-cyan-50"
+              : "border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-900/50"
           } p-6 flex flex-col justify-between group hover:border-teal-300 hover:shadow-md transition-all duration-300`}
         >
           <div>
             {card.icon && (
               <span className="text-2xl mb-3 block">{card.icon}</span>
             )}
-            <h3 className="text-base font-semibold text-zinc-900 mb-2">
+            <h3 className="text-base font-semibold text-zinc-900 dark:text-zinc-100 mb-2">
               {card.title}
             </h3>
-            <p className="text-sm text-zinc-500 leading-relaxed">
+            <p className="text-sm text-zinc-500 dark:text-zinc-400 leading-relaxed">
               {card.description}
             </p>
           </div>

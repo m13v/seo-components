@@ -316,14 +316,14 @@ export function SitemapSidebar({
         {/* Page list */}
         <nav ref={navRef} className="flex-1 overflow-y-auto p-3">
           {filtered.length === 0 && (
-            <p className="text-sm text-zinc-400 dark:text-zinc-500 px-3 py-4">No pages found</p>
+            <p className="text-sm text-zinc-400 dark:text-zinc-400 px-3 py-4">No pages found</p>
           )}
 
           {Array.from(groups.entries()).map(([category, categoryPages]) => (
             <div key={category} className="mb-4">
               {/* Category header (only show if more than one category) */}
               {groups.size > 1 && (
-                <div className="px-3 py-1.5 text-xs font-semibold text-zinc-400 dark:text-zinc-500 uppercase tracking-wider">
+                <div className="px-3 py-1.5 text-xs font-semibold text-zinc-400 dark:text-zinc-400 uppercase tracking-wider">
                   {getCategoryLabel(category, categoryLabels)}
                 </div>
               )}
@@ -339,7 +339,7 @@ export function SitemapSidebar({
                       className={`block px-3 py-2.5 rounded-lg transition-colors ${
                         isActive
                           ? "text-zinc-900 dark:text-zinc-100 font-medium"
-                          : "text-zinc-600 dark:text-zinc-400 hover:bg-zinc-50 dark:hover:bg-zinc-900 hover:text-zinc-900 dark:hover:text-zinc-100"
+                          : "text-zinc-600 dark:text-zinc-300 hover:bg-zinc-50 dark:hover:bg-zinc-900 hover:text-zinc-900 dark:hover:text-zinc-100"
                       }`}
                       style={
                         isActive
@@ -355,7 +355,7 @@ export function SitemapSidebar({
                         {page.title}
                       </span>
                       {page.datePublished && (
-                        <span className="text-[11px] text-zinc-400 dark:text-zinc-500 mt-0.5 block">
+                        <span className="text-[11px] text-zinc-400 dark:text-zinc-400 mt-0.5 block">
                           {page.datePublished}
                         </span>
                       )}
@@ -377,7 +377,7 @@ export function SitemapSidebar({
                                 className={`block pl-3 pr-2 py-1.5 -ml-px border-l-2 text-[13px] leading-snug transition-colors ${
                                   isSectionActive
                                     ? "font-medium"
-                                    : "border-transparent text-zinc-500 dark:text-zinc-500 hover:text-zinc-900 dark:hover:text-zinc-100 hover:border-zinc-300 dark:hover:border-zinc-700"
+                                    : "border-transparent text-zinc-500 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-zinc-100 hover:border-zinc-300 dark:hover:border-zinc-700"
                                 }`}
                                 style={
                                   isSectionActive

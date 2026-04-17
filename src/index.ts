@@ -67,6 +67,12 @@ export type { GuideChatPanelProps } from "./components/GuideChatPanel";
 export { NewsletterSignup } from "./components/NewsletterSignup";
 export type { NewsletterSignupProps } from "./components/NewsletterSignup";
 
+// SEO page comments + reactions (public, anonymous, no signup)
+export { SeoPageComments } from "./components/SeoPageComments";
+export type { SeoPageCommentsProps } from "./components/SeoPageComments";
+export { SeoPageReactions } from "./components/SeoPageReactions";
+export type { SeoPageReactionsProps } from "./components/SeoPageReactions";
+
 // Server utilities: import from "@seo/components/server" instead
 // (walkPages, createGuideChatHandler, logAiUsage, discoverGuides, etc.)
 

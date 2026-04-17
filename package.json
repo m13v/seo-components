@@ -1,6 +1,6 @@
 {
   "name": "@m13v/seo-components",
-  "version": "0.9.1",
+  "version": "0.9.2",
   "scripts": {
     "build:css": "tailwind -i src/_build.css -o dist/styles.css --minify",
     "prepublishOnly": "npm run build:css"

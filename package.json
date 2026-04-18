@@ -1,13 +1,13 @@
 {
   "name": "@m13v/seo-components",
-  "version": "0.13.0",
+  "version": "0.14.0",
   "scripts": {
     "build:css": "tailwind -i src/_build.css -o dist/styles.css --minify",
     "bump:consumers": "bash scripts/bump-consumers.sh",
     "prepublishOnly": "npm run build:css",
     "postpublish": "npm run bump:consumers"
   },
-  "description": "39 animated React components for programmatic SEO pages. Remotion video, Magic UI style animations, trust signals, JSON-LD helpers. Teal/cyan brand, supports light and dark themes.",
+  "description": "42 animated React components for programmatic SEO pages. Remotion video, Magic UI style animations, trust signals, JSON-LD helpers. Teal/cyan brand, supports light and dark themes.",
   "type": "module",
   "main": "./src/index.ts",
   "types": "./src/index.ts",

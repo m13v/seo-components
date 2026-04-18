@@ -49,6 +49,14 @@ export { GlowCard } from "./components/GlowCard";
 export { ParallaxSection } from "./components/ParallaxSection";
 export { StepTimeline } from "./components/StepTimeline";
 export { MotionSequence } from "./components/MotionSequence";
+export { HorizontalStepper } from "./components/HorizontalStepper";
+export type { StepperStep } from "./components/HorizontalStepper";
+export { Team } from "./components/Team";
+export type { TeamMember } from "./components/Team";
+export { IntegrationsGrid } from "./components/IntegrationsGrid";
+export type { IntegrationItem } from "./components/IntegrationsGrid";
+export { RelatedPostsGrid } from "./components/RelatedPostsGrid";
+export type { RelatedPost } from "./components/RelatedPostsGrid";
 
 // Remotion video + Lottie
 export { RemotionClip, ConceptReveal } from "./components/RemotionClip";

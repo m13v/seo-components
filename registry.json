@@ -261,6 +261,34 @@
       "description": "vertical timeline with animated line drawing and staggered step reveals. Each step has a numbered dot, title, description, and optional detail panel. Use for processes, setup guides, or \"how it works\" narratives.",
       "quotaTags": ["visual-rich-mandatory"]
     },
+    {
+      "name": "HorizontalStepper",
+      "group": "rich-layout",
+      "signature": "(title?, steps[], current?)",
+      "description": "horizontal onboarding/progress stepper with numbered dots and animated connectors. Each step has title and optional description. Use for short linear flows (3-5 steps) where a vertical StepTimeline would feel too heavy, e.g. \"how to get started in 4 steps,\" quickstart previews, or pricing/plan pickers.",
+      "quotaTags": ["visual-rich-mandatory"]
+    },
+    {
+      "name": "Team",
+      "group": "rich-layout",
+      "signature": "(title?, subtitle?, members[])",
+      "description": "grid of author/contributor/expert cards with avatar circles (initials or image), name, role, and optional bio. Use for \"who wrote this,\" \"backed by,\" \"meet the experts\" blocks on guides that want E-E-A-T trust signals tied to named humans.",
+      "quotaTags": ["visual-rich-mandatory"]
+    },
+    {
+      "name": "IntegrationsGrid",
+      "group": "rich-layout",
+      "signature": "(title?, subtitle?, items[], columns?)",
+      "description": "grid of tool/integration cards with initials or logo squares, name, and short description. Use for \"works with\" sections on feature or comparison pages when the product plugs into named third-party tools. Pairs well with OrbitingCircles for deeper coverage.",
+      "quotaTags": ["visual-rich-mandatory"]
+    },
+    {
+      "name": "RelatedPostsGrid",
+      "group": "rich-layout",
+      "signature": "(title?, subtitle?, posts[])",
+      "description": "three-column grid of related guide/post cards with gradient banner, tag, excerpt, and \"Read\" arrow. Use at the end of guides to surface internal links to adjacent topics. Boosts internal linking and session depth, which both help SEO.",
+      "quotaTags": ["visual-rich-mandatory"]
+    },
 
     {
       "name": "InlineCta",

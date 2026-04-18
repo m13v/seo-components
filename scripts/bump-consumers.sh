@@ -53,6 +53,21 @@ for dir in "${consumers[@]}"; do
     continue
   fi
 
+  # Also bump any local alias that points at @m13v/seo-components (e.g. "@seo/components": "npm:@m13v/seo-components@^0.11.0").
+  # These aliases are what consumer code actually imports, so if they drift behind the direct dep the new version is never used.
+  aliases=$(jq -r '((.dependencies // {}) + (.devDependencies // {})) | to_entries | map(select(.value | type == "string" and startswith("npm:@m13v/seo-components@"))) | .[].key' "$dir/package.json" 2>/dev/null || true)
+  alias_failed=0
+  for alias in $aliases; do
+    if ! (cd "$dir" && npm i "$alias@npm:@m13v/seo-components@$VERSION" --save --silent); then
+      failed+=("$name: alias $alias install failed")
+      alias_failed=1
+      break
+    fi
+  done
+  if [ "$alias_failed" -eq 1 ]; then
+    continue
+  fi
+
   if [ -z "$(git -C "$dir" status --porcelain package.json package-lock.json 2>/dev/null)" ]; then
     echo "already at $VERSION, nothing to commit"
     continue

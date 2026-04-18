@@ -1,20 +1,9 @@
 import fs from "node:fs";
 import path from "node:path";
 import { slugify } from "./slugify";
-
-export interface PageSection {
-  id: string;
-  title: string;
-}
-
-export interface PageEntry {
-  href: string;
-  title: string;
-  description: string;
-  datePublished?: string;
-  sections: PageSection[];
-  category: string;
-}
+import type { PageEntry, PageSection } from "./page-entry";
+export { groupByCategory, categoryLabel } from "./page-entry";
+export type { PageEntry, PageSection } from "./page-entry";
 
 export interface WalkPagesOptions {
   /** Absolute path to src/app directory. Defaults to `process.cwd()/src/app`. */
@@ -204,41 +193,3 @@ export function walkPages(opts?: WalkPagesOptions): PageEntry[] {
   return pages;
 }
 
-/**
- * Groups pages by their category (first URL segment).
- * Returns a Map where keys are category names and values are page arrays.
- * Categories are auto-labeled from the path segment (e.g. "use-case" becomes "Use Case").
- */
-export function groupByCategory(
-  pages: PageEntry[],
-): Map<string, PageEntry[]> {
-  const groups = new Map<string, PageEntry[]>();
-  for (const page of pages) {
-    const cat = page.category || "pages";
-    if (!groups.has(cat)) groups.set(cat, []);
-    groups.get(cat)!.push(page);
-  }
-  return groups;
-}
-
-/**
- * Converts a category slug to a display label.
- * "t" -> "Guides", "use-case" -> "Use Cases", "compare" -> "Comparisons", etc.
- */
-export function categoryLabel(category: string): string {
-  const labels: Record<string, string> = {
-    t: "Guides",
-    compare: "Comparisons",
-    blog: "Blog",
-    "use-case": "Use Cases",
-    automate: "Automations",
-    alternative: "Alternatives",
-  };
-  return (
-    labels[category] ??
-    category
-      .split("-")
-      .map((w) => w.charAt(0).toUpperCase() + w.slice(1))
-      .join(" ")
-  );
-}

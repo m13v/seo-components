@@ -10,7 +10,30 @@ export interface SeoPageCommentsProps {
   title?: string;
   placeholder?: string;
   emptyMessage?: string;
+  lockedMessage?: string;
   className?: string;
+}
+
+function unlockKey(site: string, pageSlug: string): string {
+  return `seo_comments_unlocked:${site}:${pageSlug}`;
+}
+
+function readUnlocked(site: string, pageSlug: string): boolean {
+  if (typeof window === "undefined") return false;
+  try {
+    return window.localStorage.getItem(unlockKey(site, pageSlug)) === "1";
+  } catch {
+    return false;
+  }
+}
+
+function writeUnlocked(site: string, pageSlug: string): void {
+  if (typeof window === "undefined") return;
+  try {
+    window.localStorage.setItem(unlockKey(site, pageSlug), "1");
+  } catch {
+    // no-op
+  }
 }
 
 interface Comment {
@@ -41,6 +64,7 @@ export function SeoPageComments({
   title = "Comments",
   placeholder = "Share your thoughts. No account needed.",
   emptyMessage = "Be the first to comment.",
+  lockedMessage = "Leave a comment to see what others are saying.",
   className = "",
 }: SeoPageCommentsProps) {
   const [comments, setComments] = useState<Comment[] | null>(null);
@@ -50,11 +74,13 @@ export function SeoPageComments({
   const [status, setStatus] = useState<"idle" | "loading" | "error">("idle");
   const [errorMsg, setErrorMsg] = useState("");
   const [token, setToken] = useState("");
+  const [unlocked, setUnlocked] = useState(false);
 
   useEffect(() => {
     setToken(getAuthorToken());
     setName(getStoredName());
-  }, []);
+    setUnlocked(readUnlocked(site, pageSlug));
+  }, [site, pageSlug]);
 
   const load = useCallback(async () => {
     try {
@@ -113,6 +139,8 @@ export function SeoPageComments({
       setBody("");
       setReplyTo(null);
       setStatus("idle");
+      writeUnlocked(site, pageSlug);
+      setUnlocked(true);
       await load();
     } catch {
       setErrorMsg("Network error");
@@ -166,7 +194,14 @@ export function SeoPageComments({
       </form>
 
       <div className="space-y-6">
-        {comments == null ? (
+        {!unlocked ? (
+          <div
+            className="rounded-lg border border-dashed border-zinc-200 dark:border-zinc-800 bg-zinc-50/50 dark:bg-zinc-900/40 px-4 py-6 text-center"
+            aria-live="polite"
+          >
+            <p className="text-sm text-zinc-600 dark:text-zinc-400">{lockedMessage}</p>
+          </div>
+        ) : comments == null ? (
           <p className="text-sm text-zinc-400">Loading…</p>
         ) : top.length === 0 ? (
           <p className="text-sm text-zinc-500 dark:text-zinc-400">{emptyMessage}</p>

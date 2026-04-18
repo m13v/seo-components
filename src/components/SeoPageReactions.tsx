@@ -9,6 +9,7 @@ export interface SeoPageReactionsProps {
   apiOrigin: string;
   className?: string;
   label?: string;
+  lockedHint?: string;
 }
 
 const REACTIONS = [
@@ -27,6 +28,7 @@ export function SeoPageReactions({
   apiOrigin,
   className = "",
   label = "How did this page land for you?",
+  lockedHint = "React to reveal totals",
 }: SeoPageReactionsProps) {
   const [counts, setCounts] = useState<Record<ReactionKey, number>>({
     like: 0,
@@ -86,6 +88,8 @@ export function SeoPageReactions({
     }
   }
 
+  const unlocked = mine.size > 0;
+
   return (
     <div className={`seo-page-reactions mx-auto max-w-2xl my-8 ${className}`}>
       {label && <p className="text-sm text-zinc-500 mb-2">{label}</p>}
@@ -101,17 +105,29 @@ export function SeoPageReactions({
               className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full border text-sm transition-colors ${
                 active
                   ? "border-[var(--seo-accent,#14b8a6)] text-[var(--seo-accent,#14b8a6)] bg-[var(--seo-accent-light,rgba(20,184,166,0.08))]"
-                  : "border-zinc-200 text-zinc-700 hover:bg-zinc-50"
+                  : "border-zinc-200 dark:border-zinc-800 text-zinc-700 dark:text-zinc-300 hover:bg-zinc-50"
               }`}
               aria-pressed={active}
-              aria-label={r.label}
+              aria-label={unlocked ? `${r.label}: ${counts[r.key]}` : r.label}
             >
               <span className="text-base leading-none">{r.emoji}</span>
-              <span className="font-medium tabular-nums">{counts[r.key]}</span>
+              {unlocked ? (
+                <span className="font-medium tabular-nums">{counts[r.key]}</span>
+              ) : (
+                <span
+                  className="font-medium tabular-nums select-none text-zinc-300 dark:text-zinc-600"
+                  aria-hidden="true"
+                >
+                  ••
+                </span>
+              )}
             </button>
           );
         })}
       </div>
+      {!unlocked && lockedHint && (
+        <p className="mt-2 text-xs text-zinc-400 dark:text-zinc-500">{lockedHint}</p>
+      )}
     </div>
   );
 }

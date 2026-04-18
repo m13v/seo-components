@@ -8,7 +8,8 @@ const cssPath = path.join(here, "..", "..", "dist", "styles.css");
 let cachedCss: string | null = null;
 function loadCss(): string {
   if (cachedCss !== null) return cachedCss;
-  cachedCss = fs.readFileSync(cssPath, "utf8");
+  const raw = fs.readFileSync(cssPath, "utf8");
+  cachedCss = `@layer seo-components { ${raw} }`;
   return cachedCss;
 }
 

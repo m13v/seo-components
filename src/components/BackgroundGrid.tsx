@@ -26,12 +26,12 @@ export function BackgroundGrid({
 }: BackgroundGridProps) {
   const bg =
     pattern === "dots"
-      ? `radial-gradient(circle, rgba(var(--seo-accent-rgb), 0.18) 1px, transparent 1px)`
-      : `linear-gradient(rgba(var(--seo-accent-rgb), 0.12) 1px, transparent 1px), linear-gradient(90deg, rgba(var(--seo-accent-rgb), 0.12) 1px, transparent 1px)`;
+      ? `radial-gradient(circle, rgba(var(--seo-accent-rgb, 20, 184, 166), 0.18) 1px, transparent 1px)`
+      : `linear-gradient(rgba(var(--seo-accent-rgb, 20, 184, 166), 0.12) 1px, transparent 1px), linear-gradient(90deg, rgba(var(--seo-accent-rgb, 20, 184, 166), 0.12) 1px, transparent 1px)`;
 
   return (
     <div
-      className={`relative overflow-hidden rounded-2xl border border-zinc-200 my-10 ${className}`}
+      className={`relative overflow-hidden rounded-2xl border border-zinc-200 dark:border-zinc-800 my-10 ${className}`}
     >
       <div
         className="absolute inset-0 pointer-events-none"
@@ -49,7 +49,7 @@ export function BackgroundGrid({
           className="absolute inset-0 pointer-events-none"
           style={{
             background:
-              "radial-gradient(ellipse at center, rgba(var(--seo-accent-rgb), 0.15) 0%, transparent 60%)",
+              "radial-gradient(ellipse at center, rgba(var(--seo-accent-rgb, 20, 184, 166), 0.15) 0%, transparent 60%)",
           }}
         />
       )}

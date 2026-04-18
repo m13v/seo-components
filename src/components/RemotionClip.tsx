@@ -208,7 +208,7 @@ export function RemotionClip({
 }: RemotionClipProps) {
   return (
     <div
-      className={`my-10 rounded-2xl overflow-hidden border border-zinc-200 shadow-lg ${className}`}
+      className={`my-10 rounded-2xl overflow-hidden border border-zinc-200 dark:border-zinc-800 shadow-lg ${className}`}
       style={{ aspectRatio: `${width} / ${height}` }}
     >
       <Player

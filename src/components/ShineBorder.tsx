@@ -46,7 +46,7 @@ export function ShineBorder({
   children,
 }: ShineBorderProps) {
   const outerBase =
-    "relative grid min-h-[60px] w-fit min-w-[300px] place-items-center bg-white p-3 text-zinc-900";
+    "relative grid min-h-[60px] w-fit min-w-[300px] place-items-center bg-white dark:bg-zinc-900 p-3 text-zinc-900 dark:text-zinc-100";
   const outerClass = className
     ? `${outerBase} ${className}`
     : outerBase;

@@ -21,7 +21,7 @@ export function Breadcrumbs({ items, className = "", align = "start" }: Breadcru
           const isLast = i === items.length - 1;
           return (
             <Fragment key={`${item.label}-${i}`}>
-              <li className={isLast ? "text-zinc-900 line-clamp-1" : ""}>
+              <li className={isLast ? "text-zinc-900 dark:text-zinc-100 line-clamp-1" : ""}>
                 {item.href && !isLast ? (
                   <Link href={item.href} className="hover:text-zinc-900 transition-colors">
                     {item.label}

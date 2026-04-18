@@ -24,8 +24,8 @@ export function GradientText({
 }: GradientTextProps) {
   const gradient =
     variant === "rainbow"
-      ? "linear-gradient(90deg, var(--seo-accent-gradient-from), var(--seo-accent), #10b981, var(--seo-accent), var(--seo-accent-gradient-from))"
-      : "linear-gradient(90deg, var(--seo-accent-gradient-from), var(--seo-accent), var(--seo-accent-dark), var(--seo-accent), var(--seo-accent-gradient-from))";
+      ? "linear-gradient(90deg, var(--seo-accent-gradient-from, #06b6d4), var(--seo-accent, #14b8a6), #10b981, var(--seo-accent, #14b8a6), var(--seo-accent-gradient-from, #06b6d4))"
+      : "linear-gradient(90deg, var(--seo-accent-gradient-from, #06b6d4), var(--seo-accent, #14b8a6), var(--seo-accent-dark, #0d9488), var(--seo-accent, #14b8a6), var(--seo-accent-gradient-from, #06b6d4))";
 
   return (
     <motion.span

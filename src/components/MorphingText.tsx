@@ -111,11 +111,11 @@ function Texts({ texts }: { texts: string[] }) {
   return (
     <>
       <span
-        className="absolute inset-x-0 top-0 m-auto inline-block w-full text-center text-zinc-900 [will-change:filter,opacity] antialiased"
+        className="absolute inset-x-0 top-0 m-auto inline-block w-full text-center text-zinc-900 dark:text-zinc-100 [will-change:filter,opacity] antialiased"
         ref={text1Ref}
       />
       <span
-        className="absolute inset-x-0 top-0 m-auto inline-block w-full text-center text-zinc-900 [will-change:filter,opacity] antialiased"
+        className="absolute inset-x-0 top-0 m-auto inline-block w-full text-center text-zinc-900 dark:text-zinc-100 [will-change:filter,opacity] antialiased"
         ref={text2Ref}
       />
     </>

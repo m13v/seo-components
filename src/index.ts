@@ -54,10 +54,12 @@ export { MotionSequence } from "./components/MotionSequence";
 export { RemotionClip, ConceptReveal } from "./components/RemotionClip";
 export { LottiePlayer } from "./components/LottiePlayer";
 
-// Sitemap sidebar + heading anchors
+// Sitemap sidebar + heading anchors + HTML sitemap page
 export { SitemapSidebar } from "./components/SitemapSidebar";
 export type { SitemapSidebarProps } from "./components/SitemapSidebar";
 export { HeadingAnchors } from "./components/HeadingAnchors";
+export { HtmlSitemap } from "./components/HtmlSitemap";
+export type { HtmlSitemapProps } from "./components/HtmlSitemap";
 
 // Guide chat (AI page assistant) — client-safe
 export { GuideChatPanel } from "./components/GuideChatPanel";

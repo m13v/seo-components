@@ -52,7 +52,7 @@ export function AnimatedCodeBlock({
         </div>
       )}
       <pre className="p-5 text-sm font-mono overflow-x-auto">
-        <code className="text-code-text">
+        <code className="text-zinc-100">
           {lines.slice(0, displayedLines).join("\n")}
           {displayedLines < lines.length && isInView && (
             <motion.span

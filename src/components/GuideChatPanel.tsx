@@ -423,7 +423,7 @@ function ChatThread({
             <TypingIndicator />
           </ThreadPrimitive.If>
         </ThreadPrimitive.Viewport>
-        <div className="px-3 py-3 border-t border-zinc-100">
+        <div className="px-3 py-3 border-t border-zinc-100 dark:border-zinc-900">
           <Composer />
         </div>
       </ThreadPrimitive.Root>

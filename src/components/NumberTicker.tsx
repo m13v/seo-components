@@ -60,7 +60,7 @@ export function NumberTicker({
   return (
     <motion.span
       ref={ref}
-      className={`tabular-nums font-bold text-zinc-900 ${className}`}
+      className={`tabular-nums font-bold text-zinc-900 dark:text-zinc-100 ${className}`}
     >
       {prefix}0{suffix}
     </motion.span>

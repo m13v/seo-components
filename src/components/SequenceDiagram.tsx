@@ -17,7 +17,7 @@ interface SequenceDiagramProps {
 
 const typeStyles: Record<string, { stroke: string; text: string; dash?: string }> = {
   request: { stroke: "stroke-emerald-500", text: "text-emerald-500" },
-  response: { stroke: "stroke-teal-500", text: "text-teal-600", dash: "6 3" },
+  response: { stroke: "stroke-teal-500", text: "text-teal-600 dark:text-teal-400", dash: "6 3" },
   event: { stroke: "stroke-amber-400", text: "text-amber-400" },
   error: { stroke: "stroke-red-400", text: "text-red-400", dash: "4 4" },
 };
@@ -31,7 +31,7 @@ export function SequenceDiagram({ title, actors, messages }: SequenceDiagramProp
 
   return (
     <motion.div
-      className="my-10 rounded-2xl border border-zinc-200 bg-white p-6 overflow-x-auto"
+      className="my-10 rounded-2xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 p-6 overflow-x-auto"
       initial={{ opacity: 0, y: 16 }}
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true }}

@@ -68,11 +68,11 @@ export function MotionSequence({
   return (
     <div
       ref={containerRef}
-      className={`my-10 rounded-2xl border border-zinc-200 bg-white overflow-hidden ${className}`}
+      className={`my-10 rounded-2xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 overflow-hidden ${className}`}
     >
       {title && (
-        <div className="border-b border-zinc-100 px-6 py-4 flex items-center justify-between">
-          <h3 className="text-sm font-semibold text-zinc-900">{title}</h3>
+        <div className="border-b border-zinc-100 dark:border-zinc-900 px-6 py-4 flex items-center justify-between">
+          <h3 className="text-sm font-semibold text-zinc-900 dark:text-zinc-100">{title}</h3>
           <div className="flex items-center gap-2">
             <div className="flex gap-1">
               {frames.map((_, i) => (
@@ -116,7 +116,7 @@ export function MotionSequence({
                 initial={{ opacity: 0, y: 8 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.15, duration: 0.4 }}
-                className="text-xl font-semibold text-zinc-900 text-center mb-2"
+                className="text-xl font-semibold text-zinc-900 dark:text-zinc-100 text-center mb-2"
               >
                 {current.title}
               </motion.h4>

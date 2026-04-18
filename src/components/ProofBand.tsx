@@ -37,7 +37,7 @@ export function ProofBand({
             </svg>
           ))}
         </div>
-        <span className="text-zinc-700 font-medium">{rating.toFixed(1)}</span>
+        <span className="text-zinc-700 dark:text-zinc-300 font-medium">{rating.toFixed(1)}</span>
         <span className="text-zinc-400">from {ratingCount}</span>
       </div>
 
@@ -56,7 +56,7 @@ export function ProofBand({
               >
                 <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
               </svg>
-              <span className="text-zinc-600">{h}</span>
+              <span className="text-zinc-600 dark:text-zinc-400">{h}</span>
             </div>
           ))}
         </div>

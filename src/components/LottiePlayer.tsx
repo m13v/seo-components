@@ -44,7 +44,7 @@ export function LottiePlayer({
   if (!data) {
     return (
       <div
-        className={`my-6 rounded-xl border border-zinc-200 bg-zinc-50 ${className}`}
+        className={`my-6 rounded-xl border border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-900 ${className}`}
         style={{ height, width }}
       />
     );

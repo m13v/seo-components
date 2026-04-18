@@ -68,7 +68,7 @@ export function AnimatedDemo({
     >
       {/* Header */}
       <div className="flex items-center justify-between mb-3">
-        <span className="text-xs font-mono font-medium text-teal-600 tracking-wider uppercase">
+        <span className="text-xs font-mono font-medium text-teal-600 dark:text-teal-400 tracking-wider uppercase">
           {title}
         </span>
         {code && (
@@ -82,7 +82,7 @@ export function AnimatedDemo({
       </div>
 
       {/* Demo screen */}
-      <div className="rounded-2xl border border-zinc-200 bg-zinc-950 overflow-hidden shadow-lg">
+      <div className="rounded-2xl border border-zinc-200 dark:border-zinc-800 bg-zinc-950 overflow-hidden shadow-lg">
         {/* Title bar */}
         <div className="flex items-center gap-1.5 px-4 py-2.5 bg-zinc-900 border-b border-zinc-800">
           <div className="w-2.5 h-2.5 rounded-full bg-red-400/80" />
@@ -166,12 +166,12 @@ export function AnimatedDemo({
           transition={{ duration: 0.3 }}
           className="mt-4"
         >
-          <div className="rounded-xl border border-zinc-200 bg-zinc-950 overflow-hidden">
+          <div className="rounded-xl border border-zinc-200 dark:border-zinc-800 bg-zinc-950 overflow-hidden">
             <div className="flex items-center justify-between px-4 py-2 bg-zinc-900 border-b border-zinc-800">
               <span className="text-[11px] text-zinc-500 font-mono">
                 {codeLanguage}
               </span>
-              <span className="text-[10px] text-zinc-600 font-mono">
+              <span className="text-[10px] text-zinc-600 dark:text-zinc-400 font-mono">
                 How to build this
               </span>
             </div>

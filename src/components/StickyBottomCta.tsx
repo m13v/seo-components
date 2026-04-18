@@ -32,7 +32,7 @@ export function StickyBottomCta({
           animate={{ y: 0 }}
           exit={{ y: "100%" }}
           transition={{ duration: 0.3, ease: [0.16, 1, 0.3, 1] }}
-          className="fixed bottom-0 left-0 right-0 z-40 border-t border-zinc-200 backdrop-blur-xl py-3 px-6"
+          className="fixed bottom-0 left-0 right-0 z-40 border-t border-zinc-200 dark:border-zinc-800 backdrop-blur-xl py-3 px-6"
           style={{ backgroundColor: "var(--mobile-bg)" }}
         >
           <div className="mx-auto max-w-7xl flex items-center justify-between">

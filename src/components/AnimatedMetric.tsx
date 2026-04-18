@@ -44,7 +44,7 @@ export function AnimatedMetric({
       viewport={{ once: true }}
       transition={{ duration: 0.4, ease: [0.16, 1, 0.3, 1] }}
     >
-      <span className="text-3xl md:text-4xl font-bold text-teal-600 tabular-nums">
+      <span className="text-3xl md:text-4xl font-bold text-teal-600 dark:text-teal-400 tabular-nums">
         {prefix}{display}
         {suffix && <span className="text-base font-semibold">{suffix}</span>}
       </span>

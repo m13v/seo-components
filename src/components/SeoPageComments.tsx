@@ -148,9 +148,27 @@ export function SeoPageComments({
     }
   }
 
+  const totalCount = comments?.length ?? 0;
+
   return (
     <section className={`seo-page-comments mx-auto max-w-2xl my-12 ${className}`}>
-      <h2 className="text-xl font-semibold text-zinc-900 dark:text-zinc-100 mb-1">{title}</h2>
+      <div className="flex flex-wrap items-center gap-x-3 gap-y-2 mb-1">
+        <h2 className="text-xl font-semibold text-zinc-900 dark:text-zinc-100">
+          {title}{" "}
+          <span className="text-zinc-400 dark:text-zinc-500 font-semibold">
+            ({unlocked ? (
+              <span className="tabular-nums">{totalCount}</span>
+            ) : (
+              <span aria-hidden="true" className="select-none text-zinc-300 dark:text-zinc-600">••</span>
+            )})
+          </span>
+        </h2>
+        {!unlocked && (
+          <span className="inline-flex items-center rounded-full border border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-900/60 px-2.5 py-0.5 text-xs font-medium text-zinc-600 dark:text-zinc-400">
+            {lockedMessage}
+          </span>
+        )}
+      </div>
       <p className="text-sm text-zinc-500 dark:text-zinc-400 mb-6">Public and anonymous. No signup.</p>
 
       <form onSubmit={submit} className="mb-8 space-y-2">
@@ -193,33 +211,28 @@ export function SeoPageComments({
         {status === "error" && errorMsg && <p className="text-xs text-red-500 px-1">{errorMsg}</p>}
       </form>
 
-      <div className="space-y-6">
-        {!unlocked ? (
-          <div
-            className="rounded-lg border border-dashed border-zinc-200 dark:border-zinc-800 bg-zinc-50/50 dark:bg-zinc-900/40 px-4 py-6 text-center"
-            aria-live="polite"
-          >
-            <p className="text-sm text-zinc-600 dark:text-zinc-400">{lockedMessage}</p>
-          </div>
-        ) : comments == null ? (
-          <p className="text-sm text-zinc-400">Loading…</p>
-        ) : top.length === 0 ? (
-          <p className="text-sm text-zinc-500 dark:text-zinc-400">{emptyMessage}</p>
-        ) : (
-          top.map((c) => (
-            <div key={c.id}>
-              <CommentRow c={c} onReply={() => setReplyTo(c.id)} />
-              {(children[c.id] ?? []).length > 0 && (
-                <div className="mt-3 ml-6 pl-4 border-l border-zinc-200 dark:border-zinc-800 space-y-4">
-                  {children[c.id].map((r) => (
-                    <CommentRow key={r.id} c={r} />
-                  ))}
-                </div>
-              )}
-            </div>
-          ))
-        )}
-      </div>
+      {unlocked && (
+        <div className="space-y-6" aria-live="polite">
+          {comments == null ? (
+            <p className="text-sm text-zinc-400">Loading…</p>
+          ) : top.length === 0 ? (
+            <p className="text-sm text-zinc-500 dark:text-zinc-400">{emptyMessage}</p>
+          ) : (
+            top.map((c) => (
+              <div key={c.id}>
+                <CommentRow c={c} onReply={() => setReplyTo(c.id)} />
+                {(children[c.id] ?? []).length > 0 && (
+                  <div className="mt-3 ml-6 pl-4 border-l border-zinc-200 dark:border-zinc-800 space-y-4">
+                    {children[c.id].map((r) => (
+                      <CommentRow key={r.id} c={r} />
+                    ))}
+                  </div>
+                )}
+              </div>
+            ))
+          )}
+        </div>
+      )}
     </section>
   );
 }

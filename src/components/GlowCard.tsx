@@ -16,7 +16,7 @@ interface GlowCardProps {
 export function GlowCard({
   children,
   className = "",
-  glowColor = "rgba(var(--seo-accent-rgb), 0.15)",
+  glowColor = "rgba(var(--seo-accent-rgb, 20, 184, 166), 0.15)",
 }: GlowCardProps) {
   const ref = useRef<HTMLDivElement>(null);
   const [mousePos, setMousePos] = useState({ x: 0, y: 0 });

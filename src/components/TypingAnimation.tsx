@@ -44,7 +44,7 @@ export function TypingAnimation({
   }, [duration, i, text]);
 
   const base =
-    "font-display text-center text-4xl font-bold leading-[5rem] tracking-[-0.02em] drop-shadow-sm text-zinc-900";
+    "font-display text-center text-4xl font-bold leading-[5rem] tracking-[-0.02em] drop-shadow-sm text-zinc-900 dark:text-zinc-100";
 
   return (
     <h1 className={className ? `${base} ${className}` : base}>

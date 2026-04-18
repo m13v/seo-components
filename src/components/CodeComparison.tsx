@@ -29,22 +29,22 @@ export function CodeComparison({
 
   return (
     <motion.div
-      className="my-8 rounded-2xl border border-zinc-200 bg-white overflow-hidden"
+      className="my-8 rounded-2xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 overflow-hidden"
       initial={{ opacity: 0, y: 12 }}
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true }}
       transition={{ duration: 0.4, ease: [0.16, 1, 0.3, 1] }}
     >
-      <div className="flex items-center justify-between px-5 py-3 border-b border-zinc-200 bg-white/50">
+      <div className="flex items-center justify-between px-5 py-3 border-b border-zinc-200 dark:border-zinc-800 bg-white/50">
         {title && (
           <p className="text-xs font-mono uppercase tracking-widest text-emerald-500">{title}</p>
         )}
-        <div className="flex gap-1 rounded-lg bg-white p-0.5 border border-zinc-200">
+        <div className="flex gap-1 rounded-lg bg-white dark:bg-zinc-900 p-0.5 border border-zinc-200 dark:border-zinc-800">
           <button
             onClick={() => setTab("left")}
             className={`text-[11px] font-medium px-3 py-1 rounded-md transition-colors ${
               tab === "left"
-                ? "bg-teal-500/10 text-teal-600"
+                ? "bg-teal-500/10 text-teal-600 dark:text-teal-400"
                 : "text-zinc-500 hover:text-zinc-900"
             }`}
           >
@@ -74,7 +74,7 @@ export function CodeComparison({
               exit={{ opacity: 0, x: 8 }}
               transition={{ duration: 0.2 }}
             >
-              <code className="text-code-text">{leftCode}</code>
+              <code className="text-zinc-900 dark:text-zinc-100">{leftCode}</code>
             </motion.pre>
           ) : (
             <motion.pre
@@ -85,13 +85,13 @@ export function CodeComparison({
               exit={{ opacity: 0, x: 8 }}
               transition={{ duration: 0.2 }}
             >
-              <code className="text-code-text">{rightCode}</code>
+              <code className="text-zinc-900 dark:text-zinc-100">{rightCode}</code>
             </motion.pre>
           )}
         </AnimatePresence>
       </div>
 
-      <div className="px-5 py-3 border-t border-zinc-200 bg-white/50 flex items-center gap-3">
+      <div className="px-5 py-3 border-t border-zinc-200 dark:border-zinc-800 bg-white/50 flex items-center gap-3">
         <motion.div
           className="h-1.5 rounded-full bg-emerald-500/20 flex-1 overflow-hidden"
           initial={{ opacity: 0 }}

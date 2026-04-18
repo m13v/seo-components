@@ -4,6 +4,13 @@
 export { walkPages, groupByCategory, categoryLabel } from "./lib/walk-pages";
 export type { PageEntry, PageSection, WalkPagesOptions } from "./lib/walk-pages";
 
+export { generateSitemap } from "./lib/generate-sitemap";
+export type {
+  SitemapEntry,
+  SitemapPriority,
+  GenerateSitemapOptions,
+} from "./lib/generate-sitemap";
+
 export { slugify } from "./lib/slugify";
 
 export { createGuideChatHandler } from "./lib/guide-chat-route";

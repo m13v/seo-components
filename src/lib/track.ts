@@ -2,17 +2,11 @@
 // `posthog.capture("cta_click", ...)` directly so every consumer site
 // fires the same event names with the same property shape.
 //
-// All helpers are no-ops on the server and when PostHog is not loaded.
+// All helpers are no-ops on the server and when PostHog is not loaded,
+// but when PostHog is missing in the browser they emit a one-time
+// console.warn (via captureFromWindow) so the wiring bug is visible.
 
-type PostHogLike = {
-  capture: (event: string, properties?: Record<string, unknown>) => void;
-};
-
-function ph(): PostHogLike | undefined {
-  if (typeof window === "undefined") return undefined;
-  const w = window as unknown as { posthog?: PostHogLike };
-  return w.posthog;
-}
+import { captureFromWindow } from "./analytics-context";
 
 export interface ScheduleClickProps {
   /** Absolute URL the click sends the user to (e.g. https://cal.com/team/mediar/demo). */
@@ -38,10 +32,8 @@ export interface ScheduleClickProps {
  * Funnel Stats table.
  */
 export function trackScheduleClick(props: ScheduleClickProps): void {
-  const posthog = ph();
-  if (!posthog) return;
   const { destination, site, section, text, component, extra } = props;
-  posthog.capture("schedule_click", {
+  captureFromWindow("schedule_click", {
     ...(extra || {}),
     destination,
     site,

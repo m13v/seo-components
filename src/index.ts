@@ -41,6 +41,22 @@ export { StickyBottomCta } from "./components/StickyBottomCta";
 export { trackScheduleClick } from "./lib/track";
 export type { ScheduleClickProps } from "./lib/track";
 
+// Analytics context: provider + hooks so library components fire PostHog
+// events reliably regardless of how the consumer loads posthog-js.
+export {
+  SeoAnalyticsProvider,
+  useCapture,
+  captureFromWindow,
+} from "./lib/analytics-context";
+export type {
+  PostHogLike,
+  SeoAnalyticsProviderProps,
+} from "./lib/analytics-context";
+
+// All-in-one analytics wiring for consumer sites.
+export { FullSiteAnalytics } from "./components/FullSiteAnalytics";
+export type { FullSiteAnalyticsProps } from "./components/FullSiteAnalytics";
+
 // Proof / social proof
 export { ProofBanner } from "./components/ProofBanner";
 

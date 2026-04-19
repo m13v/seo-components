@@ -9,11 +9,42 @@ import { AbsoluteFill, interpolate, spring, useCurrentFrame, useVideoConfig } fr
 /* gradient background and a growing progress bar.                    */
 /* ------------------------------------------------------------------ */
 
+type RemotionAccent =
+  | "teal"
+  | "cyan"
+  | "orange"
+  | "amber"
+  | "rose"
+  | "pink"
+  | "red"
+  | "green"
+  | "emerald"
+  | "blue"
+  | "indigo"
+  | "violet"
+  | "purple";
+
+const ACCENT_HEX: Record<RemotionAccent, { from: string; to: string }> = {
+  teal: { from: "#14b8a6", to: "#0d9488" },
+  cyan: { from: "#06b6d4", to: "#0891b2" },
+  orange: { from: "#fb923c", to: "#ea580c" },
+  amber: { from: "#fbbf24", to: "#d97706" },
+  rose: { from: "#fb7185", to: "#e11d48" },
+  pink: { from: "#f472b6", to: "#db2777" },
+  red: { from: "#ef4444", to: "#b91c1c" },
+  green: { from: "#22c55e", to: "#15803d" },
+  emerald: { from: "#10b981", to: "#047857" },
+  blue: { from: "#3b82f6", to: "#1d4ed8" },
+  indigo: { from: "#6366f1", to: "#4338ca" },
+  violet: { from: "#8b5cf6", to: "#6d28d9" },
+  purple: { from: "#a855f7", to: "#7e22ce" },
+};
+
 interface ConceptRevealProps {
   title: string;
   subtitle?: string;
   captions: string[];
-  accent?: "teal" | "cyan";
+  accent?: RemotionAccent;
   /** Override hex color for the primary gradient stop. If set, takes precedence over `accent`. */
   accentHex?: string;
   /** Override hex color for the secondary (dark) gradient stop. If set, takes precedence over `accent`. */
@@ -48,8 +79,9 @@ export function ConceptReveal({
     extrapolateRight: "clamp",
   });
 
-  const bgA = accentHex ?? (accent === "teal" ? "#14b8a6" : "#06b6d4");
-  const bgB = accentHexDark ?? (accent === "teal" ? "#0d9488" : "#0891b2");
+  const palette = ACCENT_HEX[accent] ?? ACCENT_HEX.teal;
+  const bgA = accentHex ?? palette.from;
+  const bgB = accentHexDark ?? palette.to;
 
   return (
     <AbsoluteFill
@@ -171,7 +203,7 @@ interface RemotionClipProps {
   title: string;
   subtitle?: string;
   captions: string[];
-  accent?: "teal" | "cyan";
+  accent?: RemotionAccent;
   /** Override hex color for the primary gradient stop. If set, takes precedence over `accent`. */
   accentHex?: string;
   /** Override hex color for the secondary (dark) gradient stop. If set, takes precedence over `accent`. */

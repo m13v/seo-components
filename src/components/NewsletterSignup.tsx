@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
+import { useCapture } from "../lib/analytics-context";
 
 export interface NewsletterSignupProps {
   /** Text shown next to the input on desktop */
@@ -26,6 +27,7 @@ export function NewsletterSignup({
   successMessage = "You're subscribed! Check your inbox.",
   placeholder = "you@example.com",
 }: NewsletterSignupProps) {
+  const capture = useCapture();
   const [visible, setVisible] = useState(false);
   const [email, setEmail] = useState("");
   const [status, setStatus] = useState<"idle" | "loading" | "success" | "error">("idle");
@@ -61,10 +63,7 @@ export function NewsletterSignup({
 
       setStatus("success");
 
-      const w = typeof window !== "undefined"
-        ? (window as unknown as { posthog?: { capture: (e: string, p?: Record<string, unknown>) => void } })
-        : undefined;
-      w?.posthog?.capture("newsletter_subscribed", {
+      capture("newsletter_subscribed", {
         component: "NewsletterSignup",
         page: typeof window !== "undefined" ? window.location.pathname : undefined,
       });

@@ -301,6 +301,13 @@
       "group": "cta",
       "signature": "(description, buttonLabel, href)",
       "description": "fixed bottom bar that appears on scroll. Use instead of (or alongside) InlineCta for variety."
+    },
+    {
+      "name": "BookCallCTA",
+      "group": "cta",
+      "signature": "(destination, appearance: \"inline\" | \"sticky\" | \"hero\" | \"footer\", text?, heading?, description?, section?, site?, scrollThreshold?)",
+      "description": "canonical \"Book a call\" CTA. Fires the `schedule_click` PostHog event via `trackScheduleClick` so bookings are counted in project funnel stats. `destination` should be the project's Cal.com link from config.json `booking_link`. Render TWO instances per page: one `appearance=\"footer\"` near the end of the article body, and one `appearance=\"sticky\"` at the bottom of the page so the CTA follows the reader on scroll.",
+      "quotaTags": ["book-call-mandatory"]
     }
   ]
 }

@@ -36,6 +36,11 @@ export { MetricsRow } from "./components/MetricsRow";
 // CTA components
 export { InlineCta } from "./components/InlineCta";
 export { StickyBottomCta } from "./components/StickyBottomCta";
+export { BookCallCTA } from "./components/BookCallCTA";
+export type {
+  BookCallCTAProps,
+  BookCallAppearance,
+} from "./components/BookCallCTA";
 
 // Canonical analytics helpers (schedule_click, etc.)
 export { trackScheduleClick } from "./lib/track";

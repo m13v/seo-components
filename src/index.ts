@@ -37,6 +37,10 @@ export { MetricsRow } from "./components/MetricsRow";
 export { InlineCta } from "./components/InlineCta";
 export { StickyBottomCta } from "./components/StickyBottomCta";
 
+// Canonical analytics helpers (schedule_click, etc.)
+export { trackScheduleClick } from "./lib/track";
+export type { ScheduleClickProps } from "./lib/track";
+
 // Proof / social proof
 export { ProofBanner } from "./components/ProofBanner";
 

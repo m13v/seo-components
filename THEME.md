@@ -42,3 +42,9 @@ content: [
 ```css
 @source "../seo-components/src";
 ```
+
+## Surface backgrounds
+
+Long-lived panel components (`SitemapSidebar`, `GuideChatPanel`, `NewsletterSignup`) no longer hardcode a surface color. Their outer containers are transparent and inherit whatever the host page's `body` background is (paper, white, zinc-950, anything). Inner sub-surfaces (search field, message bubbles, summary chip, input, hover states) use `color-mix(in srgb, currentColor N%, transparent)` so the tint adapts to the site's own text color.
+
+This means consumer sites do NOT need to override a surface variable; they just paint their own body background as usual and the shared panels blend in. The only cross-site dependencies are accent colors (see above). `color-mix` requires Safari 16.2+, Chrome 111+.

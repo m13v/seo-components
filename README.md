@@ -110,12 +110,56 @@ import { walkPages, createGuideChatHandler, logAiUsage } from "@seo/components/s
 | Export | What it does |
 |--------|-------------|
 | `walkPages()` | Discovers all pages in `src/app/`, extracts titles, descriptions, H2 sections |
+| `generateSitemap()` | Returns a `MetadataRoute.Sitemap` by walking `src/app` with priority tiers |
+| `generateRobots()` | Returns a `MetadataRoute.Robots` with default + AI-crawler allowlist + sitemap URL |
 | `createGuideChatHandler()` | Gemini streaming chat route handler |
 | `discoverGuides()` | Legacy guide discovery (delegates to `walkPages`) |
 | `getGuideContext()` | Builds page context for AI chat |
 | `logAiUsage()` | Token usage tracking |
 | `getSupabaseAdmin()` | Supabase admin client |
 | `slugify()` | URL-safe slug utility |
+
+### Sitemap + robots (canonical setup)
+
+Every site should ship a **dynamic** sitemap and a robots.txt that references it. The library provides both as one-liners so you never hand-roll either again.
+
+```ts
+// src/app/sitemap.ts
+import type { MetadataRoute } from "next";
+import { generateSitemap } from "@seo/components/server";
+
+export default function sitemap(): MetadataRoute.Sitemap {
+  return generateSitemap({ baseUrl: "https://yourdomain.com" });
+}
+```
+
+```ts
+// src/app/robots.ts
+import type { MetadataRoute } from "next";
+import { generateRobots } from "@seo/components/server";
+
+export default function robots(): MetadataRoute.Robots {
+  return generateRobots({ baseUrl: "https://yourdomain.com" });
+}
+```
+
+`generateSitemap()` walks `src/app/` for `page.tsx` files (skipping route groups, dynamic segments, `api/`, underscore-prefixed dirs) and applies priority tiers. For dynamic routes like `/blog/[slug]`, pass `extraEntries`:
+
+```ts
+return generateSitemap({
+  baseUrl: "https://yourdomain.com",
+  extraEntries: posts.map((p) => ({ url: `https://yourdomain.com/blog/${p.slug}` })),
+});
+```
+
+`generateRobots()` emits the default `User-agent: *` rule, a 13-bot AI allowlist (GPTBot, ChatGPT-User, ClaudeBot, Claude-Web, anthropic-ai, PerplexityBot, CCBot, Google-Extended, Bytespider, cohere-ai, Applebot, Applebot-Extended), and a sitemap URL derived from `baseUrl`. Override `aiAllowlist`, `disallow`, `extraRules`, or `sitemap` as needed.
+
+Verify live after deploy:
+
+```bash
+curl -s -o /dev/null -w "%{http_code}\n" https://yourdomain.com/sitemap.xml  # 200
+curl -s https://yourdomain.com/robots.txt | grep sitemap.xml                 # non-empty
+```
 
 ## JSON-LD Helpers
 

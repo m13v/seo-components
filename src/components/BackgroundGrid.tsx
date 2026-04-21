@@ -31,7 +31,7 @@ export function BackgroundGrid({
 
   return (
     <div
-      className={`relative overflow-hidden rounded-2xl border border-zinc-200 dark:border-zinc-800 my-10 ${className}`}
+      className={`relative overflow-hidden rounded-2xl border border-[color-mix(in_srgb,currentColor_14%,transparent)] my-10 ${className}`}
     >
       <div
         className="absolute inset-0 pointer-events-none"

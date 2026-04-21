@@ -29,17 +29,17 @@ export function CodeComparison({
 
   return (
     <motion.div
-      className="my-8 rounded-2xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 overflow-hidden"
+      className="my-8 rounded-2xl border border-[color-mix(in_srgb,currentColor_14%,transparent)] bg-[color-mix(in_srgb,currentColor_4%,transparent)] overflow-hidden"
       initial={{ opacity: 0, y: 12 }}
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true }}
       transition={{ duration: 0.4, ease: [0.16, 1, 0.3, 1] }}
     >
-      <div className="flex items-center justify-between px-5 py-3 border-b border-zinc-200 dark:border-zinc-800 bg-white/50">
+      <div className="flex items-center justify-between px-5 py-3 border-b border-[color-mix(in_srgb,currentColor_14%,transparent)] bg-[color-mix(in_srgb,currentColor_3%,transparent)]">
         {title && (
           <p className="text-xs font-mono uppercase tracking-widest text-emerald-500">{title}</p>
         )}
-        <div className="flex gap-1 rounded-lg bg-white dark:bg-zinc-900 p-0.5 border border-zinc-200 dark:border-zinc-800">
+        <div className="flex gap-1 rounded-lg bg-[color-mix(in_srgb,currentColor_4%,transparent)] p-0.5 border border-[color-mix(in_srgb,currentColor_14%,transparent)]">
           <button
             onClick={() => setTab("left")}
             className={`text-[11px] font-medium px-3 py-1 rounded-md transition-colors ${
@@ -91,7 +91,7 @@ export function CodeComparison({
         </AnimatePresence>
       </div>
 
-      <div className="px-5 py-3 border-t border-zinc-200 dark:border-zinc-800 bg-white/50 flex items-center gap-3">
+      <div className="px-5 py-3 border-t border-[color-mix(in_srgb,currentColor_14%,transparent)] bg-[color-mix(in_srgb,currentColor_3%,transparent)] flex items-center gap-3">
         <motion.div
           className="h-1.5 rounded-full bg-emerald-500/20 flex-1 overflow-hidden"
           initial={{ opacity: 0 }}

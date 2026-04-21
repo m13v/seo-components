@@ -94,7 +94,7 @@ export function StepTimeline({
                   {step.description}
                 </p>
                 {step.detail && (
-                  <div className="mt-3 rounded-lg border border-zinc-100 dark:border-zinc-900 bg-zinc-50 dark:bg-zinc-900/50 p-3 text-sm">
+                  <div className="mt-3 rounded-lg border border-[color-mix(in_srgb,currentColor_10%,transparent)] bg-[color-mix(in_srgb,currentColor_3%,transparent)] p-3 text-sm">
                     {step.detail}
                   </div>
                 )}

@@ -105,7 +105,7 @@ export function SeoPageReactions({
               className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full border text-sm transition-colors ${
                 active
                   ? "border-[var(--seo-accent,#14b8a6)] text-[var(--seo-accent,#14b8a6)] bg-[var(--seo-accent-light,rgba(20,184,166,0.08))]"
-                  : "border-zinc-200 dark:border-zinc-800 text-zinc-700 dark:text-zinc-300 hover:bg-zinc-50"
+                  : "border-[color-mix(in_srgb,currentColor_14%,transparent)] text-zinc-700 dark:text-zinc-300 hover:bg-[color-mix(in_srgb,currentColor_4%,transparent)]"
               }`}
               aria-pressed={active}
               aria-label={unlocked ? `${r.label}: ${counts[r.key]}` : r.label}

@@ -68,10 +68,10 @@ export function MotionSequence({
   return (
     <div
       ref={containerRef}
-      className={`my-10 rounded-2xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 overflow-hidden ${className}`}
+      className={`my-10 rounded-2xl border border-[color-mix(in_srgb,currentColor_14%,transparent)] bg-[color-mix(in_srgb,currentColor_4%,transparent)] overflow-hidden ${className}`}
     >
       {title && (
-        <div className="border-b border-zinc-100 dark:border-zinc-900 px-6 py-4 flex items-center justify-between">
+        <div className="border-b border-[color-mix(in_srgb,currentColor_10%,transparent)] px-6 py-4 flex items-center justify-between">
           <h3 className="text-sm font-semibold text-zinc-900 dark:text-zinc-100">{title}</h3>
           <div className="flex items-center gap-2">
             <div className="flex gap-1">

@@ -15,7 +15,7 @@ interface AnimatedBeamProps {
   /** Right side nodes (destinations) */
   to: BeamNode[];
   title?: string;
-  /** Accent hex color for the hub fill and beam glow. Defaults to teal (#14b8a6). */
+  /** Accent hex color for the hub fill and beam glow. If omitted, reads the consumer's --seo-accent CSS variable (falling back to teal #14b8a6). */
   accentColor?: string;
   className?: string;
 }
@@ -31,9 +31,10 @@ export function AnimatedBeam({
   hub,
   to,
   title,
-  accentColor = "#14b8a6",
+  accentColor,
   className = "",
 }: AnimatedBeamProps) {
+  const fillColor = accentColor ?? "var(--seo-accent, #14b8a6)";
   const width = 720;
   const height = 380;
   const centerX = width / 2;
@@ -50,7 +51,7 @@ export function AnimatedBeam({
 
   return (
     <div
-      className={`my-10 rounded-2xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 p-6 ${className}`}
+      className={`my-10 rounded-2xl border border-[color-mix(in_srgb,currentColor_14%,transparent)] bg-[color-mix(in_srgb,currentColor_4%,transparent)] p-6 ${className}`}
     >
       {title && (
         <h3 className="text-sm font-semibold text-zinc-900 dark:text-zinc-100 mb-4">{title}</h3>
@@ -62,9 +63,9 @@ export function AnimatedBeam({
       >
         <defs>
           <linearGradient id="beam-gradient" x1="0%" y1="0%" x2="100%" y2="0%">
-            <stop offset="0%" stopColor={accentColor} stopOpacity="0" />
-            <stop offset="50%" stopColor={accentColor} stopOpacity="1" />
-            <stop offset="100%" stopColor={accentColor} stopOpacity="0" />
+            <stop offset="0%" style={{ stopColor: fillColor, stopOpacity: 0 }} />
+            <stop offset="50%" style={{ stopColor: fillColor, stopOpacity: 1 }} />
+            <stop offset="100%" style={{ stopColor: fillColor, stopOpacity: 0 }} />
           </linearGradient>
           <filter id="glow">
             <feGaussianBlur stdDeviation="3" result="blur" />
@@ -185,7 +186,7 @@ export function AnimatedBeam({
             width="144"
             height="72"
             rx="36"
-            fill={accentColor}
+            style={{ fill: fillColor }}
             filter="url(#glow)"
           />
           <rect

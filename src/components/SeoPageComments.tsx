@@ -164,7 +164,7 @@ export function SeoPageComments({
           </span>
         </h2>
         {!unlocked && (
-          <span className="inline-flex items-center rounded-full border border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-900/60 px-2.5 py-0.5 text-xs font-medium text-zinc-600 dark:text-zinc-400">
+          <span className="inline-flex items-center rounded-full border border-[color-mix(in_srgb,currentColor_14%,transparent)] bg-[color-mix(in_srgb,currentColor_4%,transparent)]/60 px-2.5 py-0.5 text-xs font-medium text-zinc-600 dark:text-zinc-400">
             {lockedMessage}
           </span>
         )}
@@ -186,7 +186,7 @@ export function SeoPageComments({
           placeholder={placeholder}
           rows={3}
           maxLength={4000}
-          className="w-full px-3 py-2 rounded-lg border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 text-sm text-zinc-900 dark:text-zinc-100 placeholder-zinc-400 focus:outline-none focus:ring-2 focus:border-[var(--seo-accent,#14b8a6)]"
+          className="w-full px-3 py-2 rounded-lg border border-[color-mix(in_srgb,currentColor_14%,transparent)] bg-[color-mix(in_srgb,currentColor_4%,transparent)] text-sm text-zinc-900 dark:text-zinc-100 placeholder-zinc-400 focus:outline-none focus:ring-2 focus:border-[var(--seo-accent,#14b8a6)]"
           style={{ outlineColor: "var(--seo-accent, #14b8a6)" }}
           disabled={status === "loading"}
         />
@@ -196,7 +196,7 @@ export function SeoPageComments({
             value={name}
             onChange={(e) => setName(e.target.value.slice(0, 80))}
             placeholder="Name (optional)"
-            className="flex-1 min-w-0 px-3 py-2 rounded-lg border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 text-sm text-zinc-900 dark:text-zinc-100 placeholder-zinc-400 focus:outline-none focus:ring-2"
+            className="flex-1 min-w-0 px-3 py-2 rounded-lg border border-[color-mix(in_srgb,currentColor_14%,transparent)] bg-[color-mix(in_srgb,currentColor_4%,transparent)] text-sm text-zinc-900 dark:text-zinc-100 placeholder-zinc-400 focus:outline-none focus:ring-2"
             disabled={status === "loading"}
           />
           <button
@@ -222,7 +222,7 @@ export function SeoPageComments({
               <div key={c.id}>
                 <CommentRow c={c} onReply={() => setReplyTo(c.id)} />
                 {(children[c.id] ?? []).length > 0 && (
-                  <div className="mt-3 ml-6 pl-4 border-l border-zinc-200 dark:border-zinc-800 space-y-4">
+                  <div className="mt-3 ml-6 pl-4 border-l border-[color-mix(in_srgb,currentColor_14%,transparent)] space-y-4">
                     {children[c.id].map((r) => (
                       <CommentRow key={r.id} c={r} />
                     ))}

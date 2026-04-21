@@ -75,41 +75,44 @@ export function FullSiteAnalytics({
       return;
     }
     let cancelled = false;
-    // Defer init to idle to keep it off the critical path.
-    const ric: (
-      cb: IdleRequestCallback,
-      opts?: IdleRequestOptions,
-    ) => number =
-      typeof window !== "undefined" && window.requestIdleCallback
-        ? window.requestIdleCallback.bind(window)
-        : (cb) => setTimeout(cb as unknown as () => void, 1) as unknown as number;
-    const cic: (id: number) => void =
-      typeof window !== "undefined" && window.cancelIdleCallback
-        ? window.cancelIdleCallback.bind(window)
-        : (id) => clearTimeout(id);
-    const id = ric(
-      () => {
-        import("posthog-js").then((mod) => {
-          if (cancelled) return;
-          const lib = mod.default;
-          lib.init(posthogKey, {
-            api_host: posthogHost,
-            person_profiles: personProfiles,
-            capture_pageview: capturePageview,
-            capture_pageleave: capturePageleave,
-          });
-          // Legacy: some helpers still read window.posthog. Setting this
-          // is what 3 of 4 consumer sites forgot, which silently broke
-          // newsletter_subscribed and schedule_click events.
-          (window as unknown as { posthog: typeof lib }).posthog = lib;
-          setPosthog(lib as unknown as PostHogLike);
+    let idleId: number | undefined;
+    let timeoutId: ReturnType<typeof setTimeout> | undefined;
+
+    const run = () => {
+      import("posthog-js").then((mod) => {
+        if (cancelled) return;
+        const lib = mod.default;
+        lib.init(posthogKey, {
+          api_host: posthogHost,
+          person_profiles: personProfiles,
+          capture_pageview: capturePageview,
+          capture_pageleave: capturePageleave,
         });
-      },
-      { timeout: 3000 },
-    );
+        // Legacy: some helpers still read window.posthog. Setting this
+        // is what 3 of 4 consumer sites forgot, which silently broke
+        // newsletter_subscribed and schedule_click events.
+        (window as unknown as { posthog: typeof lib }).posthog = lib;
+        setPosthog(lib as unknown as PostHogLike);
+      });
+    };
+
+    // Defer init to idle to keep it off the critical path.
+    if (typeof window !== "undefined" && window.requestIdleCallback) {
+      idleId = window.requestIdleCallback(run, { timeout: 3000 });
+    } else {
+      timeoutId = setTimeout(run, 1);
+    }
+
     return () => {
       cancelled = true;
-      cic(id);
+      if (
+        idleId !== undefined &&
+        typeof window !== "undefined" &&
+        window.cancelIdleCallback
+      ) {
+        window.cancelIdleCallback(idleId);
+      }
+      if (timeoutId !== undefined) clearTimeout(timeoutId);
     };
   }, [
     posthogKey,

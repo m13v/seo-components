@@ -28,7 +28,7 @@ const icons: Record<string, string> = {
 
 export function FlowDiagram({ title, steps }: FlowDiagramProps) {
   return (
-    <div className="my-10 rounded-2xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 p-6 overflow-x-auto">
+    <div className="my-10 rounded-2xl border border-[color-mix(in_srgb,currentColor_14%,transparent)] bg-[color-mix(in_srgb,currentColor_4%,transparent)] p-6 overflow-x-auto">
       <p className="text-xs font-mono uppercase tracking-widest text-emerald-500 mb-5">
         {title}
       </p>
@@ -47,7 +47,7 @@ export function FlowDiagram({ title, steps }: FlowDiagramProps) {
             }}
           >
             <div className="flex flex-col items-center flex-1 min-w-0 max-w-[180px]">
-              <div className="w-11 h-11 rounded-xl bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 flex items-center justify-center text-lg mb-2">
+              <div className="w-11 h-11 rounded-xl bg-[color-mix(in_srgb,currentColor_4%,transparent)] border border-[color-mix(in_srgb,currentColor_14%,transparent)] flex items-center justify-center text-lg mb-2">
                 {step.icon ? icons[step.icon] || "\u2022" : `${i + 1}`}
               </div>
               <p className="text-xs font-medium text-zinc-900 dark:text-zinc-100 text-center leading-tight">

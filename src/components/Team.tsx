@@ -66,13 +66,13 @@ export function Team({ title, subtitle, members, className = "" }: TeamProps) {
             >
               <Wrapper
                 {...wrapperProps}
-                className="group flex flex-col items-center rounded-2xl border border-zinc-200 bg-zinc-50 p-5 text-center transition-all hover:border-teal-300 hover:shadow-md dark:border-zinc-800 dark:bg-zinc-900/50"
+                className="group flex flex-col items-center rounded-2xl border border-[color-mix(in_srgb,currentColor_14%,transparent)] bg-[color-mix(in_srgb,currentColor_3%,transparent)] p-5 text-center transition-all hover:border-teal-300 hover:shadow-md"
               >
                 {m.avatarUrl ? (
                   <img
                     src={m.avatarUrl}
                     alt={m.name}
-                    className="h-16 w-16 rounded-full border-2 border-white object-cover dark:border-zinc-800"
+                    className="h-16 w-16 rounded-full border-2 border-[color-mix(in_srgb,currentColor_14%,transparent)] object-cover"
                   />
                 ) : (
                   <div className="flex h-16 w-16 items-center justify-center rounded-full bg-gradient-to-br from-teal-400/30 to-cyan-500/30 text-base font-semibold text-teal-700 dark:text-teal-300">

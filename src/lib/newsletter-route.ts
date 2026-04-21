@@ -4,7 +4,41 @@ import { NextRequest } from "next/server";
 /*  Default welcome email template (light theme, teal brand)           */
 /* ------------------------------------------------------------------ */
 
-function defaultWelcomeEmailHtml(brand: string, siteUrl: string): string {
+function defaultWelcomeEmailHtml(
+  brand: string,
+  siteUrl: string,
+  bookingUrl?: string,
+): string {
+  const bookingBlock = bookingUrl
+    ? `
+          <!-- Booking CTA (primary) -->
+          <tr>
+            <td style="padding:0 32px 12px;">
+              <a href="${bookingUrl}" style="display:inline-block;padding:12px 24px;background-color:#14b8a6;color:#ffffff;font-size:15px;font-weight:600;text-decoration:none;border-radius:10px;">
+                Book a 15-min call
+              </a>
+            </td>
+          </tr>
+          <!-- Visit CTA (secondary) -->
+          <tr>
+            <td style="padding:0 32px 32px;color:#64748b;font-size:14px;line-height:1.6;">
+              Or <a href="${siteUrl}" style="color:#14b8a6;text-decoration:none;font-weight:600;">visit ${brand}</a> to read the latest.
+            </td>
+          </tr>`
+    : `
+          <!-- CTA Button -->
+          <tr>
+            <td style="padding:0 32px 32px;">
+              <a href="${siteUrl}" style="display:inline-block;padding:12px 24px;background-color:#14b8a6;color:#ffffff;font-size:15px;font-weight:600;text-decoration:none;border-radius:10px;">
+                Visit ${brand}
+              </a>
+            </td>
+          </tr>`;
+
+  const bodyCopy = bookingUrl
+    ? `Thanks for subscribing! You'll receive our latest guides, tips, and updates straight to your inbox. If you want to talk shop, grab a time below.`
+    : `Thanks for subscribing! You'll receive our latest guides, tips, and updates straight to your inbox.`;
+
   return `<!DOCTYPE html>
 <html>
 <head>
@@ -37,17 +71,9 @@ function defaultWelcomeEmailHtml(brand: string, siteUrl: string): string {
           <!-- Body -->
           <tr>
             <td style="padding:0 32px 24px;color:#475569;font-size:15px;line-height:1.6;">
-              Thanks for subscribing! You'll receive our latest guides, tips, and updates straight to your inbox.
+              ${bodyCopy}
             </td>
-          </tr>
-          <!-- CTA Button -->
-          <tr>
-            <td style="padding:0 32px 32px;">
-              <a href="${siteUrl}" style="display:inline-block;padding:12px 24px;background-color:#14b8a6;color:#ffffff;font-size:15px;font-weight:600;text-decoration:none;border-radius:10px;">
-                Visit ${brand}
-              </a>
-            </td>
-          </tr>
+          </tr>${bookingBlock}
           <!-- Footer -->
           <tr>
             <td style="border-top:1px solid #e2e8f0;padding:20px 32px;color:#94a3b8;font-size:13px;line-height:1.5;">
@@ -75,6 +101,12 @@ export interface NewsletterConfig {
   brand: string;
   /** Site URL used in the default email template CTA link */
   siteUrl: string;
+  /**
+   * Optional per-client booking URL (e.g. "https://cal.com/team/mediar/<slug>").
+   * When set, the default welcome template shows "Book a 15-min call" as the
+   * primary CTA. Consumers typically pass `BOOKING_URL` from `@/lib/booking`.
+   */
+  bookingUrl?: string;
   /** Env var name for the Resend API key (default: "RESEND_API_KEY") */
   apiKeyEnv?: string;
   /** Override the welcome email subject line */
@@ -102,6 +134,7 @@ export function createNewsletterHandler(config: NewsletterConfig) {
     fromEmail,
     brand,
     siteUrl,
+    bookingUrl,
     apiKeyEnv = "RESEND_API_KEY",
     welcomeSubject,
     welcomeHtml,
@@ -166,7 +199,7 @@ export function createNewsletterHandler(config: NewsletterConfig) {
     const subject = welcomeSubject || `Welcome to ${brand}`;
     const html = welcomeHtml
       ? welcomeHtml(email)
-      : defaultWelcomeEmailHtml(brand, siteUrl);
+      : defaultWelcomeEmailHtml(brand, siteUrl, bookingUrl);
 
     let resendEmailId: string | null = null;
 

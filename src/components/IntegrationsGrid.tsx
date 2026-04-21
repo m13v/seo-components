@@ -70,7 +70,7 @@ export function IntegrationsGrid({
             >
               <Wrapper
                 {...wrapperProps}
-                className="group flex items-center gap-3 rounded-xl border border-zinc-200 bg-zinc-50 p-4 transition-all hover:border-teal-300 hover:shadow-md dark:border-zinc-800 dark:bg-zinc-900/50"
+                className="group flex items-center gap-3 rounded-xl border border-[color-mix(in_srgb,currentColor_14%,transparent)] bg-[color-mix(in_srgb,currentColor_3%,transparent)] p-4 transition-all hover:border-teal-300 hover:shadow-md"
               >
                 {it.logoUrl ? (
                   <img
@@ -81,7 +81,11 @@ export function IntegrationsGrid({
                 ) : (
                   <div
                     className="flex h-9 w-9 flex-shrink-0 items-center justify-center rounded-md text-sm font-semibold text-white"
-                    style={{ background: it.accent || "linear-gradient(135deg,#14b8a6,#22d3ee)" }}
+                    style={{
+                      background:
+                        it.accent ||
+                        "linear-gradient(135deg, var(--seo-accent, #14b8a6), var(--seo-accent-2, #22d3ee))",
+                    }}
                     aria-hidden="true"
                   >
                     {initial}

@@ -24,14 +24,15 @@ import React from "react";
  * </ShineBorder>
  */
 
-type TColorProp = `#${string}` | `#${string}`[];
+type TColorProp = string | string[];
 
 interface ShineBorderProps {
   borderRadius?: number;
   borderWidth?: number;
   duration?: number;
-  /** Hex color(s) for the shine gradient. Pass your brand accent color. Defaults to teal.
-   *  CSS custom properties are not supported here (conic gradient border trick). */
+  /** Color(s) for the shine gradient. Accepts any CSS color or a CSS custom
+   *  property (e.g. `var(--seo-accent)`). Defaults to the consumer's
+   *  `--seo-accent` value, falling back to teal (#14b8a6). */
   color?: TColorProp;
   className?: string;
   children: React.ReactNode;
@@ -41,12 +42,13 @@ export function ShineBorder({
   borderRadius = 8,
   borderWidth = 1,
   duration = 14,
-  color = "#14b8a6",
+  color,
   className,
   children,
 }: ShineBorderProps) {
+  const resolvedColor = color ?? "var(--seo-accent, #14b8a6)";
   const outerBase =
-    "relative grid min-h-[60px] w-fit min-w-[300px] place-items-center bg-white dark:bg-zinc-900 p-3 text-zinc-900 dark:text-zinc-100";
+    "relative grid min-h-[60px] w-fit min-w-[300px] place-items-center bg-[color-mix(in_srgb,currentColor_4%,transparent)] p-3 text-zinc-900 dark:text-zinc-100";
   const outerClass = className
     ? `${outerBase} ${className}`
     : outerBase;
@@ -71,7 +73,7 @@ export function ShineBorder({
             "--mask-linear-gradient":
               "linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0)",
             "--background-radial-gradient": `radial-gradient(transparent,transparent, ${
-              Array.isArray(color) ? color.join(",") : color
+              Array.isArray(resolvedColor) ? resolvedColor.join(",") : resolvedColor
             },transparent,transparent)`,
           } as React.CSSProperties
         }

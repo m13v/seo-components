@@ -2,13 +2,13 @@
 
 import { useEffect, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { trackScheduleClick } from "../lib/track";
+import { trackGetStartedClick } from "../lib/track";
 
-export type BookCallAppearance = "inline" | "sticky" | "hero" | "footer";
+export type GetStartedCTAAppearance = "inline" | "sticky" | "hero" | "footer";
 
-export interface BookCallCTAProps {
+export interface GetStartedCTAProps {
   destination: string;
-  appearance?: BookCallAppearance;
+  appearance?: GetStartedCTAAppearance;
   text?: string;
   heading?: string;
   description?: string;
@@ -17,23 +17,23 @@ export interface BookCallCTAProps {
   scrollThreshold?: number;
 }
 
-export function BookCallCTA({
+export function GetStartedCTA({
   destination,
   appearance = "inline",
-  text = "Book a call",
+  text = "Get started",
   heading,
   description,
   section,
   site,
   scrollThreshold = 800,
-}: BookCallCTAProps) {
+}: GetStartedCTAProps) {
   if (appearance === "sticky") {
     return (
-      <StickyBookCall
+      <StickyGetStarted
         destination={destination}
         text={text}
-        description={description ?? "Talk to the team and see it live."}
-        section={section ?? "book-call-sticky"}
+        description={description ?? "Jump in, takes under a minute."}
+        section={section ?? "get-started-sticky"}
         site={site}
         scrollThreshold={scrollThreshold}
       />
@@ -42,10 +42,10 @@ export function BookCallCTA({
 
   if (appearance === "hero") {
     return (
-      <HeroBookCall
+      <HeroGetStarted
         destination={destination}
         text={text}
-        section={section ?? "book-call-hero"}
+        section={section ?? "get-started-hero"}
         site={site}
       />
     );
@@ -53,32 +53,35 @@ export function BookCallCTA({
 
   if (appearance === "footer") {
     return (
-      <FooterBookCall
+      <FooterGetStarted
         destination={destination}
         text={text}
-        heading={heading ?? "Ready to see it live?"}
-        description={
-          description ?? "Book a 20-minute walkthrough with the team."
-        }
-        section={section ?? "book-call-footer"}
+        heading={heading ?? "Ready to start?"}
+        description={description ?? "Free to try. No credit card needed."}
+        section={section ?? "get-started-footer"}
         site={site}
       />
     );
   }
 
   return (
-    <InlineBookCall
+    <InlineGetStarted
       destination={destination}
       text={text}
-      heading={heading ?? "Want a live walkthrough?"}
-      description={
-        description ?? "Book a 20-minute call and we'll show you the product end-to-end."
-      }
-      section={section ?? "book-call-inline"}
+      heading={heading ?? "Want to try it now?"}
+      description={description ?? "Jump in, takes under a minute."}
+      section={section ?? "get-started-inline"}
       site={site}
     />
   );
 }
+
+/** @deprecated Use `GetStartedCTA` instead. Alias kept for backward compat. */
+export const DownloadCTA = GetStartedCTA;
+/** @deprecated Use `GetStartedCTAProps` instead. */
+export type DownloadCTAProps = GetStartedCTAProps;
+/** @deprecated Use `GetStartedCTAAppearance` instead. */
+export type DownloadCTAAppearance = GetStartedCTAAppearance;
 
 function fire(
   destination: string,
@@ -87,7 +90,7 @@ function fire(
   site: string | undefined,
   component: string,
 ) {
-  trackScheduleClick({
+  trackGetStartedClick({
     destination,
     site,
     section,
@@ -96,7 +99,7 @@ function fire(
   });
 }
 
-function InlineBookCall({
+function InlineGetStarted({
   destination,
   text,
   heading,
@@ -131,16 +134,16 @@ function InlineBookCall({
         rel="noopener noreferrer"
         className="inline-flex items-center gap-2 text-sm font-medium px-4 py-2 rounded-lg bg-teal-500 text-accent-contrast hover:bg-accent-dim transition-colors"
         onClick={() =>
-          fire(destination, text, section, site, "BookCallCTA.inline")
+          fire(destination, text, section, site, "GetStartedCTA.inline")
         }
       >
-        {text} <span>&rarr;</span>
+        <ArrowGlyph /> {text}
       </a>
     </motion.div>
   );
 }
 
-function HeroBookCall({
+function HeroGetStarted({
   destination,
   text,
   section,
@@ -158,15 +161,15 @@ function HeroBookCall({
       rel="noopener noreferrer"
       className="inline-flex items-center gap-2 px-5 py-2.5 rounded-lg border border-teal-200 dark:border-teal-800/60 text-sm font-medium text-teal-700 dark:text-teal-200 hover:bg-teal-50 dark:hover:bg-teal-950/60 transition-colors"
       onClick={() =>
-        fire(destination, text, section, site, "BookCallCTA.hero")
+        fire(destination, text, section, site, "GetStartedCTA.hero")
       }
     >
-      {text} <span>&rarr;</span>
+      <ArrowGlyph /> {text}
     </a>
   );
 }
 
-function FooterBookCall({
+function FooterGetStarted({
   destination,
   text,
   heading,
@@ -201,16 +204,16 @@ function FooterBookCall({
         rel="noopener noreferrer"
         className="inline-flex items-center gap-2 px-5 py-2.5 rounded-lg bg-teal-500 text-accent-contrast hover:bg-accent-dim transition-colors text-sm font-medium"
         onClick={() =>
-          fire(destination, text, section, site, "BookCallCTA.footer")
+          fire(destination, text, section, site, "GetStartedCTA.footer")
         }
       >
-        {text} <span>&rarr;</span>
+        <ArrowGlyph /> {text}
       </a>
     </motion.div>
   );
 }
 
-function StickyBookCall({
+function StickyGetStarted({
   destination,
   text,
   description,
@@ -252,16 +255,35 @@ function StickyBookCall({
               href={destination}
               target="_blank"
               rel="noopener noreferrer"
-              className="text-sm font-medium px-4 py-2 rounded-lg bg-teal-500 text-accent-contrast hover:bg-accent-dim transition-colors"
+              className="inline-flex items-center gap-2 text-sm font-medium px-4 py-2 rounded-lg bg-teal-500 text-accent-contrast hover:bg-accent-dim transition-colors"
               onClick={() =>
-                fire(destination, text, section, site, "BookCallCTA.sticky")
+                fire(destination, text, section, site, "GetStartedCTA.sticky")
               }
             >
-              {text}
+              <ArrowGlyph /> {text}
             </a>
           </div>
         </motion.div>
       )}
     </AnimatePresence>
+  );
+}
+
+function ArrowGlyph() {
+  return (
+    <svg
+      aria-hidden="true"
+      width="14"
+      height="14"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    >
+      <path d="M5 12h14" />
+      <path d="m12 5 7 7-7 7" />
+    </svg>
   );
 }

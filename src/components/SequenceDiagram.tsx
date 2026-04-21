@@ -31,7 +31,7 @@ export function SequenceDiagram({ title, actors, messages }: SequenceDiagramProp
 
   return (
     <motion.div
-      className="my-10 rounded-2xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 p-6 overflow-x-auto"
+      className="my-10 rounded-2xl border border-[color-mix(in_srgb,currentColor_14%,transparent)] bg-[color-mix(in_srgb,currentColor_4%,transparent)] p-6 overflow-x-auto"
       initial={{ opacity: 0, y: 16 }}
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true }}

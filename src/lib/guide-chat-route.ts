@@ -189,7 +189,7 @@ export function createGuideChatHandler(config: GuideChatConfig) {
       );
     }
 
-    let body: { messages?: ChatMessage[]; slug?: string };
+    let body: { messages?: ChatMessage[]; slug?: string; healthCheck?: boolean };
     try {
       body = await req.json();
     } catch {
@@ -197,6 +197,19 @@ export function createGuideChatHandler(config: GuideChatConfig) {
         status: 400,
         headers: { "content-type": "application/json" },
       });
+    }
+
+    if (body.healthCheck) {
+      const hasKey = !!process.env.GEMINI_API_KEY;
+      return new Response(
+        JSON.stringify(
+          hasKey ? { ok: true } : { ok: false, reason: "missing_gemini_key" },
+        ),
+        {
+          status: hasKey ? 200 : 503,
+          headers: { "content-type": "application/json" },
+        },
+      );
     }
 
     const messages = Array.isArray(body.messages) ? body.messages : [];

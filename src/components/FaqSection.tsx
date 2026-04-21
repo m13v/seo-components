@@ -18,7 +18,7 @@ export function FaqSection({
         {items.map((faq) => (
           <details
             key={faq.q}
-            className="group p-5 rounded-xl bg-zinc-50 dark:bg-zinc-900/50 border border-zinc-200 dark:border-zinc-800"
+            className="group p-5 rounded-xl bg-[color-mix(in_srgb,currentColor_3%,transparent)] border border-[color-mix(in_srgb,currentColor_14%,transparent)]"
           >
             <summary className="text-zinc-900 dark:text-zinc-100 font-semibold cursor-pointer list-none flex items-center justify-between gap-4">
               <span>{faq.q}</span>

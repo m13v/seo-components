@@ -35,10 +35,10 @@ export function ComparisonTable({
           {intro}
         </p>
       )}
-      <div className="rounded-2xl bg-zinc-50 dark:bg-zinc-900/50 border border-zinc-200 dark:border-zinc-800 overflow-hidden">
+      <div className="rounded-2xl bg-[color-mix(in_srgb,currentColor_3%,transparent)] border border-[color-mix(in_srgb,currentColor_14%,transparent)] overflow-hidden">
         <table className="w-full text-left">
           <thead>
-            <tr className="border-b border-zinc-200 dark:border-zinc-800">
+            <tr className="border-b border-[color-mix(in_srgb,currentColor_14%,transparent)]">
               <th className="px-5 py-4 text-zinc-500 dark:text-zinc-400 text-sm font-medium">Feature</th>
               <th className="px-5 py-4 text-zinc-500 dark:text-zinc-400 text-sm font-medium">{competitorName}</th>
               <th className="px-5 py-4 text-teal-600 dark:text-teal-400 text-sm font-medium">{productName}</th>
@@ -48,7 +48,7 @@ export function ComparisonTable({
             {rows.map((row, i) => (
               <tr
                 key={i}
-                className={i < rows.length - 1 ? "border-b border-zinc-200 dark:border-zinc-800" : ""}
+                className={i < rows.length - 1 ? "border-b border-[color-mix(in_srgb,currentColor_14%,transparent)]" : ""}
               >
                 <td className="px-5 py-3 text-zinc-900 dark:text-zinc-100 text-sm font-medium">{row.feature}</td>
                 <td className="px-5 py-3 text-zinc-500 dark:text-zinc-400 text-sm">{row.competitor}</td>

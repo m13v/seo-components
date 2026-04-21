@@ -83,7 +83,7 @@ export function NewsletterSignup({
           animate={{ y: 0 }}
           exit={{ y: "100%" }}
           transition={{ duration: 0.3, ease: [0.16, 1, 0.3, 1] }}
-          className="fixed bottom-0 left-0 right-0 z-40 border-t border-zinc-200 dark:border-zinc-800 backdrop-blur-xl py-3 px-4 sm:px-6 bg-white/90 dark:bg-zinc-900/90"
+          className="fixed bottom-0 left-0 right-0 z-40 border-t border-[color-mix(in_srgb,currentColor_14%,transparent)] backdrop-blur-xl py-3 px-4 sm:px-6 bg-[color-mix(in_srgb,currentColor_4%,transparent)]"
         >
           <div className="mx-auto max-w-7xl flex items-center justify-between gap-3">
             {status === "success" ? (
@@ -105,7 +105,7 @@ export function NewsletterSignup({
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
                     placeholder={placeholder}
-                    className="flex-1 min-w-0 text-sm px-3 py-2 rounded-lg border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 text-zinc-900 dark:text-zinc-100 placeholder-zinc-400 focus:outline-none focus:ring-2 focus:ring-teal-500/40 focus:border-teal-500 transition-shadow"
+                    className="flex-1 min-w-0 text-sm px-3 py-2 rounded-lg border border-[color-mix(in_srgb,currentColor_14%,transparent)] bg-[color-mix(in_srgb,currentColor_4%,transparent)] text-zinc-900 dark:text-zinc-100 placeholder-zinc-400 focus:outline-none focus:ring-2 focus:ring-teal-500/40 focus:border-teal-500 transition-shadow"
                     disabled={status === "loading"}
                   />
                   <button

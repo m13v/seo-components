@@ -56,7 +56,7 @@ export function RelatedPostsGrid({
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true, margin: "-40px" }}
               transition={{ duration: 0.45, ease: [0.16, 1, 0.3, 1], delay: i * 0.06 }}
-              className="group flex flex-col overflow-hidden rounded-2xl border border-zinc-200 bg-zinc-50 transition-all hover:border-teal-300 hover:shadow-md dark:border-zinc-800 dark:bg-zinc-900/50"
+              className="group flex flex-col overflow-hidden rounded-2xl border border-[color-mix(in_srgb,currentColor_14%,transparent)] bg-[color-mix(in_srgb,currentColor_3%,transparent)] transition-all hover:border-teal-300 hover:shadow-md"
             >
               <div className="h-28 bg-gradient-to-br from-teal-400/20 via-cyan-400/15 to-zinc-50 dark:to-zinc-900" />
               <div className="flex flex-1 flex-col gap-2 p-5">

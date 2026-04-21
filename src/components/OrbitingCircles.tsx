@@ -39,7 +39,7 @@ export function OrbitingCircles({
     >
       {/* Orbit ring */}
       <div
-        className="absolute rounded-full border border-dashed border-zinc-200 dark:border-zinc-800"
+        className="absolute rounded-full border border-dashed border-[color-mix(in_srgb,currentColor_14%,transparent)]"
         style={{ width: radius * 2, height: radius * 2 }}
       />
 
@@ -64,7 +64,7 @@ export function OrbitingCircles({
           return (
             <motion.div
               key={i}
-              className="absolute top-1/2 left-1/2 flex items-center justify-center rounded-xl bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 shadow-sm text-xs font-medium text-zinc-700 dark:text-zinc-300"
+              className="absolute top-1/2 left-1/2 flex items-center justify-center rounded-xl bg-[color-mix(in_srgb,currentColor_4%,transparent)] border border-[color-mix(in_srgb,currentColor_14%,transparent)] shadow-sm text-xs font-medium text-zinc-700 dark:text-zinc-300"
               style={{
                 width: 64,
                 height: 64,

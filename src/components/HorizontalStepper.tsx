@@ -55,8 +55,8 @@ export function HorizontalStepper({
                     done
                       ? "border-teal-400 bg-teal-400 text-white"
                       : active
-                      ? "border-teal-400 bg-white text-teal-600 dark:bg-zinc-900 dark:text-teal-400"
-                      : "border-zinc-300 bg-zinc-100 text-zinc-500 dark:border-zinc-700 dark:bg-zinc-900 dark:text-zinc-500"
+                      ? "border-teal-400 bg-[color-mix(in_srgb,currentColor_4%,transparent)] text-teal-600 dark:text-teal-400"
+                      : "border-[color-mix(in_srgb,currentColor_20%,transparent)] bg-[color-mix(in_srgb,currentColor_6%,transparent)] text-zinc-500 dark:text-zinc-500"
                   }`}
                 >
                   {done ? (

@@ -11,7 +11,7 @@ interface ProofBannerProps {
 export function ProofBanner({ quote, source, metric }: ProofBannerProps) {
   return (
     <motion.div
-      className="my-8 p-4 rounded-xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 flex items-start gap-4"
+      className="my-8 p-4 rounded-xl border border-[color-mix(in_srgb,currentColor_14%,transparent)] bg-[color-mix(in_srgb,currentColor_4%,transparent)] flex items-start gap-4"
       initial={{ opacity: 0, x: -16 }}
       whileInView={{ opacity: 1, x: 0 }}
       viewport={{ once: true }}

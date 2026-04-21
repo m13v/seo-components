@@ -31,12 +31,12 @@ export function BeforeAfter({
       )}
 
       {/* Toggle */}
-      <div className="flex items-center gap-1 mb-4 bg-zinc-100 dark:bg-zinc-900 rounded-lg p-1 w-fit">
+      <div className="flex items-center gap-1 mb-4 bg-[color-mix(in_srgb,currentColor_6%,transparent)] rounded-lg p-1 w-fit">
         <button
           onClick={() => setShowAfter(false)}
           className={`px-4 py-2 text-sm font-medium rounded-md transition-all duration-200 ${
             !showAfter
-              ? "bg-white dark:bg-zinc-800 text-zinc-900 dark:text-zinc-100 shadow-sm"
+              ? "bg-[color-mix(in_srgb,currentColor_6%,transparent)] text-zinc-900 dark:text-zinc-100 shadow-sm"
               : "text-zinc-500 dark:text-zinc-400 hover:text-zinc-700 dark:hover:text-zinc-200"
           }`}
         >
@@ -55,7 +55,7 @@ export function BeforeAfter({
       </div>
 
       {/* Content panel */}
-      <div className="relative rounded-xl border border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-950/50 overflow-hidden min-h-[200px]">
+      <div className="relative rounded-xl border border-[color-mix(in_srgb,currentColor_14%,transparent)] bg-[color-mix(in_srgb,currentColor_3%,transparent)] overflow-hidden min-h-[200px]">
         <AnimatePresence mode="wait">
           {!showAfter ? (
             <motion.div

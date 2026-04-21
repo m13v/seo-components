@@ -121,7 +121,7 @@ export function HtmlSitemap({
                 <li key={page.href} className="min-w-0">
                   <a
                     href={page.href}
-                    className="group block py-2 border-b border-zinc-100 dark:border-zinc-800 hover:border-zinc-300 dark:hover:border-zinc-700 transition-colors"
+                    className="group block py-2 border-b border-[color-mix(in_srgb,currentColor_10%,transparent)] hover:border-[color-mix(in_srgb,currentColor_18%,transparent)] transition-colors"
                   >
                     <div className="text-sm font-medium text-zinc-900 dark:text-zinc-100 group-hover:opacity-70 transition-opacity line-clamp-2">
                       {page.title}
@@ -154,7 +154,7 @@ export function HtmlSitemap({
               <li key={link.href} className="min-w-0">
                 <a
                   href={link.href}
-                  className="group block py-2 border-b border-zinc-100 dark:border-zinc-800 hover:border-zinc-300 dark:hover:border-zinc-700 transition-colors"
+                  className="group block py-2 border-b border-[color-mix(in_srgb,currentColor_10%,transparent)] hover:border-[color-mix(in_srgb,currentColor_18%,transparent)] transition-colors"
                 >
                   <div className="text-sm font-medium text-zinc-900 dark:text-zinc-100 group-hover:opacity-70 transition-opacity">
                     {link.title}
@@ -171,7 +171,7 @@ export function HtmlSitemap({
         </section>
       )}
 
-      <footer className="mt-16 pt-6 border-t border-zinc-100 dark:border-zinc-800">
+      <footer className="mt-16 pt-6 border-t border-[color-mix(in_srgb,currentColor_10%,transparent)]">
         <p className="text-xs text-zinc-500 dark:text-zinc-400">
           Machine-readable version:{" "}
           <a

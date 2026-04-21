@@ -232,7 +232,7 @@ export function SitemapSidebar({
         className={`
           fixed lg:sticky top-0 left-0 z-40 h-screen shrink-0
           w-72 ${desktopCollapsed ? "lg:w-12" : ""}
-          bg-white dark:bg-zinc-950 border-r border-zinc-200 dark:border-zinc-800
+          border-r border-[color-mix(in_srgb,currentColor_14%,transparent)]
           flex flex-col
           transition-all duration-200 ease-out overflow-hidden
           lg:translate-x-0
@@ -243,7 +243,7 @@ export function SitemapSidebar({
         <div className={`hidden ${desktopCollapsed ? "lg:flex" : ""} flex-col items-center pt-3 h-full`}>
           <button
             onClick={toggleDesktopCollapse}
-            className="p-2 rounded-md text-zinc-400 hover:text-zinc-900 dark:hover:text-zinc-100 hover:bg-zinc-100 dark:hover:bg-zinc-800 transition-colors"
+            className="p-2 rounded-md text-zinc-400 hover:text-zinc-900 dark:hover:text-zinc-100 hover:bg-[color-mix(in_srgb,currentColor_8%,transparent)] transition-colors"
             aria-label="Expand sidebar"
           >
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -255,7 +255,7 @@ export function SitemapSidebar({
         {/* Full sidebar content */}
         <div className={`flex flex-col h-full min-w-0 ${desktopCollapsed ? "lg:hidden" : ""}`}>
         {/* Header */}
-        <div className="p-4 border-b border-zinc-100 dark:border-zinc-800">
+        <div className="p-4 border-b border-[color-mix(in_srgb,currentColor_10%,transparent)]">
           <div className="flex items-center justify-between mb-3">
             {!hasExternalBrand && (
               <a href={homeHref} className="flex items-baseline gap-0">
@@ -274,7 +274,7 @@ export function SitemapSidebar({
             )}
             <button
               onClick={toggleDesktopCollapse}
-              className="hidden lg:flex p-1.5 rounded-md text-zinc-400 hover:text-zinc-900 dark:hover:text-zinc-100 hover:bg-zinc-100 dark:hover:bg-zinc-800 transition-colors ml-auto"
+              className="hidden lg:flex p-1.5 rounded-md text-zinc-400 hover:text-zinc-900 dark:hover:text-zinc-100 hover:bg-[color-mix(in_srgb,currentColor_8%,transparent)] transition-colors ml-auto"
               aria-label="Collapse sidebar"
             >
               <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -302,7 +302,7 @@ export function SitemapSidebar({
               placeholder="Search pages..."
               value={query}
               onChange={(e) => setQuery(e.target.value)}
-              className="w-full pl-8 pr-3 py-2 text-sm border border-zinc-200 dark:border-zinc-800 rounded-lg bg-zinc-50 dark:bg-zinc-900 text-zinc-900 dark:text-zinc-100 placeholder:text-zinc-400 dark:placeholder:text-zinc-500 focus:outline-none focus:ring-2 focus:border-transparent transition"
+              className="w-full pl-8 pr-3 py-2 text-sm border border-[color-mix(in_srgb,currentColor_14%,transparent)] rounded-lg bg-[color-mix(in_srgb,currentColor_4%,transparent)] text-zinc-900 dark:text-zinc-100 placeholder:text-zinc-400 dark:placeholder:text-zinc-500 focus:outline-none focus:ring-2 focus:border-transparent transition"
               style={
                 {
                   "--tw-ring-color":
@@ -339,7 +339,7 @@ export function SitemapSidebar({
                       className={`block px-3 py-2.5 rounded-lg transition-colors ${
                         isActive
                           ? "text-zinc-900 dark:text-zinc-100 font-medium"
-                          : "text-zinc-600 dark:text-zinc-300 hover:bg-zinc-50 dark:hover:bg-zinc-900 hover:text-zinc-900 dark:hover:text-zinc-100"
+                          : "text-zinc-600 dark:text-zinc-300 hover:bg-[color-mix(in_srgb,currentColor_4%,transparent)] hover:text-zinc-900 dark:hover:text-zinc-100"
                       }`}
                       style={
                         isActive
@@ -363,7 +363,7 @@ export function SitemapSidebar({
 
                     {/* Subsections for the active page */}
                     {isActive && page.sections.length > 0 && (
-                      <ul className="mt-1 mb-2 ml-3 border-l border-zinc-200 dark:border-zinc-800 space-y-0.5">
+                      <ul className="mt-1 mb-2 ml-3 border-l border-[color-mix(in_srgb,currentColor_14%,transparent)] space-y-0.5">
                         {page.sections.map((section) => {
                           const isSectionActive =
                             activeSection === section.id;
@@ -377,7 +377,7 @@ export function SitemapSidebar({
                                 className={`block pl-3 pr-2 py-1.5 -ml-px border-l-2 text-[13px] leading-snug transition-colors ${
                                   isSectionActive
                                     ? "font-medium"
-                                    : "border-transparent text-zinc-500 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-zinc-100 hover:border-zinc-300 dark:hover:border-zinc-700"
+                                    : "border-transparent text-zinc-500 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-zinc-100 hover:border-[color-mix(in_srgb,currentColor_25%,transparent)]"
                                 }`}
                                 style={
                                   isSectionActive
@@ -405,7 +405,7 @@ export function SitemapSidebar({
         </nav>
 
         {/* Footer */}
-        <div className="p-4 border-t border-zinc-100 dark:border-zinc-800">
+        <div className="p-4 border-t border-[color-mix(in_srgb,currentColor_10%,transparent)]">
           <a
             href={homeHref}
             className="text-sm font-medium transition-colors"

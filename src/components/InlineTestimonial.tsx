@@ -33,7 +33,7 @@ export function InlineTestimonial({
 }: InlineTestimonialProps) {
   return (
     <figure
-      className={`p-6 sm:p-8 rounded-2xl bg-zinc-50 dark:bg-zinc-900/50 border border-zinc-200 dark:border-zinc-800 ${className}`}
+      className={`p-6 sm:p-8 rounded-2xl bg-[color-mix(in_srgb,currentColor_3%,transparent)] border border-[color-mix(in_srgb,currentColor_14%,transparent)] ${className}`}
     >
       <Stars count={stars} />
       <blockquote className="mt-4 text-lg sm:text-xl leading-relaxed text-zinc-800 dark:text-zinc-200">

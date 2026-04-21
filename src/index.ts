@@ -36,15 +36,40 @@ export { MetricsRow } from "./components/MetricsRow";
 // CTA components
 export { InlineCta } from "./components/InlineCta";
 export { StickyBottomCta } from "./components/StickyBottomCta";
+export { ClaudeMeterCta } from "./components/ClaudeMeterCta";
+export type { ClaudeMeterCtaProps } from "./components/ClaudeMeterCta";
 export { BookCallCTA } from "./components/BookCallCTA";
 export type {
   BookCallCTAProps,
   BookCallAppearance,
 } from "./components/BookCallCTA";
+export {
+  GetStartedCTA,
+  // Deprecated aliases — re-exported so existing callers keep compiling.
+  DownloadCTA,
+} from "./components/GetStartedCTA";
+export type {
+  GetStartedCTAProps,
+  GetStartedCTAAppearance,
+  DownloadCTAProps,
+  DownloadCTAAppearance,
+} from "./components/GetStartedCTA";
 
-// Canonical analytics helpers (schedule_click, etc.)
-export { trackScheduleClick } from "./lib/track";
-export type { ScheduleClickProps } from "./lib/track";
+// Canonical analytics helpers.
+// `get_started_click` covers every primary self-serve CTA: downloads,
+// installs, and signups. `schedule_click` covers sales-led book-a-call
+// CTAs. `trackDownloadClick` is a deprecated alias that emits
+// `get_started_click` (not `download_click`).
+export {
+  trackScheduleClick,
+  trackGetStartedClick,
+  trackDownloadClick,
+} from "./lib/track";
+export type {
+  ScheduleClickProps,
+  GetStartedClickProps,
+  DownloadClickProps,
+} from "./lib/track";
 
 // Analytics context: provider + hooks so library components fire PostHog
 // events reliably regardless of how the consumer loads posthog-js.

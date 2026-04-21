@@ -5,7 +5,9 @@ import React, { useEffect, useRef, useState } from "react";
 /**
  * Particles: renders an interactive canvas of floating particles that
  * subtly follow the mouse cursor. Great for ambient hero backgrounds.
- * Default color is teal (#14b8a6). Fully self-contained, canvas-based.
+ * If `color` is omitted, reads the consumer's `--seo-accent` CSS variable
+ * at mount (falling back to teal #14b8a6). Canvas paint cannot use CSS
+ * vars directly, so we resolve it once via getComputedStyle.
  *
  * @example
  * <Particles className="absolute inset-0" quantity={80} />
@@ -36,12 +38,27 @@ function useMousePosition(): MousePosition {
 }
 
 function hexToRgb(hex: string): number[] {
-  hex = hex.replace("#", "");
+  hex = hex.replace("#", "").trim();
+  if (hex.length === 3) hex = hex.split("").map((c) => c + c).join("");
+  if (!/^[0-9a-fA-F]{6}$/.test(hex)) return [20, 184, 166]; // teal fallback
   const hexInt = parseInt(hex, 16);
   const red = (hexInt >> 16) & 255;
   const green = (hexInt >> 8) & 255;
   const blue = hexInt & 255;
   return [red, green, blue];
+}
+
+function resolveAccentFromDOM(): string {
+  if (typeof window === "undefined") return "#14b8a6";
+  try {
+    const v = getComputedStyle(document.documentElement)
+      .getPropertyValue("--seo-accent")
+      .trim();
+    if (v && v.startsWith("#")) return v;
+  } catch {
+    // ignore
+  }
+  return "#14b8a6";
 }
 
 interface ParticlesProps {
@@ -51,8 +68,9 @@ interface ParticlesProps {
   ease?: number;
   size?: number;
   refresh?: boolean;
-  /** Hex color for particles. Pass your brand accent color. Defaults to teal (#14b8a6).
-   *  CSS custom properties are not supported here (canvas context). */
+  /** Hex color for particles. Pass your brand accent color. If omitted,
+   *  reads the consumer's `--seo-accent` CSS variable at mount (falling
+   *  back to teal #14b8a6). Only hex values are supported (canvas context). */
   color?: string;
   vx?: number;
   vy?: number;
@@ -78,7 +96,7 @@ export function Particles({
   ease = 50,
   size = 0.4,
   refresh = false,
-  color = "#14b8a6",
+  color,
   vx = 0,
   vy = 0,
 }: ParticlesProps) {
@@ -91,7 +109,13 @@ export function Particles({
   const canvasSize = useRef<{ w: number; h: number }>({ w: 0, h: 0 });
   const dpr = typeof window !== "undefined" ? window.devicePixelRatio : 1;
 
-  const rgb = hexToRgb(color);
+  const [resolvedColor, setResolvedColor] = useState<string>(
+    color ?? "#14b8a6",
+  );
+  useEffect(() => {
+    setResolvedColor(color ?? resolveAccentFromDOM());
+  }, [color]);
+  const rgb = hexToRgb(resolvedColor);
 
   const circleParams = (): Circle => {
     const x = Math.floor(Math.random() * canvasSize.current.w);

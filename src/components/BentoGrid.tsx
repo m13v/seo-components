@@ -43,7 +43,7 @@ export function BentoGrid({ cards, className = "" }: BentoGridProps) {
           className={`${SIZE_CLASSES[card.size || "1x1"]} rounded-2xl border ${
             card.accent
               ? "border-teal-200 dark:border-teal-800 bg-gradient-to-br from-teal-50 dark:from-teal-900/20 to-cyan-50"
-              : "border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-900/50"
+              : "border-[color-mix(in_srgb,currentColor_14%,transparent)] bg-[color-mix(in_srgb,currentColor_3%,transparent)]"
           } p-6 flex flex-col justify-between group hover:border-teal-300 hover:shadow-md transition-all duration-300`}
         >
           <div>

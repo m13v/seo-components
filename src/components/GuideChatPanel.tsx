@@ -323,6 +323,7 @@ export function GuideChatPanel({
   const hidden = !slug || (hideOnPaths?.includes(pathname) ?? false);
 
   const [collapsed, setCollapsed] = useState(false);
+  const [health, setHealth] = useState<"probing" | "ok" | "down">("probing");
 
   useEffect(() => {
     try {
@@ -332,6 +333,25 @@ export function GuideChatPanel({
     } catch {}
   }, []);
 
+  useEffect(() => {
+    if (hidden) return;
+    const ac = new AbortController();
+    (async () => {
+      try {
+        const res = await fetch(apiEndpoint, {
+          method: "POST",
+          headers: { "content-type": "application/json" },
+          body: JSON.stringify({ healthCheck: true }),
+          signal: ac.signal,
+        });
+        setHealth(res.ok ? "ok" : "down");
+      } catch (e) {
+        if ((e as Error).name !== "AbortError") setHealth("down");
+      }
+    })();
+    return () => ac.abort();
+  }, [hidden, apiEndpoint]);
+
   const toggleCollapse = () => {
     const next = !collapsed;
     setCollapsed(next);
@@ -339,21 +359,29 @@ export function GuideChatPanel({
   };
 
   useEffect(() => {
-    if (hidden) return;
+    if (hidden || health !== "ok") return;
     onPosthogLoaded(() =>
       capture("guide_chat_panel_viewed", { app, slug }),
     );
-  }, [hidden, slug, app]);
+  }, [hidden, slug, app, health]);
 
-  if (hidden) return null;
+  if (hidden || health === "down") return null;
+  if (health === "probing") {
+    return (
+      <aside
+        className="hidden xl:flex flex-col sticky top-0 h-screen shrink-0 w-80 2xl:w-96 border-l border-[color-mix(in_srgb,currentColor_14%,transparent)]"
+        aria-hidden="true"
+      />
+    );
+  }
 
   return (
-    <aside className={`hidden xl:flex flex-col sticky top-0 h-screen shrink-0 ${collapsed ? "w-12" : "w-80 2xl:w-96"} bg-white dark:bg-zinc-950 border-l border-zinc-200 dark:border-zinc-800 transition-all duration-200 ease-out overflow-hidden`}>
+    <aside className={`hidden xl:flex flex-col sticky top-0 h-screen shrink-0 ${collapsed ? "w-12" : "w-80 2xl:w-96"} border-l border-[color-mix(in_srgb,currentColor_14%,transparent)] transition-all duration-200 ease-out overflow-hidden`}>
       {collapsed ? (
         <div className="flex flex-col items-center pt-3 h-full">
           <button
             onClick={toggleCollapse}
-            className="p-2 rounded-md text-zinc-400 hover:text-zinc-900 dark:hover:text-zinc-100 hover:bg-zinc-100 dark:hover:bg-zinc-800 transition-colors"
+            className="p-2 rounded-md text-zinc-400 hover:text-zinc-900 dark:hover:text-zinc-100 hover:bg-[color-mix(in_srgb,currentColor_8%,transparent)] transition-colors"
             aria-label="Expand page assistant"
           >
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -364,14 +392,14 @@ export function GuideChatPanel({
         </div>
       ) : (
         <>
-          <div className="flex items-center gap-2 px-4 py-3 border-b border-zinc-100 dark:border-zinc-800">
+          <div className="flex items-center gap-2 px-4 py-3 border-b border-[color-mix(in_srgb,currentColor_10%,transparent)]">
             <span className="w-1.5 h-1.5 rounded-full bg-teal-500 inline-block" />
             <span className="font-mono text-xs tracking-tight text-zinc-900 dark:text-zinc-100">
               {label}
             </span>
             <button
               onClick={toggleCollapse}
-              className="ml-auto p-1.5 rounded-md text-zinc-400 hover:text-zinc-900 dark:hover:text-zinc-100 hover:bg-zinc-100 dark:hover:bg-zinc-800 transition-colors"
+              className="ml-auto p-1.5 rounded-md text-zinc-400 hover:text-zinc-900 dark:hover:text-zinc-100 hover:bg-[color-mix(in_srgb,currentColor_8%,transparent)] transition-colors"
               aria-label="Collapse page assistant"
             >
               <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -423,7 +451,7 @@ function ChatThread({
             <TypingIndicator />
           </ThreadPrimitive.If>
         </ThreadPrimitive.Viewport>
-        <div className="px-3 py-3 border-t border-zinc-100 dark:border-zinc-900">
+        <div className="px-3 py-3 border-t border-[color-mix(in_srgb,currentColor_10%,transparent)]">
           <Composer />
         </div>
       </ThreadPrimitive.Root>
@@ -445,12 +473,12 @@ function SummarySection({
   if (summary.loading) {
     return (
       <div className="mb-4 space-y-2 animate-pulse">
-        <div className="h-3 bg-zinc-100 dark:bg-zinc-800 rounded w-3/4" />
-        <div className="h-3 bg-zinc-100 dark:bg-zinc-800 rounded w-full" />
-        <div className="h-3 bg-zinc-100 dark:bg-zinc-800 rounded w-5/6" />
-        <div className="mt-3 h-8 bg-zinc-50 dark:bg-zinc-900 rounded w-full" />
-        <div className="h-8 bg-zinc-50 dark:bg-zinc-900 rounded w-full" />
-        <div className="h-8 bg-zinc-50 dark:bg-zinc-900 rounded w-full" />
+        <div className="h-3 bg-[color-mix(in_srgb,currentColor_8%,transparent)] rounded w-3/4" />
+        <div className="h-3 bg-[color-mix(in_srgb,currentColor_8%,transparent)] rounded w-full" />
+        <div className="h-3 bg-[color-mix(in_srgb,currentColor_8%,transparent)] rounded w-5/6" />
+        <div className="mt-3 h-8 bg-[color-mix(in_srgb,currentColor_4%,transparent)] rounded w-full" />
+        <div className="h-8 bg-[color-mix(in_srgb,currentColor_4%,transparent)] rounded w-full" />
+        <div className="h-8 bg-[color-mix(in_srgb,currentColor_4%,transparent)] rounded w-full" />
       </div>
     );
   }
@@ -459,7 +487,7 @@ function SummarySection({
 
   return (
     <div className="mb-4 space-y-3">
-      <div className="rounded-lg px-3 py-2.5 bg-zinc-50 dark:bg-zinc-900 border border-zinc-100 dark:border-zinc-800 text-[13px] text-zinc-900 dark:text-zinc-100 font-mono leading-relaxed whitespace-pre-wrap">
+      <div className="rounded-lg px-3 py-2.5 bg-[color-mix(in_srgb,currentColor_4%,transparent)] border border-[color-mix(in_srgb,currentColor_10%,transparent)] text-[13px] text-zinc-900 dark:text-zinc-100 font-mono leading-relaxed whitespace-pre-wrap">
         {summary.text}
       </div>
       {summary.questions.length > 0 && (
@@ -507,7 +535,7 @@ function QuestionChips({
         <button
           key={i}
           onClick={() => send(q, i)}
-          className="w-full text-left px-3 py-2 rounded-lg border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 hover:border-teal-300 dark:hover:border-teal-700 hover:text-teal-700 dark:hover:text-teal-300 transition-colors text-[12px] font-mono text-zinc-600 dark:text-zinc-400 leading-snug"
+          className="w-full text-left px-3 py-2 rounded-lg border border-[color-mix(in_srgb,currentColor_14%,transparent)] bg-[color-mix(in_srgb,currentColor_3%,transparent)] hover:border-teal-300 dark:hover:border-teal-700 hover:text-teal-700 dark:hover:text-teal-300 transition-colors text-[12px] font-mono text-zinc-600 dark:text-zinc-400 leading-snug"
         >
           {q}
         </button>
@@ -533,7 +561,7 @@ function UserMessage() {
 function AssistantMessage() {
   return (
     <MessagePrimitive.Root className="mb-3 flex justify-start">
-      <div className="max-w-[90%] rounded-lg px-3 py-2 bg-zinc-50 dark:bg-zinc-900 border border-zinc-100 dark:border-zinc-800 text-[13px] text-zinc-900 dark:text-zinc-100 font-mono leading-relaxed whitespace-pre-wrap">
+      <div className="max-w-[90%] rounded-lg px-3 py-2 bg-[color-mix(in_srgb,currentColor_4%,transparent)] border border-[color-mix(in_srgb,currentColor_10%,transparent)] text-[13px] text-zinc-900 dark:text-zinc-100 font-mono leading-relaxed whitespace-pre-wrap">
         <MessagePrimitive.Parts />
       </div>
     </MessagePrimitive.Root>
@@ -543,7 +571,7 @@ function AssistantMessage() {
 function TypingIndicator() {
   return (
     <div className="mb-3 flex justify-start">
-      <div className="rounded-lg px-3 py-2 bg-zinc-50 dark:bg-zinc-900 border border-zinc-100 dark:border-zinc-800 text-[13px] text-zinc-400 dark:text-zinc-600 font-mono">
+      <div className="rounded-lg px-3 py-2 bg-[color-mix(in_srgb,currentColor_4%,transparent)] border border-[color-mix(in_srgb,currentColor_10%,transparent)] text-[13px] text-zinc-400 dark:text-zinc-600 font-mono">
         <span className="inline-flex gap-1">
           <span className="w-1 h-1 bg-zinc-400 dark:bg-zinc-600 rounded-full animate-pulse" />
           <span className="w-1 h-1 bg-zinc-400 dark:bg-zinc-600 rounded-full animate-pulse [animation-delay:150ms]" />
@@ -556,7 +584,7 @@ function TypingIndicator() {
 
 function Composer() {
   return (
-    <ComposerPrimitive.Root className="flex items-end gap-2 rounded-lg border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 focus-within:border-teal-300 dark:focus-within:border-teal-700 focus-within:ring-2 focus-within:ring-teal-500/20 transition">
+    <ComposerPrimitive.Root className="flex items-end gap-2 rounded-lg border border-[color-mix(in_srgb,currentColor_14%,transparent)] bg-[color-mix(in_srgb,currentColor_3%,transparent)] focus-within:border-teal-300 dark:focus-within:border-teal-700 focus-within:ring-2 focus-within:ring-teal-500/20 transition">
       <ComposerPrimitive.Input
         placeholder="ask a question..."
         className="flex-1 bg-transparent px-3 py-2 text-[13px] font-mono text-zinc-900 dark:text-zinc-100 placeholder:text-zinc-400 dark:placeholder:text-zinc-500 focus:outline-none resize-none max-h-32"

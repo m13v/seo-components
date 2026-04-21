@@ -17,7 +17,7 @@
 //   3. Consumer sites wrap their tree in <SeoAnalyticsProvider posthog={ph}>
 //      (or use the all-in-one FullSiteAnalytics component).
 
-import { createContext, useCallback, useContext, useMemo, type ReactNode } from "react";
+import { createContext, useCallback, useContext, useEffect, useMemo, type ReactNode } from "react";
 
 export interface PostHogLike {
   capture: (event: string, properties?: Record<string, unknown>) => void;
@@ -38,6 +38,18 @@ export interface SeoAnalyticsProviderProps {
  */
 export function SeoAnalyticsProvider({ posthog, children }: SeoAnalyticsProviderProps) {
   const value = useMemo(() => posthog ?? null, [posthog]);
+
+  // Mirror the instance onto window.posthog so non-React helpers
+  // (trackScheduleClick, legacy inline scripts) resolve without each
+  // consumer site remembering to hand-wire this line after posthog.init().
+  useEffect(() => {
+    if (!value) return;
+    if (typeof window === "undefined") return;
+    const w = window as unknown as { posthog?: PostHogLike };
+    if (w.posthog === value) return;
+    w.posthog = value;
+  }, [value]);
+
   return (
     <SeoAnalyticsContext.Provider value={value}>
       {children}

@@ -11,6 +11,13 @@ export type {
   GenerateSitemapOptions,
 } from "./lib/generate-sitemap";
 
+export { generateRobots } from "./lib/generate-robots";
+export type {
+  RobotsRule,
+  GenerateRobotsOptions,
+  GeneratedRobots,
+} from "./lib/generate-robots";
+
 export { slugify } from "./lib/slugify";
 
 export { createGuideChatHandler } from "./lib/guide-chat-route";

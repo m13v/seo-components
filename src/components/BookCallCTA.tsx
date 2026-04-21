@@ -2,7 +2,21 @@
 
 import { useEffect, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { trackScheduleClick } from "../lib/track";
+import { trackScheduleClick, withBookingAttribution } from "../lib/track";
+
+/**
+ * Render the bare destination for SSR, then swap in the UTM-attributed URL
+ * after hydration so Cmd+Click / middle-click preserves the attribution.
+ * PostHog's `schedule_click` event still receives the bare destination so
+ * aggregation isn't fragmented per page.
+ */
+function useBookingHref(destination: string): string {
+  const [href, setHref] = useState(destination);
+  useEffect(() => {
+    setHref(withBookingAttribution(destination));
+  }, [destination]);
+  return href;
+}
 
 export type BookCallAppearance = "inline" | "sticky" | "hero" | "footer";
 
@@ -111,6 +125,7 @@ function InlineBookCall({
   section: string;
   site?: string;
 }) {
+  const href = useBookingHref(destination);
   return (
     <motion.div
       className="my-12 mx-auto max-w-2xl p-6 rounded-2xl border border-teal-100 dark:border-teal-800/60 bg-teal-50/40 dark:bg-teal-950/60"
@@ -126,7 +141,7 @@ function InlineBookCall({
         {description}
       </p>
       <a
-        href={destination}
+        href={href}
         target="_blank"
         rel="noopener noreferrer"
         className="inline-flex items-center gap-2 text-sm font-medium px-4 py-2 rounded-lg bg-teal-500 text-accent-contrast hover:bg-accent-dim transition-colors"
@@ -151,9 +166,10 @@ function HeroBookCall({
   section: string;
   site?: string;
 }) {
+  const href = useBookingHref(destination);
   return (
     <a
-      href={destination}
+      href={href}
       target="_blank"
       rel="noopener noreferrer"
       className="inline-flex items-center gap-2 px-5 py-2.5 rounded-lg border border-teal-200 dark:border-teal-800/60 text-sm font-medium text-teal-700 dark:text-teal-200 hover:bg-teal-50 dark:hover:bg-teal-950/60 transition-colors"
@@ -181,6 +197,7 @@ function FooterBookCall({
   section: string;
   site?: string;
 }) {
+  const href = useBookingHref(destination);
   return (
     <motion.div
       className="my-16 mx-auto max-w-3xl p-8 rounded-2xl border border-teal-200 dark:border-teal-800/60 bg-gradient-to-br from-teal-50 to-white dark:from-teal-950/70 dark:to-zinc-950 text-center"
@@ -196,7 +213,7 @@ function FooterBookCall({
         {description}
       </p>
       <a
-        href={destination}
+        href={href}
         target="_blank"
         rel="noopener noreferrer"
         className="inline-flex items-center gap-2 px-5 py-2.5 rounded-lg bg-teal-500 text-accent-contrast hover:bg-accent-dim transition-colors text-sm font-medium"
@@ -226,6 +243,7 @@ function StickyBookCall({
   scrollThreshold: number;
 }) {
   const [visible, setVisible] = useState(false);
+  const href = useBookingHref(destination);
 
   useEffect(() => {
     const handler = () => setVisible(window.scrollY > scrollThreshold);
@@ -249,7 +267,7 @@ function StickyBookCall({
               {description}
             </p>
             <a
-              href={destination}
+              href={href}
               target="_blank"
               rel="noopener noreferrer"
               className="text-sm font-medium px-4 py-2 rounded-lg bg-teal-500 text-accent-contrast hover:bg-accent-dim transition-colors"

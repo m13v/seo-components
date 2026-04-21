@@ -12,11 +12,14 @@ import { captureFromWindow } from "./analytics-context";
  * Rewrite a booking URL (Cal.com, Calendly, etc.) so the booking webhook can
  * attribute the booking back to the specific landing page it came from.
  *
- * We append Cal.com's documented `metadata[key]=value` query-param syntax,
- * which Cal.com mirrors into `booking.metadata.key` on the webhook payload.
- * Our webhook handler (social-autoposter-website/api/webhooks/cal/route.ts)
- * then writes `booking.metadata.utm_*` into the `cal_bookings.utm_*` columns,
- * so every booking carries the originating site + page path.
+ * Cal.com's hosted booking page captures plain `utm_source/utm_medium/utm_campaign`
+ * URL query params and stores them on the booking's metadata, which Cal.com
+ * then forwards in the webhook payload as `booking.metadata.utm_*`. We also
+ * emit Cal.com's bracketed `metadata[key]=value` form as a belt-and-braces
+ * fallback (some Cal.com surfaces accept that syntax instead). Our webhook
+ * handler (social-autoposter-website/api/webhooks/cal/route.ts) writes
+ * `booking.metadata.utm_*` into `cal_bookings.utm_source / utm_medium /
+ * utm_campaign`, so every booking carries the originating site + page path.
  *
  * Attribution scheme:
  *   utm_source   = current hostname (e.g. "fazm.com")
@@ -24,23 +27,29 @@ import { captureFromWindow } from "./analytics-context";
  *   utm_campaign = current pathname (e.g. "/t/how-to-quit-weed")
  *
  * SSR-safe: returns the URL unchanged on the server (no `window`) or when the
- * input cannot be parsed as a URL. Never overwrites a pre-existing metadata
- * key so manual overrides on specific CTAs still win.
+ * input cannot be parsed as a URL. Never overwrites a pre-existing query key
+ * so manual overrides on specific CTAs still win.
  *
- * This is applied automatically by `BookCallCTA`, and by `InlineCta` /
- * `StickyBottomCta` when `trackAs === "schedule"`, so downstream consumers do
- * not need to call it directly.
+ * Applied automatically by `BookCallCTA`, and by `InlineCta` /
+ * `StickyBottomCta` when `trackAs === "schedule"`. Consumers that build a
+ * custom Book-a-Call CTA MUST route their href through this helper or
+ * page-level booking attribution breaks.
  */
 export function withBookingAttribution(destination: string): string {
   if (typeof window === "undefined") return destination;
   try {
     const url = new URL(destination, window.location.href);
+    const source = window.location.hostname;
+    const campaign = window.location.pathname || "/";
     const setIfAbsent = (key: string, value: string) => {
       if (!url.searchParams.has(key)) url.searchParams.set(key, value);
     };
-    setIfAbsent("metadata[utm_source]", window.location.hostname);
+    setIfAbsent("utm_source", source);
+    setIfAbsent("utm_medium", "schedule_click");
+    setIfAbsent("utm_campaign", campaign);
+    setIfAbsent("metadata[utm_source]", source);
     setIfAbsent("metadata[utm_medium]", "schedule_click");
-    setIfAbsent("metadata[utm_campaign]", window.location.pathname || "/");
+    setIfAbsent("metadata[utm_campaign]", campaign);
     return url.toString();
   } catch {
     return destination;

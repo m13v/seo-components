@@ -2,7 +2,11 @@
 
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { trackGetStartedClick, trackScheduleClick } from "../lib/track";
+import {
+  trackGetStartedClick,
+  trackScheduleClick,
+  withBookingAttribution,
+} from "../lib/track";
 
 interface StickyBottomCtaProps {
   description: string;
@@ -32,6 +36,13 @@ export function StickyBottomCta({
   section,
 }: StickyBottomCtaProps) {
   const [visible, setVisible] = useState(false);
+
+  // Rewrite schedule CTAs' href after hydration so the Cal.com webhook sees
+  // `metadata[utm_*]` params and attributes the booking to this page.
+  const [renderHref, setRenderHref] = useState(href);
+  useEffect(() => {
+    setRenderHref(trackAs === "schedule" ? withBookingAttribution(href) : href);
+  }, [href, trackAs]);
 
   useEffect(() => {
     const handler = () => setVisible(window.scrollY > scrollThreshold);
@@ -75,7 +86,7 @@ export function StickyBottomCta({
               {description}
             </p>
             <a
-              href={href}
+              href={renderHref}
               className="text-sm font-medium px-4 py-2 rounded-lg bg-teal-500 text-accent-contrast hover:bg-accent-dim transition-colors"
               onClick={onClick}
             >

@@ -1,7 +1,12 @@
 "use client";
 
+import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
-import { trackGetStartedClick, trackScheduleClick } from "../lib/track";
+import {
+  trackGetStartedClick,
+  trackScheduleClick,
+  withBookingAttribution,
+} from "../lib/track";
 
 interface InlineCtaProps {
   heading: string;
@@ -30,6 +35,13 @@ export function InlineCta({
   site,
   section,
 }: InlineCtaProps) {
+  // For schedule CTAs, rewrite the href after hydration so the Cal.com webhook
+  // sees `metadata[utm_*]` params and can attribute the booking to this page.
+  // PostHog events still carry the bare `href` so aggregation stays clean.
+  const [renderHref, setRenderHref] = useState(href);
+  useEffect(() => {
+    setRenderHref(trackAs === "schedule" ? withBookingAttribution(href) : href);
+  }, [href, trackAs]);
   return (
     <motion.div
       className="my-12 mx-auto max-w-2xl p-6 rounded-2xl border border-teal-100 dark:border-teal-800/60 bg-teal-50/30 dark:bg-teal-950/60"
@@ -45,7 +57,7 @@ export function InlineCta({
         {body}
       </p>
       <a
-        href={href}
+        href={renderHref}
         className="inline-flex items-center gap-2 text-sm font-medium text-teal-600 dark:text-teal-300 hover:text-accent-dim transition-colors"
         onClick={() => {
           if (trackAs === "get_started") {

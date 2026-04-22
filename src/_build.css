@@ -1,6 +1,10 @@
 /* Build input for the prebuilt styles.css shipped in the npm package. */
 /* This file is consumed by `tailwindcss -i src/_build.css -o dist/styles.css`. */
-/* Do NOT import this file from a consumer app; use `@m13v/seo-components/server`'s SeoComponentsStyles. */
+/* Consumer apps should NOT import this source file. If you need the prebuilt
+   bundle, import the compiled artifact: `import "@m13v/seo-components/styles.css"`.
+   In most cases the right approach is to let your own Tailwind scan the
+   library via `@source "../../node_modules/@seo/components/src";` in
+   globals.css, which is how every current consumer does it. */
 @tailwind base;
 @tailwind components;
 @tailwind utilities;

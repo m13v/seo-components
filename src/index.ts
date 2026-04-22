@@ -64,12 +64,14 @@ export {
   trackScheduleClick,
   trackGetStartedClick,
   trackDownloadClick,
+  trackCrossProductClick,
   withBookingAttribution,
 } from "./lib/track";
 export type {
   ScheduleClickProps,
   GetStartedClickProps,
   DownloadClickProps,
+  CrossProductClickProps,
 } from "./lib/track";
 
 // Analytics context: provider + hooks so library components fire PostHog

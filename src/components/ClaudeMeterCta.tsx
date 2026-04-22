@@ -1,7 +1,7 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { trackGetStartedClick } from "../lib/track";
+import { trackCrossProductClick } from "../lib/track";
 
 export interface ClaudeMeterCtaProps {
   /** Placement tag, kept in analytics payload. */
@@ -30,9 +30,10 @@ export function ClaudeMeterCta({
   const sectionLabel = section ?? `claude-meter-cta-${placement}`;
 
   const handleClick = () => {
-    trackGetStartedClick({
+    trackCrossProductClick({
       destination: href,
       site,
+      targetProduct: "claude-meter",
       section: sectionLabel,
       text: "Install Claude Meter",
       component: "ClaudeMeterCta",

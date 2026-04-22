@@ -145,3 +145,45 @@ export type DownloadClickProps = GetStartedClickProps;
 export function trackDownloadClick(props: GetStartedClickProps): void {
   trackGetStartedClick(props);
 }
+
+export interface CrossProductClickProps {
+  /** Absolute URL the click sends the user to (e.g. https://claude-meter.com/install). */
+  destination: string;
+  /** Slug of the ORIGIN site the click happened on (e.g. "fazm"). */
+  site?: string;
+  /** Slug of the DESTINATION product being promoted (e.g. "claude-meter"). */
+  targetProduct?: string;
+  /** Section of the page the CTA lives in (e.g. "blog-post-top", "blog-post-bottom"). */
+  section?: string;
+  /** Visible button/link text. */
+  text?: string;
+  /** Name of the rendering component (e.g. "ClaudeMeterCta"). */
+  component?: string;
+  /** Free-form extra properties — merged last, cannot override reserved keys above. */
+  extra?: Record<string, unknown>;
+}
+
+/**
+ * Fire the canonical `cross_product_click` PostHog event. Use for every CTA
+ * that promotes a SIBLING product on a different site (e.g. a Claude Meter
+ * CTA on fazm.ai blog posts). These clicks are tracked separately from the
+ * primary `get_started_click` event so the dashboard can distinguish
+ * own-product conversions from cross-promotion.
+ *
+ * The dashboard at social-autoposter/scripts/project_stats_json.py counts
+ * this event per `$host` to produce the "Cross Product" column in the
+ * Project Funnel Stats table.
+ */
+export function trackCrossProductClick(props: CrossProductClickProps): void {
+  const { destination, site, targetProduct, section, text, component, extra } = props;
+  captureFromWindow("cross_product_click", {
+    ...(extra || {}),
+    destination,
+    site,
+    target_product: targetProduct,
+    section,
+    text,
+    component,
+    page: typeof window !== "undefined" ? window.location.pathname : undefined,
+  });
+}

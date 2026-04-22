@@ -24,7 +24,11 @@ export function getGuideContext(
   );
   if (!guide) return null;
 
-  // Derive appDir from contentDir to locate page files by their full href
+  // Resolve the page file on disk. `guide.href` is a URL path, which has
+  // Next.js route-group segments like `(content)` stripped out, so we cannot
+  // just join `appDir + href`. Instead, compute the URL prefix that `dir`
+  // maps to, strip it from `href`, and append the remainder to `dir` (the
+  // real filesystem path the caller passed in).
   const relDir = path.relative(process.cwd(), dir);
   const relParts = relDir.split(path.sep);
   const appIdx = relParts.indexOf("app");
@@ -32,7 +36,20 @@ export function getGuideContext(
     appIdx >= 0
       ? path.join(process.cwd(), ...relParts.slice(0, appIdx + 1))
       : dir;
-  const pagePath = path.join(appDir, guide.href, "page.tsx");
+  const relContent = path.relative(appDir, dir);
+  const urlSegments = relContent
+    ? relContent
+        .split(path.sep)
+        .filter((s) => !(s.startsWith("(") && s.endsWith(")")))
+    : [];
+  const urlPrefix = urlSegments.length ? "/" + urlSegments.join("/") : "";
+  let relHref = guide.href;
+  if (urlPrefix && relHref.startsWith(urlPrefix + "/")) {
+    relHref = relHref.slice(urlPrefix.length + 1);
+  } else if (relHref.startsWith("/")) {
+    relHref = relHref.slice(1);
+  }
+  const pagePath = path.join(dir, relHref, "page.tsx");
   let rawSource = "";
   try {
     rawSource = fs.readFileSync(pagePath, "utf-8");

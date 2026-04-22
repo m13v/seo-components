@@ -37,7 +37,10 @@ export { getSupabaseAdmin } from "./lib/supabase-admin";
 export { createNewsletterHandler } from "./lib/newsletter-route";
 export type { NewsletterConfig } from "./lib/newsletter-route";
 
-// Style injector — server-only component that inlines the prebuilt Tailwind
-// CSS for the sidebar/chat/heading components as a <style> tag.
-// Use in your root layout <head> to avoid consumer-side PostCSS conflicts.
-export { SeoComponentsStyles } from "./components/SeoComponentsStyles";
+// SeoComponentsStyles was removed in v0.23.0. It injected a prebuilt Tailwind
+// bundle wrapped in `@layer seo-components`, which collided with the
+// consumer's own `@layer utilities` and forced GuideChatPanel / SitemapSidebar
+// to `display: none`. Consumers should rely on their own Tailwind scanning
+// the library via `@source "../../node_modules/@seo/components/src";` in
+// globals.css instead. The prebuilt CSS file is still shipped for anyone
+// who wants to `import "@m13v/seo-components/styles.css"` directly.

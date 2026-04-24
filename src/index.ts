@@ -123,6 +123,13 @@ export { HeadingAnchors } from "./components/HeadingAnchors";
 export { HtmlSitemap } from "./components/HtmlSitemap";
 export type { HtmlSitemapProps } from "./components/HtmlSitemap";
 
+// Site chrome (shared navbar + footer). Mount once in the site's
+// intermediate SEO layout; individual pages must NOT render these.
+export { SiteNavbar } from "./components/SiteNavbar";
+export type { SiteNavbarProps } from "./components/SiteNavbar";
+export { SiteFooter } from "./components/SiteFooter";
+export type { SiteFooterProps } from "./components/SiteFooter";
+
 // Guide chat (AI page assistant) — client-safe
 export { GuideChatPanel } from "./components/GuideChatPanel";
 export type { GuideChatPanelProps } from "./components/GuideChatPanel";

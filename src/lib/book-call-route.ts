@@ -1,5 +1,4 @@
 import { NextRequest } from "next/server";
-import { signBookCallToken } from "./book-call-token";
 
 /* ------------------------------------------------------------------ */
 /*  Default welcome + book-call email template                         */
@@ -71,7 +70,7 @@ function defaultBookCallEmailHtml(
 /* ------------------------------------------------------------------ */
 
 export interface BookCallConfig {
-  /** Site slug (matches the audience / posthog $host). Stored in book_call_leads.site. */
+  /** Site slug (matches PostHog $host). Included in the email-click URL. */
   site: string;
   /** Resend audience ID (SAME id as the site's newsletter audience — one audience per client). */
   audienceId: string;
@@ -83,18 +82,14 @@ export interface BookCallConfig {
   siteUrl: string;
   /**
    * Absolute URL for the email-click redirect endpoint, e.g. "https://fazm.ai/go/book".
-   * The factory appends `?t=<signed-token>` to this base.
+   * The factory appends `?email=<subscriber>&site=<slug>` to this base.
    */
   redirectBaseUrl: string;
   /** Env var for the Resend API key (default: "RESEND_API_KEY"). */
   apiKeyEnv?: string;
-  /** Env var for the Neon / Postgres URL (default: "BOOKINGS_DATABASE_URL"). */
-  databaseUrlEnv?: string;
-  /** Env var for the HMAC secret used to sign the email-click token (default: "BOOK_CALL_TOKEN_SECRET"). */
-  tokenSecretEnv?: string;
   /** Override the email subject line. */
   emailSubject?: string;
-  /** Override the email HTML. Receives the email-click URL (with signed token) and the submitted email. */
+  /** Override the email HTML. Receives the email-click URL and the submitted email. */
   emailHtml?: (emailClickUrl: string, subscriberEmail: string) => string;
 }
 
@@ -108,17 +103,12 @@ export interface BookCallConfig {
  * The handler:
  *   1. Upserts the email into the client's Resend audience (same audience as
  *      NewsletterSignup — one shared audience per client).
- *   2. Upserts a row into the shared `book_call_leads` table (Neon), so we
- *      can tell if this is a first-time lead (drives dedup of the
- *      `newsletter_subscribed` PostHog event).
- *   3. Fires a welcome email with a booking link routed through the site's
- *      `/go/book?t=<signed-token>` redirect endpoint. The token is an
- *      HMAC-signed short-lived payload carrying `{email, site, issued_at}`.
+ *   2. Sends a welcome email with a booking link routed through the site's
+ *      `/go/book?email=...&site=...` redirect endpoint.
  *
- * The response is deliberately small: the client uses `first_seen` to decide
- * whether to fire the `newsletter_subscribed` event, and redirects the user
- * to the booking URL itself (with `?email=` prefilled) so we avoid an extra
- * server round-trip before Cal.com / Calendly opens.
+ * Dedup is handled entirely by PostHog at the user level (`identify(email)`
+ * before capture). No DB, no signed token — see createBookCallRedirectHandler
+ * for the matching simplification on the redirect side.
  */
 export function createBookCallHandler(config: BookCallConfig) {
   const {
@@ -129,37 +119,21 @@ export function createBookCallHandler(config: BookCallConfig) {
     siteUrl,
     redirectBaseUrl,
     apiKeyEnv = "RESEND_API_KEY",
-    databaseUrlEnv = "BOOKINGS_DATABASE_URL",
-    tokenSecretEnv = "BOOK_CALL_TOKEN_SECRET",
     emailSubject,
     emailHtml,
   } = config;
 
   return async function POST(req: NextRequest) {
     const resendKey = process.env[apiKeyEnv];
-    const databaseUrl = process.env[databaseUrlEnv];
-    const tokenSecret = process.env[tokenSecretEnv];
-    if (!resendKey || !databaseUrl || !tokenSecret) {
-      console.error("[book-call] missing env:", {
-        resendKey: !!resendKey,
-        databaseUrl: !!databaseUrl,
-        tokenSecret: !!tokenSecret,
-      });
+    if (!resendKey) {
+      console.error("[book-call] missing", apiKeyEnv);
       return new Response(
         JSON.stringify({ error: "Server configuration error" }),
         { status: 500, headers: { "content-type": "application/json" } },
       );
     }
 
-    let body: {
-      email?: string;
-      destination?: string;
-      source_path?: string;
-      source_host?: string;
-      utm_source?: string;
-      utm_medium?: string;
-      utm_campaign?: string;
-    };
+    let body: { email?: string };
     try {
       body = await req.json();
     } catch {
@@ -177,47 +151,7 @@ export function createBookCallHandler(config: BookCallConfig) {
       );
     }
 
-    const destination = typeof body.destination === "string" ? body.destination : null;
-    const sourcePath = typeof body.source_path === "string" ? body.source_path : null;
-    const sourceHost = typeof body.source_host === "string" ? body.source_host : null;
-    const utmSource = typeof body.utm_source === "string" ? body.utm_source : null;
-    const utmMedium = typeof body.utm_medium === "string" ? body.utm_medium : null;
-    const utmCampaign = typeof body.utm_campaign === "string" ? body.utm_campaign : null;
-
-    // 1. DB upsert: returns first_seen=true on a fresh insert.
-    //    Using a dynamic import so the handler doesn't force Neon onto
-    //    consumers that might ever want a different driver.
-    let firstSeen = true;
-    try {
-      const { neon } = await import("@neondatabase/serverless");
-      const sql = neon(databaseUrl);
-      const rows = (await sql`
-        INSERT INTO book_call_leads (
-          email, site, source_path, source_host, destination,
-          utm_source, utm_medium, utm_campaign
-        ) VALUES (
-          ${email}, ${site}, ${sourcePath}, ${sourceHost}, ${destination},
-          ${utmSource}, ${utmMedium}, ${utmCampaign}
-        )
-        ON CONFLICT (email, site) DO UPDATE SET
-          last_intent_at = NOW(),
-          source_path = COALESCE(EXCLUDED.source_path, book_call_leads.source_path),
-          source_host = COALESCE(EXCLUDED.source_host, book_call_leads.source_host),
-          destination = COALESCE(EXCLUDED.destination, book_call_leads.destination),
-          utm_source = COALESCE(EXCLUDED.utm_source, book_call_leads.utm_source),
-          utm_medium = COALESCE(EXCLUDED.utm_medium, book_call_leads.utm_medium),
-          utm_campaign = COALESCE(EXCLUDED.utm_campaign, book_call_leads.utm_campaign)
-        RETURNING (xmax = 0) AS first_seen
-      `) as Array<{ first_seen: boolean }>;
-      firstSeen = rows[0]?.first_seen ?? true;
-    } catch (err) {
-      console.error("[book-call] DB upsert failed:", err);
-      // Don't hard-fail the user-facing flow on DB issues — the lead is still
-      // captured in Resend and the browser can still redirect to Cal.
-      firstSeen = true;
-    }
-
-    // 2. Resend audience upsert (shared with NewsletterSignup — one audience per client).
+    // 1. Resend audience upsert (shared with NewsletterSignup — one audience per client).
     const contactRes = await fetch(
       `https://api.resend.com/audiences/${audienceId}/contacts`,
       {
@@ -234,9 +168,8 @@ export function createBookCallHandler(config: BookCallConfig) {
       console.error("[book-call] Failed to add contact:", detail);
     }
 
-    // 3. Signed token + email (fire-and-forget, doesn't block the redirect).
-    const token = signBookCallToken(email, site, tokenSecret);
-    const emailClickUrl = `${redirectBaseUrl}?t=${encodeURIComponent(token)}`;
+    // 2. Welcome email with a site-scoped `/go/book` link (fire-and-forget).
+    const emailClickUrl = `${redirectBaseUrl}?email=${encodeURIComponent(email)}&site=${encodeURIComponent(site)}`;
     const subject = emailSubject || `Book a 20-minute call with ${brand}`;
     const html = emailHtml
       ? emailHtml(emailClickUrl, email)
@@ -249,29 +182,10 @@ export function createBookCallHandler(config: BookCallConfig) {
         "Content-Type": "application/json",
       },
       body: JSON.stringify({ from: fromEmail, to: email, subject, html }),
-    })
-      .then(async (res) => {
-        if (!res.ok) {
-          const detail = await res.text().catch(() => "");
-          console.error("[book-call] Failed to send email:", detail);
-          return;
-        }
-        try {
-          const { neon } = await import("@neondatabase/serverless");
-          const sql = neon(databaseUrl);
-          await sql`
-            UPDATE book_call_leads
-            SET email_link_sent_at = NOW()
-            WHERE email = ${email} AND site = ${site}
-          `;
-        } catch {
-          /* best-effort timestamp */
-        }
-      })
-      .catch((err) => console.error("[book-call] email send threw:", err));
+    }).catch((err) => console.error("[book-call] email send threw:", err));
 
     return new Response(
-      JSON.stringify({ ok: true, first_seen: firstSeen }),
+      JSON.stringify({ ok: true }),
       { status: 200, headers: { "content-type": "application/json" } },
     );
   };

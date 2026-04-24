@@ -9,8 +9,18 @@ import React, { useEffect, useRef, useState } from "react";
  * at mount (falling back to teal #14b8a6). Canvas paint cannot use CSS
  * vars directly, so we resolve it once via getComputedStyle.
  *
+ * Defaults to `absolute inset-0 pointer-events-none` so it sits as an
+ * ambient layer behind its `position: relative` parent (e.g. a hero
+ * card). Callers who need a non-default layout can pass `className` to
+ * override. Prior to 0.28.1 the default was an empty string, which made
+ * the canvas render in-flow and consume 500-700px of hero vertical
+ * space, pushing the real hero content off-screen.
+ *
  * @example
- * <Particles className="absolute inset-0" quantity={80} />
+ * <div className="relative">
+ *   <Particles quantity={80} />
+ *   <h1>Hero content on top</h1>
+ * </div>
  */
 
 interface MousePosition {
@@ -90,7 +100,7 @@ type Circle = {
 };
 
 export function Particles({
-  className = "",
+  className = "absolute inset-0 pointer-events-none",
   quantity = 100,
   staticity = 50,
   ease = 50,

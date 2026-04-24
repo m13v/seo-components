@@ -151,15 +151,7 @@ function useBookCallGate(opts: UseBookCallGateOptions) {
         const res = await fetch(opts.endpoint, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            email: trimmed,
-            destination: opts.destination,
-            source_path: sourcePath,
-            source_host: sourceHost,
-            utm_source: sourceHost,
-            utm_medium: "schedule_click",
-            utm_campaign: sourcePath,
-          }),
+          body: JSON.stringify({ email: trimmed }),
         });
         if (!res.ok) {
           const data = await res.json().catch(() => ({}));
@@ -167,18 +159,18 @@ function useBookCallGate(opts: UseBookCallGateOptions) {
           setStatus("error");
           return;
         }
-        const data = (await res.json().catch(() => ({}))) as { first_seen?: boolean };
 
+        // Identify the user BEFORE capturing so PostHog attributes both events
+        // (newsletter_subscribed + schedule_click) to the same person as the
+        // later server-side book_call_email_link_clicked event.
         identifyBookCallLead(trimmed);
 
-        if (data.first_seen) {
-          capture("newsletter_subscribed", {
-            component: opts.component,
-            email: trimmed,
-            page: sourcePath,
-            source: "book_call",
-          });
-        }
+        capture("newsletter_subscribed", {
+          component: opts.component,
+          email: trimmed,
+          page: sourcePath,
+          source: "book_call",
+        });
 
         trackScheduleClick({
           destination: opts.destination,

@@ -10,7 +10,11 @@ import {
   type ChatModelAdapter,
 } from "@assistant-ui/react";
 import { usePathname } from "next/navigation";
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import {
+  useLayoutAnchorGuard,
+  LayoutAnchorWarningBanner,
+} from "../lib/useLayoutAnchorGuard";
 
 /* ------------------------------------------------------------------ */
 /*  PostHog helper (works with any posthog setup on window or global)  */
@@ -324,6 +328,12 @@ export function GuideChatPanel({
 
   const [collapsed, setCollapsed] = useState(false);
   const [health, setHealth] = useState<"probing" | "ok" | "down">("probing");
+  const panelRef = useRef<HTMLElement | null>(null);
+
+  const layoutWarning = useLayoutAnchorGuard(panelRef, {
+    component: "GuideChatPanel",
+    minWidth: 1280,
+  });
 
   useEffect(() => {
     try {
@@ -368,15 +378,21 @@ export function GuideChatPanel({
   if (hidden || health === "down") return null;
   if (health === "probing") {
     return (
-      <aside
-        className="hidden xl:flex flex-col sticky top-0 h-screen shrink-0 w-80 2xl:w-96 border-l border-[color-mix(in_srgb,currentColor_14%,transparent)]"
-        aria-hidden="true"
-      />
+      <>
+        <LayoutAnchorWarningBanner message={layoutWarning} />
+        <aside
+          ref={panelRef}
+          className="hidden xl:flex flex-col sticky top-0 h-screen shrink-0 w-80 2xl:w-96 border-l border-[color-mix(in_srgb,currentColor_14%,transparent)]"
+          aria-hidden="true"
+        />
+      </>
     );
   }
 
   return (
-    <aside className={`hidden xl:flex flex-col sticky top-0 h-screen shrink-0 ${collapsed ? "w-12" : "w-80 2xl:w-96"} border-l border-[color-mix(in_srgb,currentColor_14%,transparent)] transition-all duration-200 ease-out overflow-hidden`}>
+    <>
+    <LayoutAnchorWarningBanner message={layoutWarning} />
+    <aside ref={panelRef} className={`hidden xl:flex flex-col sticky top-0 h-screen shrink-0 ${collapsed ? "w-12" : "w-80 2xl:w-96"} border-l border-[color-mix(in_srgb,currentColor_14%,transparent)] transition-all duration-200 ease-out overflow-hidden`}>
       {collapsed ? (
         <div className="flex flex-col items-center pt-3 h-full">
           <button
@@ -416,6 +432,7 @@ export function GuideChatPanel({
         </>
       )}
     </aside>
+    </>
   );
 }
 

@@ -52,7 +52,6 @@
   "peerDependencies": {
     "@assistant-ui/react": ">=0.7",
     "@google/generative-ai": ">=0.24",
-    "@neondatabase/serverless": ">=0.9",
     "@remotion/player": ">=4",
     "@supabase/supabase-js": ">=2",
     "framer-motion": ">=11",
@@ -84,9 +83,6 @@
       "optional": true
     },
     "posthog-js": {
-      "optional": true
-    },
-    "@neondatabase/serverless": {
       "optional": true
     },
     "posthog-node": {

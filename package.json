@@ -1,6 +1,6 @@
 {
   "name": "@m13v/seo-components",
-  "version": "0.27.0",
+  "version": "0.28.0",
   "scripts": {
     "build:css": "tailwind -i src/_build.css -o dist/styles.css --minify",
     "bump:consumers": "bash scripts/bump-consumers.sh",
@@ -58,7 +58,6 @@
     "lottie-react": ">=2",
     "next": ">=14",
     "posthog-js": ">=1.100",
-    "posthog-node": ">=4",
     "react": ">=18",
     "react-dom": ">=18",
     "remotion": ">=4"
@@ -83,9 +82,6 @@
       "optional": true
     },
     "posthog-js": {
-      "optional": true
-    },
-    "posthog-node": {
       "optional": true
     }
   },

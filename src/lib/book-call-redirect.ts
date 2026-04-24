@@ -17,7 +17,8 @@ export interface BookCallRedirectConfig {
  * The handler:
  *   1. Reads `email` and `site` from the query string (unsigned — the blast
  *      radius of forgery is a noisy PostHog event).
- *   2. Fires a server-side `book_call_email_link_clicked` PostHog event with
+ *   2. Fires a `book_call_email_link_clicked` event to PostHog via the
+ *      public `/i/v0/e/` HTTP endpoint (no posthog-node dependency), with
  *      `distinct_id = email`. Unique-user dedup is handled by PostHog.
  *   3. 302s to Cal.com / Calendly with `?email=` pre-filled and
  *      `utm_medium=email_booking_link` so the funnel column separates
@@ -40,33 +41,29 @@ export function createBookCallRedirectHandler(config: BookCallRedirectConfig) {
     const validEmail = !!email && email.includes("@") && email.length <= 254;
     const siteMatches = querySite === site;
 
-    // If the query is malformed or targeted at a different site, drop to the
-    // bare booking URL so the user still reaches Cal/Calendly.
     if (validEmail && siteMatches) {
       const posthogKey = process.env[posthogKeyEnv];
+      const posthogHost = process.env[posthogHostEnv] || "https://us.i.posthog.com";
       if (posthogKey) {
-        try {
-          // Lazy import so sites that never use this handler don't have to
-          // install posthog-node to satisfy Next.js static analysis.
-          const { PostHog } = await import("posthog-node");
-          const ph = new PostHog(posthogKey, {
-            host: process.env[posthogHostEnv] || "https://us.i.posthog.com",
-            flushAt: 1,
-            flushInterval: 0,
-          });
-          ph.capture({
-            distinctId: email,
+        // Fire via PostHog's public HTTP capture endpoint. Fire-and-forget
+        // with .catch so a PostHog hiccup never delays the 302.
+        fetch(`${posthogHost.replace(/\/+$/, "")}/i/v0/e/`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            api_key: posthogKey,
             event: "book_call_email_link_clicked",
+            distinct_id: email,
+            timestamp: new Date().toISOString(),
             properties: {
               site,
               email,
               $set: { email },
             },
-          });
-          await ph.shutdown();
-        } catch (err) {
-          console.error("[book-call/redirect] posthog capture failed:", err);
-        }
+          }),
+        }).catch((err) => {
+          console.error("[book-call/redirect] posthog fetch failed:", err);
+        });
       }
     }
 

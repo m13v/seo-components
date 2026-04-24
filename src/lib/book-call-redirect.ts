@@ -1,5 +1,4 @@
 import { NextRequest } from "next/server";
-import { PostHog } from "posthog-node";
 
 export interface BookCallRedirectConfig {
   /** Site slug. Must match the value the POST handler encoded into the link. */
@@ -46,12 +45,15 @@ export function createBookCallRedirectHandler(config: BookCallRedirectConfig) {
     if (validEmail && siteMatches) {
       const posthogKey = process.env[posthogKeyEnv];
       if (posthogKey) {
-        const ph = new PostHog(posthogKey, {
-          host: process.env[posthogHostEnv] || "https://us.i.posthog.com",
-          flushAt: 1,
-          flushInterval: 0,
-        });
         try {
+          // Lazy import so sites that never use this handler don't have to
+          // install posthog-node to satisfy Next.js static analysis.
+          const { PostHog } = await import("posthog-node");
+          const ph = new PostHog(posthogKey, {
+            host: process.env[posthogHostEnv] || "https://us.i.posthog.com",
+            flushAt: 1,
+            flushInterval: 0,
+          });
           ph.capture({
             distinctId: email,
             event: "book_call_email_link_clicked",

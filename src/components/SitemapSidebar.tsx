@@ -2,6 +2,10 @@
 
 import { useEffect, useLayoutEffect, useRef, useState } from "react";
 import { usePathname } from "next/navigation";
+import {
+  useLayoutAnchorGuard,
+  LayoutAnchorWarningBanner,
+} from "../lib/useLayoutAnchorGuard";
 
 interface PageSection {
   id: string;
@@ -81,6 +85,11 @@ export function SitemapSidebar({
   const activeRef = useRef<HTMLAnchorElement | null>(null);
   const navRef = useRef<HTMLElement | null>(null);
   const sidebarRef = useRef<HTMLElement | null>(null);
+
+  const layoutWarning = useLayoutAnchorGuard(sidebarRef, {
+    component: "SitemapSidebar",
+    minWidth: 1024,
+  });
 
   const filtered = query
     ? pages.filter(
@@ -184,6 +193,7 @@ export function SitemapSidebar({
 
   return (
     <>
+      <LayoutAnchorWarningBanner message={layoutWarning} />
       {/* Mobile toggle */}
       <button
         onClick={() => setMobileOpen(!mobileOpen)}

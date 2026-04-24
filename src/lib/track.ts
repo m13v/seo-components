@@ -187,3 +187,31 @@ export function trackCrossProductClick(props: CrossProductClickProps): void {
     page: typeof window !== "undefined" ? window.location.pathname : undefined,
   });
 }
+
+/**
+ * Identify the current browser session with a book-call lead's email so
+ * PostHog stitches the pre-booking browser activity, the welcome-email
+ * click (`book_call_email_link_clicked`), and the completed Cal booking
+ * (`cal_booking_completed`) into one person.
+ *
+ * We use the raw email as `distinct_id` to match the server-side identity
+ * used in the email-click redirect handler. If posthog-js isn't loaded
+ * yet, this is a no-op — the subsequent browser capture() calls will
+ * still fire with the anonymous id and PostHog will merge on identify
+ * later.
+ */
+export function identifyBookCallLead(email: string): void {
+  if (typeof window === "undefined") return;
+  const w = window as unknown as {
+    posthog?: {
+      identify?: (id: string, props?: Record<string, unknown>) => void;
+    };
+  };
+  const id = (email || "").trim().toLowerCase();
+  if (!id || !id.includes("@")) return;
+  try {
+    w.posthog?.identify?.(id, { email: id });
+  } catch {
+    /* no-op */
+  }
+}

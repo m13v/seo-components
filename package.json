@@ -1,6 +1,6 @@
 {
   "name": "@m13v/seo-components",
-  "version": "0.26.0",
+  "version": "0.27.0",
   "scripts": {
     "build:css": "tailwind -i src/_build.css -o dist/styles.css --minify",
     "bump:consumers": "bash scripts/bump-consumers.sh",

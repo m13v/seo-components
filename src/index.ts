@@ -66,6 +66,7 @@ export {
   trackDownloadClick,
   trackCrossProductClick,
   withBookingAttribution,
+  identifyBookCallLead,
 } from "./lib/track";
 export type {
   ScheduleClickProps,

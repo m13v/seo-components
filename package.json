@@ -1,6 +1,6 @@
 {
   "name": "@m13v/seo-components",
-  "version": "0.24.0",
+  "version": "0.25.0",
   "scripts": {
     "build:css": "tailwind -i src/_build.css -o dist/styles.css --minify",
     "bump:consumers": "bash scripts/bump-consumers.sh",
@@ -52,12 +52,14 @@
   "peerDependencies": {
     "@assistant-ui/react": ">=0.7",
     "@google/generative-ai": ">=0.24",
+    "@neondatabase/serverless": ">=0.9",
     "@remotion/player": ">=4",
     "@supabase/supabase-js": ">=2",
     "framer-motion": ">=11",
     "lottie-react": ">=2",
     "next": ">=14",
     "posthog-js": ">=1.100",
+    "posthog-node": ">=4",
     "react": ">=18",
     "react-dom": ">=18",
     "remotion": ">=4"
@@ -82,6 +84,12 @@
       "optional": true
     },
     "posthog-js": {
+      "optional": true
+    },
+    "@neondatabase/serverless": {
+      "optional": true
+    },
+    "posthog-node": {
       "optional": true
     }
   },

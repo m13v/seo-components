@@ -43,9 +43,6 @@ export type { BookCallConfig } from "./lib/book-call-route";
 export { createBookCallRedirectHandler } from "./lib/book-call-redirect";
 export type { BookCallRedirectConfig } from "./lib/book-call-redirect";
 
-export { signBookCallToken, verifyBookCallToken } from "./lib/book-call-token";
-export type { BookCallTokenPayload } from "./lib/book-call-token";
-
 // SeoComponentsStyles was removed in v0.23.0. It injected a prebuilt Tailwind
 // bundle wrapped in `@layer seo-components`, which collided with the
 // consumer's own `@layer utilities` and forced GuideChatPanel / SitemapSidebar

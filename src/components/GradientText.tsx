@@ -29,7 +29,7 @@ export function GradientText({
 
   return (
     <motion.span
-      className={`inline-block bg-clip-text text-transparent ${className}`}
+      className={`bg-clip-text text-transparent ${className}`}
       style={{
         backgroundImage: gradient,
         backgroundSize: "200% 100%",

@@ -32,8 +32,12 @@ export function ArticleMeta({
         <div className="w-7 h-7 rounded-full bg-gradient-to-br from-teal-500/40 to-teal-500/10 flex items-center justify-center text-xs font-semibold text-white">
           {author.charAt(0)}
         </div>
-        <span className="text-zinc-900 dark:text-zinc-100 font-medium">{author}</span>
-        {authorRole && <span className="hidden sm:inline text-zinc-500">, {authorRole}</span>}
+        <span className="text-zinc-900 dark:text-zinc-100 font-medium">
+          {author}
+          {authorRole && (
+            <span className="hidden sm:inline text-zinc-500 font-normal">, {authorRole}</span>
+          )}
+        </span>
       </div>
       <span aria-hidden="true">&middot;</span>
       <time dateTime={datePublished}>

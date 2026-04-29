@@ -12,6 +12,10 @@ export type {
   HowToStepInput,
 } from "./lib/json-ld";
 
+// Blog post layout (renders pre-converted HTML content with JSON-LD + breadcrumbs)
+export { BlogPostLayout } from "./components/BlogPostLayout";
+export type { BlogPostLayoutProps } from "./components/BlogPostLayout";
+
 // Trust-signal components
 export { Breadcrumbs } from "./components/Breadcrumbs";
 export type { BreadcrumbCrumb } from "./components/Breadcrumbs";

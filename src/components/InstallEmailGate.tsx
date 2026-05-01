@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { trackGetStartedClick } from "../lib/track";
+import { useCapture } from "../lib/analytics-context";
 
 const DEFAULT_STORAGE_KEY = "install_email_captured";
 
@@ -92,6 +93,7 @@ export function InstallEmailGate({
   newsletterPath = "/api/newsletter",
   renderTrigger,
 }: InstallEmailGateProps) {
+  const capture = useCapture();
   const [stage, setStage] = useState<Stage>("closed");
   const [email, setEmail] = useState("");
   const [submitting, setSubmitting] = useState(false);
@@ -154,6 +156,14 @@ export function InstallEmailGate({
         console.warn("[InstallEmailGate] newsletter POST failed", res.status);
       }
       if (remember) markInstallEmailCaptured(trimmed, storageKey);
+      capture("newsletter_subscribed", {
+        component: "InstallEmailGate",
+        email: trimmed,
+        page: typeof window !== "undefined" ? window.location.pathname : undefined,
+        site,
+        section,
+        source: "install_gate",
+      });
       trackGetStartedClick({
         destination: "modal:command",
         site,

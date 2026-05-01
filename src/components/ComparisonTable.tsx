@@ -35,8 +35,9 @@ export function ComparisonTable({
           {intro}
         </p>
       )}
-      <div className="rounded-2xl bg-[color-mix(in_srgb,currentColor_3%,transparent)] border border-[color-mix(in_srgb,currentColor_14%,transparent)] overflow-hidden">
-        <table className="w-full text-left">
+      <div className="rounded-2xl bg-[color-mix(in_srgb,currentColor_3%,transparent)] border border-[color-mix(in_srgb,currentColor_14%,transparent)] overflow-x-auto">
+        {/* min-w on table so 3 columns don't crush long copy on <420px viewports; horizontal scroll engages instead. */}
+        <table className="w-full min-w-[640px] text-left">
           <thead>
             <tr className="border-b border-[color-mix(in_srgb,currentColor_14%,transparent)]">
               <th className="px-5 py-4 text-zinc-500 dark:text-zinc-400 text-sm font-medium">Feature</th>

@@ -17,11 +17,14 @@ interface BentoGridProps {
   className?: string;
 }
 
+// Mobile is grid-cols-1; col-span-2/2x2 must be gated to >=sm or
+// they create an implicit 2nd column and squeeze 1x1 cards to half-width
+// (text wraps one character per line). See studyly.io regression 2026-04-30.
 const SIZE_CLASSES: Record<string, string> = {
   "1x1": "col-span-1 row-span-1",
-  "2x1": "col-span-2 row-span-1",
-  "1x2": "col-span-1 row-span-2",
-  "2x2": "col-span-2 row-span-2",
+  "2x1": "col-span-1 sm:col-span-2 row-span-1",
+  "1x2": "col-span-1 row-span-1 sm:row-span-2",
+  "2x2": "col-span-1 sm:col-span-2 row-span-1 sm:row-span-2",
 };
 
 export function BentoGrid({ cards, className = "" }: BentoGridProps) {

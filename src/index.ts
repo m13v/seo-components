@@ -58,6 +58,15 @@ export type {
   DownloadCTAProps,
   DownloadCTAAppearance,
 } from "./components/GetStartedCTA";
+export {
+  InstallEmailGate,
+  hasCapturedInstallEmail,
+  markInstallEmailCaptured,
+} from "./components/InstallEmailGate";
+export type {
+  InstallEmailGateProps,
+  InstallConfigBlock,
+} from "./components/InstallEmailGate";
 
 // Canonical analytics helpers.
 // `get_started_click` covers every primary self-serve CTA: downloads,

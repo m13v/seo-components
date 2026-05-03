@@ -78,6 +78,15 @@ for dir in "${consumers[@]}"; do
     failed+=("$name: commit failed")
     continue
   fi
+  # Some consumers (e.g. cl0ne.ai / ai-for-consultants) deploy via `vercel --prod`
+  # from local and have no GitHub remote configured. Skip push in that case;
+  # the local commit is what matters because the next vercel deploy reads from
+  # disk. Only report a failure when origin is configured but the push itself
+  # fails (auth, branch protection, network).
+  if ! git -C "$dir" config --get remote.origin.url >/dev/null 2>&1; then
+    echo "bumped on $branch (no origin remote configured; deploy via vercel --prod from local)"
+    continue
+  fi
   if ! git -C "$dir" push origin "$branch"; then
     failed+=("$name: push failed")
     continue

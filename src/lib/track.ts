@@ -8,6 +8,38 @@
 
 import { captureFromWindow } from "./analytics-context";
 
+// Rage-click dedup window. A real visitor revisiting the page later still
+// records; only same-event+same-destination+same-page firings within this
+// window collapse to one. 2026-05-03: claude-meter.com had 11 reported
+// `get_started_click` events in 24h that were actually 2 unique users
+// rage-mashing the install button (5-6 clicks within 4-14s each). Dedup
+// at the helper layer catches every callsite (GetStartedCTA, InlineCta,
+// StickyBottomCta, InstallEmailGate, ClaudeMeterCta, BookCallCTA,
+// SiteNavbar, and any custom caller in consumer sites).
+const _DEDUP_WINDOW_MS = 1500;
+const _lastFire = new Map<string, number>();
+
+function _shouldSuppressRecent(key: string, windowMs = _DEDUP_WINDOW_MS): boolean {
+  if (typeof window === "undefined") return false;
+  const now = Date.now();
+  const last = _lastFire.get(key);
+  if (last != null && now - last < windowMs) return true;
+  _lastFire.set(key, now);
+  // Keep the map from growing unbounded on long-lived SPAs.
+  if (_lastFire.size > 256) {
+    const cutoff = now - 60_000;
+    for (const [k, t] of _lastFire) {
+      if (t < cutoff) _lastFire.delete(k);
+    }
+  }
+  return false;
+}
+
+function _dedupKey(event: string, destination: string | undefined): string {
+  const page = typeof window !== "undefined" ? window.location.pathname : "";
+  return event + "::" + (destination || "") + "::" + page;
+}
+
 /**
  * Rewrite a booking URL (Cal.com, Calendly, etc.) so the booking webhook can
  * attribute the booking back to the specific landing page it came from.
@@ -81,6 +113,7 @@ export interface ScheduleClickProps {
  */
 export function trackScheduleClick(props: ScheduleClickProps): void {
   const { destination, site, section, text, component, extra } = props;
+  if (_shouldSuppressRecent(_dedupKey("schedule_click", destination))) return;
   captureFromWindow("schedule_click", {
     ...(extra || {}),
     destination,
@@ -119,6 +152,7 @@ export interface GetStartedClickProps {
  */
 export function trackGetStartedClick(props: GetStartedClickProps): void {
   const { destination, site, section, text, component, extra } = props;
+  if (_shouldSuppressRecent(_dedupKey("get_started_click", destination))) return;
   captureFromWindow("get_started_click", {
     ...(extra || {}),
     destination,
@@ -176,6 +210,7 @@ export interface CrossProductClickProps {
  */
 export function trackCrossProductClick(props: CrossProductClickProps): void {
   const { destination, site, targetProduct, section, text, component, extra } = props;
+  if (_shouldSuppressRecent(_dedupKey("cross_product_click", destination))) return;
   captureFromWindow("cross_product_click", {
     ...(extra || {}),
     destination,

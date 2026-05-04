@@ -43,6 +43,13 @@ export interface BookCallCTAProps {
    * redirected to Cal/Calendly immediately without a confirmation.
    */
   successMessage?: string;
+  /**
+   * Render a custom trigger element instead of the default button. Receives
+   * an `onClick` handler that opens the inline email form. Only honored by
+   * `appearance="hero"` (the click-to-expand variant). Other appearances are
+   * already standalone cards/forms that don't have a separable trigger.
+   */
+  renderTrigger?: (props: { onClick: () => void; disabled?: boolean }) => React.ReactNode;
 }
 
 export function BookCallCTA(props: BookCallCTAProps) {
@@ -281,6 +288,7 @@ function HeroBookCall({
   endpoint = "/api/book-call",
   emailPlaceholder = "you@example.com",
   submitLabel,
+  renderTrigger,
 }: BookCallCTAProps & {
   text: string;
   section: string;
@@ -296,6 +304,9 @@ function HeroBookCall({
   });
 
   if (!open && gate.status !== "success") {
+    if (renderTrigger) {
+      return <>{renderTrigger({ onClick: () => setOpen(true) })}</>;
+    }
     return (
       <button
         type="button"

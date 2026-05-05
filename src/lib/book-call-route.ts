@@ -91,6 +91,14 @@ export interface BookCallConfig {
   emailSubject?: string;
   /** Override the email HTML. Receives the email-click URL and the submitted email. */
   emailHtml?: (emailClickUrl: string, subscriberEmail: string) => string;
+  /**
+   * Optional: log the outbound send. Called after the Resend send call returns;
+   * receives the subscriber email and the Resend email id (or null on failure).
+   * Errors thrown here are logged and swallowed so a flaky DB doesn't break the
+   * booking flow. Required for sites that want delivery / open / click webhook
+   * events to update the right `<slug>_emails` row by `resend_id`.
+   */
+  onSent?: (email: string, resendEmailId: string | null) => Promise<void>;
 }
 
 /* ------------------------------------------------------------------ */
@@ -121,6 +129,7 @@ export function createBookCallHandler(config: BookCallConfig) {
     apiKeyEnv = "RESEND_API_KEY",
     emailSubject,
     emailHtml,
+    onSent,
   } = config;
 
   return async function POST(req: NextRequest) {
@@ -175,14 +184,43 @@ export function createBookCallHandler(config: BookCallConfig) {
       ? emailHtml(emailClickUrl, email)
       : defaultBookCallEmailHtml(brand, siteUrl, emailClickUrl);
 
-    fetch("https://api.resend.com/emails", {
-      method: "POST",
-      headers: {
-        Authorization: `Bearer ${resendKey}`,
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({ from: fromEmail, to: email, subject, html }),
-    }).catch((err) => console.error("[book-call] email send threw:", err));
+    if (onSent) {
+      // Sequential so the `onSent` callback receives the actual Resend id.
+      try {
+        const sendRes = await fetch("https://api.resend.com/emails", {
+          method: "POST",
+          headers: {
+            Authorization: `Bearer ${resendKey}`,
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ from: fromEmail, to: email, subject, html }),
+        });
+        let resendEmailId: string | null = null;
+        if (sendRes.ok) {
+          const data = (await sendRes.json().catch(() => ({}))) as { id?: string };
+          resendEmailId = data.id || null;
+        } else {
+          const detail = await sendRes.text().catch(() => "");
+          console.error("[book-call] email send failed:", sendRes.status, detail);
+        }
+        try {
+          await onSent(email, resendEmailId);
+        } catch (err) {
+          console.error("[book-call] onSent callback error:", err);
+        }
+      } catch (err) {
+        console.error("[book-call] email send threw:", err);
+      }
+    } else {
+      fetch("https://api.resend.com/emails", {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${resendKey}`,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ from: fromEmail, to: email, subject, html }),
+      }).catch((err) => console.error("[book-call] email send threw:", err));
+    }
 
     return new Response(
       JSON.stringify({ ok: true }),

@@ -69,9 +69,22 @@ export interface InstallEmailGateProps {
   newsletterPath?: string;
   /** Render a custom trigger element instead of the default button. Receives an onClick handler. */
   renderTrigger?: (props: { onClick: () => void; disabled?: boolean }) => React.ReactNode;
+  /**
+   * Email-only delivery mode. When true, the command is NEVER revealed in the
+   * modal; instead, after a successful email submit the user sees a
+   * "Check your inbox" success state. The newsletter route is responsible for
+   * sending the install command via email. Forces a re-submit on every click
+   * (no localStorage skip) so each click drives a fresh send and a clean
+   * `newsletter_subscribed` + `get_started_click` signal.
+   */
+  emailOnly?: boolean;
+  /** Stage 2 (sent) heading when emailOnly is true. */
+  sentTitle?: string;
+  /** Stage 2 (sent) body copy when emailOnly is true. Receives the submitted email. */
+  sentDescription?: (email: string) => React.ReactNode;
 }
 
-type Stage = "closed" | "email" | "command";
+type Stage = "closed" | "email" | "command" | "sent";
 
 export function InstallEmailGate({
   command,
@@ -92,10 +105,14 @@ export function InstallEmailGate({
   storageKey = DEFAULT_STORAGE_KEY,
   newsletterPath = "/api/newsletter",
   renderTrigger,
+  emailOnly = false,
+  sentTitle = "Check your inbox",
+  sentDescription,
 }: InstallEmailGateProps) {
   const capture = useCapture();
   const [stage, setStage] = useState<Stage>("closed");
   const [email, setEmail] = useState("");
+  const [submittedEmail, setSubmittedEmail] = useState("");
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState("");
   const [copied, setCopied] = useState<"command" | "config" | null>(null);
@@ -119,7 +136,10 @@ export function InstallEmailGate({
   }, [stage]);
 
   const onOpen = () => {
-    const skip = remember && hasCapturedInstallEmail(storageKey);
+    // emailOnly mode: never skip via localStorage, never reveal the command.
+    // Every click goes through the email form so the user gets a fresh email
+    // and the funnel records a fresh signal.
+    const skip = !emailOnly && remember && hasCapturedInstallEmail(storageKey);
     if (skip) {
       // Gate already passed previously: fire the canonical funnel event for
       // the gated-passed click. No event when the gate is fresh and we're
@@ -168,20 +188,23 @@ export function InstallEmailGate({
         site,
         section,
         source: "install_gate",
+        delivery: emailOnly ? "email_only" : "page_reveal",
       });
       trackGetStartedClick({
-        destination: "modal:command",
+        destination: emailOnly ? "email:install" : "modal:command",
         site,
         section,
         text: "email-submitted",
         component: "InstallEmailGate",
-        extra: { email: trimmed },
+        extra: { email: trimmed, delivery: emailOnly ? "email_only" : "page_reveal" },
       });
-      setStage("command");
+      setSubmittedEmail(trimmed);
+      setStage(emailOnly ? "sent" : "command");
     } catch (err) {
       console.warn("[InstallEmailGate] newsletter POST network error", err);
       if (remember) markInstallEmailCaptured(trimmed, storageKey);
-      setStage("command");
+      setSubmittedEmail(trimmed);
+      setStage(emailOnly ? "sent" : "command");
     } finally {
       setSubmitting(false);
     }
@@ -291,8 +314,69 @@ export function InstallEmailGate({
                     </button>
                   </form>
                   <p className="mt-4 text-xs text-zinc-500">
-                    Already subscribed? Submit anyway, the command unlocks either way.
+                    {emailOnly
+                      ? "Already subscribed? Submit anyway, we'll resend the install link."
+                      : "Already subscribed? Submit anyway, the command unlocks either way."}
                   </p>
+                </div>
+              )}
+
+              {stage === "sent" && (
+                <div className="p-7">
+                  <div className="mb-5 flex items-start justify-between gap-4">
+                    <div>
+                      <div className="mb-3 inline-flex h-10 w-10 items-center justify-center rounded-full bg-teal-50 text-teal-600">
+                        <svg
+                          className="h-5 w-5"
+                          fill="none"
+                          viewBox="0 0 24 24"
+                          stroke="currentColor"
+                          strokeWidth={2}
+                          aria-hidden="true"
+                        >
+                          <path strokeLinecap="round" strokeLinejoin="round" d="M3 8l7.5 5.25a3 3 0 003 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+                        </svg>
+                      </div>
+                      <h2 className="text-xl font-semibold tracking-tight text-zinc-900">
+                        {sentTitle}
+                      </h2>
+                      <p className="mt-1 text-sm leading-relaxed text-zinc-600">
+                        {sentDescription
+                          ? sentDescription(submittedEmail)
+                          : (
+                            <>
+                              Sent the install command to{" "}
+                              <span className="font-medium text-zinc-900">{submittedEmail}</span>.
+                              It usually arrives in under a minute. If you don&apos;t see it, check
+                              spam or promotions.
+                            </>
+                          )}
+                      </p>
+                    </div>
+                    <CloseButton onClick={() => setStage("closed")} />
+                  </div>
+
+                  <div className="mt-5 flex items-center justify-between gap-3">
+                    {githubUrl ? (
+                      <a
+                        href={githubUrl}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="text-sm font-medium text-teal-700 hover:text-teal-800"
+                      >
+                        View on GitHub →
+                      </a>
+                    ) : (
+                      <span />
+                    )}
+                    <button
+                      type="button"
+                      onClick={() => setStage("closed")}
+                      className="rounded-md border border-zinc-300 bg-white px-4 py-2 text-sm font-medium text-zinc-900 hover:bg-zinc-50"
+                    >
+                      Done
+                    </button>
+                  </div>
                 </div>
               )}
 

@@ -120,13 +120,18 @@ export function InstallEmailGate({
 
   const onOpen = () => {
     const skip = remember && hasCapturedInstallEmail(storageKey);
-    trackGetStartedClick({
-      destination: skip ? "modal:command" : "modal:email",
-      site,
-      section,
-      text: label,
-      component: "InstallEmailGate",
-    });
+    if (skip) {
+      // Gate already passed previously: fire the canonical funnel event for
+      // the gated-passed click. No event when the gate is fresh and we're
+      // about to ask for the email; that fires on submit instead.
+      trackGetStartedClick({
+        destination: "modal:command",
+        site,
+        section,
+        text: label,
+        component: "InstallEmailGate",
+      });
+    }
     setStage(skip ? "command" : "email");
     setError("");
   };
@@ -186,12 +191,16 @@ export function InstallEmailGate({
     try {
       await navigator.clipboard.writeText(text);
       setCopied(which);
-      trackGetStartedClick({
-        destination: which === "command" ? "clipboard:command" : "clipboard:config",
+      // Track the copy as its own event so it does not inflate the
+      // canonical `get_started_click` funnel. The gate event fires once
+      // when the email is submitted (or once on each subsequent gated-
+      // passed click), not for every clipboard copy.
+      capture("install_command_copied", {
+        component: "InstallEmailGate",
         site,
         section,
-        text: which === "command" ? command : configBlock?.label,
-        component: "InstallEmailGate",
+        which,
+        page: typeof window !== "undefined" ? window.location.pathname : undefined,
       });
       setTimeout(() => setCopied(null), 1800);
     } catch {

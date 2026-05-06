@@ -124,6 +124,7 @@ export interface NewsletterConfig {
   onSignup?: (email: string, resendEmailId: string | null) => Promise<void>;
 }
 
+
 /* ------------------------------------------------------------------ */
 /*  Factory                                                            */
 /* ------------------------------------------------------------------ */

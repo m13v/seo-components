@@ -1,6 +1,6 @@
 {
   "name": "@m13v/seo-components",
-  "version": "0.33.0",
+  "version": "0.34.0",
   "scripts": {
     "build:css": "tailwind -i src/_build.css -o dist/styles.css --minify",
     "lint:mobile-spans": "node scripts/lint-mobile-spans.mjs",

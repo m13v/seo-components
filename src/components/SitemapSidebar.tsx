@@ -387,7 +387,7 @@ export function SitemapSidebar({
                                 className={`block pl-3 pr-2 py-1.5 -ml-px border-l-2 text-[13px] leading-snug transition-colors ${
                                   isSectionActive
                                     ? "font-medium"
-                                    : "border-transparent text-zinc-500 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-zinc-100 hover:border-[color-mix(in_srgb,currentColor_25%,transparent)]"
+                                    : "border-transparent text-zinc-700 dark:text-zinc-300 hover:text-zinc-900 dark:hover:text-zinc-100 hover:border-[color-mix(in_srgb,currentColor_25%,transparent)]"
                                 }`}
                                 style={
                                   isSectionActive

@@ -31,7 +31,7 @@ export function ComparisonTable({
         </h2>
       )}
       {intro && (
-        <p className="text-zinc-500 dark:text-zinc-400 text-lg text-center mb-8 max-w-2xl mx-auto">
+        <p className="text-zinc-700 dark:text-zinc-300 text-lg text-center mb-8 max-w-2xl mx-auto">
           {intro}
         </p>
       )}
@@ -40,9 +40,9 @@ export function ComparisonTable({
         <table className="w-full min-w-[640px] text-left">
           <thead>
             <tr className="border-b border-[color-mix(in_srgb,currentColor_14%,transparent)]">
-              <th className="px-5 py-4 text-zinc-500 dark:text-zinc-400 text-sm font-medium">Feature</th>
-              <th className="px-5 py-4 text-zinc-500 dark:text-zinc-400 text-sm font-medium">{competitorName}</th>
-              <th className="px-5 py-4 text-teal-600 dark:text-teal-400 text-sm font-medium">{productName}</th>
+              <th className="px-5 py-4 text-zinc-800 dark:text-zinc-200 text-sm font-semibold">Feature</th>
+              <th className="px-5 py-4 text-zinc-800 dark:text-zinc-200 text-sm font-semibold">{competitorName}</th>
+              <th className="px-5 py-4 text-teal-700 dark:text-teal-300 text-sm font-semibold">{productName}</th>
             </tr>
           </thead>
           <tbody>
@@ -52,7 +52,7 @@ export function ComparisonTable({
                 className={i < rows.length - 1 ? "border-b border-[color-mix(in_srgb,currentColor_14%,transparent)]" : ""}
               >
                 <td className="px-5 py-3 text-zinc-900 dark:text-zinc-100 text-sm font-medium">{row.feature}</td>
-                <td className="px-5 py-3 text-zinc-500 dark:text-zinc-400 text-sm">{row.competitor}</td>
+                <td className="px-5 py-3 text-zinc-700 dark:text-zinc-300 text-sm">{row.competitor}</td>
                 <td className="px-5 py-3 text-zinc-900 dark:text-zinc-100 text-sm">{row.ours}</td>
               </tr>
             ))}
@@ -60,7 +60,7 @@ export function ComparisonTable({
         </table>
       </div>
       {caveat && (
-        <p className="text-zinc-500 dark:text-zinc-400 text-sm mt-4 text-center">{caveat}</p>
+        <p className="text-zinc-600 dark:text-zinc-400 text-sm mt-4 text-center">{caveat}</p>
       )}
     </section>
   );

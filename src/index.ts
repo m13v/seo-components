@@ -44,6 +44,8 @@ export type { NewsStripProps } from "./components/NewsStrip";
 // CTA components
 export { InlineCta } from "./components/InlineCta";
 export { StickyBottomCta } from "./components/StickyBottomCta";
+export { FounderChatPanel } from "./components/FounderChatPanel";
+export type { FounderChatPanelProps } from "./components/FounderChatPanel";
 export { ClaudeMeterCta } from "./components/ClaudeMeterCta";
 export type { ClaudeMeterCtaProps } from "./components/ClaudeMeterCta";
 export { BookCallCTA } from "./components/BookCallCTA";

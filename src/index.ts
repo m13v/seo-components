@@ -37,6 +37,10 @@ export { AnimatedSection } from "./components/AnimatedSection";
 export { AnimatedMetric } from "./components/AnimatedMetric";
 export { MetricsRow } from "./components/MetricsRow";
 
+// News bar (announcement strip linking to a freshly minted /t/ analysis)
+export { NewsStrip } from "./components/NewsStrip";
+export type { NewsStripProps } from "./components/NewsStrip";
+
 // CTA components
 export { InlineCta } from "./components/InlineCta";
 export { StickyBottomCta } from "./components/StickyBottomCta";

@@ -268,7 +268,7 @@ export function FounderChatPanel({
         <button
           type="button"
           onClick={handleOpen}
-          aria-label={`Chat with ${founderName}`}
+          aria-label="Chat with founder"
           style={{
             display: "flex",
             alignItems: "center",
@@ -301,14 +301,14 @@ export function FounderChatPanel({
           >
             {founderName.slice(0, 1).toUpperCase()}
           </span>
-          chat with {founderName}
+          chat with founder
         </button>
       )}
 
       {open && (
         <div
           role="dialog"
-          aria-label={`Chat with ${founderName}`}
+          aria-label="Chat with founder"
           style={{
             width: 360,
             maxWidth: "calc(100vw - 40px)",

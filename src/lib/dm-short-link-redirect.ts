@@ -17,6 +17,20 @@ export interface DmShortLinkRedirectConfig {
 }
 
 /**
+ * Bot User-Agent regex. Bots (Twitter card prefetch, LinkedIn unfurl,
+ * Slack/Discord/Telegram/WhatsApp link-preview crawlers, generic Google/Bing
+ * bots) hammer /r/<code> within seconds of mint to fetch link previews. They
+ * inflated the legacy `clicks` counter by ~20x. When this regex matches, the
+ * resolver:
+ *   1. Skips the counter increment (passes `?bot=1` so the server side
+ *      records the hit in post_link_clicks / dm_link_clicks with is_bot=true
+ *      but does NOT bump post_links.clicks / dm_links.clicks).
+ *   2. Skips the PostHog `*_short_link_clicked` event (no fake conversions).
+ *   3. Still 302s to target_url so previews render.
+ */
+const BOT_UA_RE = /bot|crawler|spider|Twitterbot|LinkedInBot|Slackbot|facebookexternalhit|Discordbot|TelegramBot|WhatsApp|Applebot|Googlebot|Bingbot|YandexBot|DuckDuckBot|redditbot|Pinterest|Embedly|Snapchat/i;
+
+/**
  * Factory for `GET /r/[code]`.
  *
  * Each short link maps to a destination URL. Two rails are supported:
@@ -34,12 +48,17 @@ export interface DmShortLinkRedirectConfig {
  *
  * Behavior:
  *   1. Read `code` from the route param. Reject non-alphanumeric / wrong-length.
- *   2. Hit `<resolverBase>/api/short-links/<code>`. The resolver increments the
- *      click counter and stamps first/last click timestamps.
- *   3. For post rail links: inject UTM params into the target URL.
- *   4. Fire the appropriate PostHog event (dm_short_link_clicked or
- *      post_short_link_clicked) fire-and-forget, non-blocking.
- *   5. 302 to the resolved target_url. On miss/error, 302 to "/".
+ *   2. Read User-Agent. If it matches BOT_UA_RE, pass `?bot=1` to the resolver
+ *      so it logs the hit but does NOT bump the human-facing counter, and
+ *      skip the PostHog event.
+ *   3. Hit `<resolverBase>/api/short-links/<code>?bot=<0|1>`. The resolver
+ *      always appends a row to post_link_clicks / dm_link_clicks (with
+ *      is_bot stamped accordingly). It only increments the legacy clicks
+ *      counter and stamps first/last click timestamps when is_bot=false.
+ *   4. For post rail links: inject UTM params into the target URL.
+ *   5. Fire the appropriate PostHog event (dm_short_link_clicked or
+ *      post_short_link_clicked) fire-and-forget, non-blocking; skipped for bots.
+ *   6. 302 to the resolved target_url. On miss/error, 302 to "/".
  */
 export function createDmShortLinkRedirectHandler(config: DmShortLinkRedirectConfig) {
   const {
@@ -62,6 +81,14 @@ export function createDmShortLinkRedirectHandler(config: DmShortLinkRedirectConf
       return Response.redirect(homeUrl, 302);
     }
 
+    // Bot detection lives at the edge so the server side can split humans vs
+    // bots in post_link_clicks / dm_link_clicks. Every UTF-8 string the user
+    // agent presents passes through this; matched UAs do NOT count as a real
+    // click and do NOT fire PostHog events.
+    const ua = req.headers.get("user-agent") || "";
+    const isBot = BOT_UA_RE.test(ua);
+    const referrer = req.headers.get("referer") || "";
+
     let target: string | null = null;
     let dmId: number | null = null;
     let postId: number | null = null;
@@ -70,7 +97,19 @@ export function createDmShortLinkRedirectHandler(config: DmShortLinkRedirectConf
     let platform: string | null = null;
 
     try {
-      const resp = await fetch(`${RESOLVER}/api/short-links/${encodeURIComponent(code)}`, {
+      const params = new URLSearchParams();
+      if (isBot) params.set("bot", "1");
+      // Forward UA + referrer so the server can persist them in
+      // *_link_clicks. We pass them through query params (not headers)
+      // because Next.js fetch normalizes some headers and the resolver
+      // is a separate origin. Truncate to keep the URL manageable.
+      if (ua) params.set("ua", ua.slice(0, 500));
+      if (referrer) params.set("ref", referrer.slice(0, 500));
+      const qs = params.toString();
+      const resolverUrl =
+        `${RESOLVER}/api/short-links/${encodeURIComponent(code)}` +
+        (qs ? `?${qs}` : "");
+      const resp = await fetch(resolverUrl, {
         cache: "no-store",
         signal: AbortSignal.timeout(4000),
       });
@@ -118,8 +157,10 @@ export function createDmShortLinkRedirectHandler(config: DmShortLinkRedirectConf
     const posthogKey = process.env[posthogKeyEnv];
     const posthogHost = (process.env[posthogHostEnv] || "https://us.i.posthog.com").replace(/\/+$/, "");
 
+    // Skip both PostHog events for bots: they do not represent intent, and
+    // counting them as `*_short_link_clicked` would taint funnel stats.
     // DM rail event
-    if (target && posthogKey && dmId != null) {
+    if (!isBot && target && posthogKey && dmId != null) {
       fetch(`${posthogHost}/i/v0/e/`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -136,7 +177,7 @@ export function createDmShortLinkRedirectHandler(config: DmShortLinkRedirectConf
     }
 
     // Post rail event
-    if (target && posthogKey && (postId != null || replyId != null)) {
+    if (!isBot && target && posthogKey && (postId != null || replyId != null)) {
       fetch(`${posthogHost}/i/v0/e/`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },

@@ -51,8 +51,18 @@ export function AnimatedCodeBlock({
           <span className="text-[11px] font-mono text-zinc-400 ml-1">{filename}</span>
         </div>
       )}
-      <pre className="p-5 text-sm font-mono overflow-x-auto">
-        <code className="text-zinc-100">
+      <pre
+        className="p-5 text-sm font-mono overflow-x-auto"
+        style={{
+          // Explicit so unlayered consumer rules like `article pre { ... }`
+          // (off-white bg + dark text) cannot leak in and produce white-on-white.
+          background: "transparent",
+          color: "rgb(244 244 245)", // zinc-100
+          border: 0,
+          margin: 0,
+        }}
+      >
+        <code style={{ color: "rgb(244 244 245)", background: "transparent" }}>
           {lines.slice(0, displayedLines).join("\n")}
           {displayedLines < lines.length && isInView && (
             <motion.span

@@ -27,8 +27,20 @@ export interface DmShortLinkRedirectConfig {
  *      but does NOT bump post_links.clicks / dm_links.clicks).
  *   2. Skips the PostHog `*_short_link_clicked` event (no fake conversions).
  *   3. Still 302s to target_url so previews render.
+ *
+ * 2026-05-07: extended after live measurement found ~71% of "human" hits in
+ * the last 24h were actually generic HTTP libs and stripped-header scrapers
+ * that the original "self-identifying bot" regex missed. New buckets:
+ *   - Generic HTTP libs (axios, python-requests, python-urllib, node-fetch,
+ *     bare "node"). No real browser ever sends these.
+ *   - Specific scraper UAs caught in the wild: dataminr (Twitter intel),
+ *     Anthill (content scanner).
+ *   - Spoofed/empty fingerprints: bare "Mozilla/5.0" (no real browser sends
+ *     just this), Chrome/70.x (2018 release, only seen from headless fleets).
+ *   - Empty UA is also treated as bot in the caller (see isBot computation
+ *     below) since real browsers always send a UA.
  */
-const BOT_UA_RE = /bot|crawler|spider|Twitterbot|LinkedInBot|Slackbot|facebookexternalhit|Discordbot|TelegramBot|WhatsApp|Applebot|Googlebot|Bingbot|YandexBot|DuckDuckBot|redditbot|Pinterest|Embedly|Snapchat/i;
+const BOT_UA_RE = /bot|crawler|spider|Twitterbot|LinkedInBot|Slackbot|facebookexternalhit|Discordbot|TelegramBot|WhatsApp|Applebot|Googlebot|Bingbot|YandexBot|DuckDuckBot|redditbot|Pinterest|Embedly|Snapchat|axios\/|python-requests|python-urllib|node-fetch|^node$|dataminr|Anthill|^Mozilla\/5\.0$|Chrome\/70\./i;
 
 /**
  * Factory for `GET /r/[code]`.
@@ -86,7 +98,10 @@ export function createDmShortLinkRedirectHandler(config: DmShortLinkRedirectConf
     // agent presents passes through this; matched UAs do NOT count as a real
     // click and do NOT fire PostHog events.
     const ua = req.headers.get("user-agent") || "";
-    const isBot = BOT_UA_RE.test(ua);
+    // Empty UA is treated as bot: real browsers always send one. Stripped-
+    // header scrapers were ~6% of "human" hits in the 24h post 2026-05-07
+    // measurement.
+    const isBot = !ua || BOT_UA_RE.test(ua);
     const referrer = req.headers.get("referer") || "";
 
     let target: string | null = null;

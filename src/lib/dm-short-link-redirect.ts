@@ -39,8 +39,15 @@ export interface DmShortLinkRedirectConfig {
  *     just this), Chrome/70.x (2018 release, only seen from headless fleets).
  *   - Empty UA is also treated as bot in the caller (see isBot computation
  *     below) since real browsers always send a UA.
+ *
+ * 2026-05-08: extended again after the post_link_clicks behavioral sweep
+ * surfaced three more recurring patterns the regex was missing:
+ *   - Nexus 5X Build/MMB29P, the literal Googlebot Smartphone UA template
+ *     (Google publishes this; any real Android user is on a current device).
+ *   - AI-Innovation-Radar, a named AI/news scraper.
+ *   - AFMMainUI/Darwin, Apple's Ads-For-Messages link prefetch (no human tap).
  */
-const BOT_UA_RE = /bot|crawler|spider|Twitterbot|LinkedInBot|Slackbot|facebookexternalhit|Discordbot|TelegramBot|WhatsApp|Applebot|Googlebot|Bingbot|YandexBot|DuckDuckBot|redditbot|Pinterest|Embedly|Snapchat|axios\/|python-requests|python-urllib|node-fetch|^node$|dataminr|Anthill|^Mozilla\/5\.0$|Chrome\/70\./i;
+const BOT_UA_RE = /bot|crawler|spider|Twitterbot|LinkedInBot|Slackbot|facebookexternalhit|Discordbot|TelegramBot|WhatsApp|Applebot|Googlebot|Bingbot|YandexBot|DuckDuckBot|redditbot|Pinterest|Embedly|Snapchat|axios\/|python-requests|python-urllib|node-fetch|^node$|dataminr|Anthill|^Mozilla\/5\.0$|Chrome\/70\.|Nexus 5X Build\/MMB29P|AI-Innovation-Radar|^AFMMainUI/i;
 
 /**
  * Factory for `GET /r/[code]`.

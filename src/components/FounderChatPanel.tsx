@@ -3,11 +3,12 @@
 /**
  * FounderChatPanel — floating chat-with-founder widget.
  *
- * Backend: ~/social-autoposter/api/web-chat-api (POST /api/web-chat/send,
- * GET /api/web-chat/thread/:threadId). Messages land in Neon, the
- * social-autoposter check-web-chats.sh launchd job picks them up every 15s,
- * spawns Claude per WEB-CHAT-SKILL.md, replies are forwarded to the
- * visitor's email AND surface here via the poll.
+ * Backend: Next.js API routes on social-autoposter-website
+ * (POST /api/web-chat/send, GET /api/web-chat/thread/:threadId). Messages
+ * land in the same Neon DB social-autoposter uses; the local
+ * check-web-chats.sh launchd job picks them up every 15s, spawns Claude
+ * per WEB-CHAT-SKILL.md, replies are forwarded to the visitor's email AND
+ * surface here via the poll.
  *
  * Visitor identity: a localStorage-scoped nanoid ("web_<id>"). Emails are
  * captured on the first message and required for reply forwarding when the
@@ -18,7 +19,7 @@
  *   <FounderChatPanel project="mediar" />
  *
  * Optional props:
- *   apiOrigin   override the default chat.m13v.com endpoint
+ *   apiOrigin   override the default social-autoposter-website endpoint
  *   founderName "matt", shown next to messages
  *   greeting    initial system bubble copy
  *   replyEta    "usually within 2 hours" line under greeting
@@ -27,7 +28,7 @@
 
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 
-const DEFAULT_API_ORIGIN = "https://chat.m13v.com";
+const DEFAULT_API_ORIGIN = "https://social-autoposter-website.vercel.app";
 const POLL_INTERVAL_MS = 30_000;
 
 type Sender = "visitor" | "agent" | "founder";

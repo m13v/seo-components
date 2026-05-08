@@ -291,6 +291,12 @@
     },
 
     {
+      "name": "NewsStrip",
+      "group": "cta",
+      "signature": "(href, lead, wedge, pillText?, ctaLabel?, tone?: \"amber\" | \"teal\" | \"rose\" | \"indigo\", site?, section?, datePublished?)",
+      "description": "Pinned, pill-anchored announcement strip that sits ABOVE the hero on the homepage and routes existing organic clickthroughs to a freshly minted /t/ analysis. Pattern: a viral post on Twitter/Reddit drives baseline traffic to '/'. Once a dedicated /t/ page ships, every subsequent visitor needs a one-click path from '/' to the deep page. Render at top of homepage, target the new /t/ slug. Tone defaults to amber for breaking news. The seo_top_posts pipeline mounts this automatically when it ships a page from a viral post."
+    },
+    {
       "name": "InlineCta",
       "group": "cta",
       "signature": "(heading, body, linkText?, href?)",

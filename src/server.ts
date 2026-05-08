@@ -37,6 +37,8 @@ export { getSupabaseAdmin } from "./lib/supabase-admin";
 export { createNewsletterHandler } from "./lib/newsletter-route";
 export type { NewsletterConfig } from "./lib/newsletter-route";
 
+export { capturePostHogServer } from "./lib/posthog-capture";
+
 export { createBookCallHandler } from "./lib/book-call-route";
 export type { BookCallConfig } from "./lib/book-call-route";
 

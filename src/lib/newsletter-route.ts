@@ -1,4 +1,5 @@
 import { NextRequest } from "next/server";
+import { capturePostHogServer } from "./posthog-capture";
 
 /* ------------------------------------------------------------------ */
 /*  Default welcome email template (light theme, teal brand)           */
@@ -117,11 +118,23 @@ export interface NewsletterConfig {
    */
   welcomeHtml?: (email: string) => string;
   /**
+   * Optional plain-text MIME part for the welcome email. Useful when the
+   * email body contains commands or URLs that whitespace-collapse when
+   * Resend auto-extracts text from HTML (claude-meter, assrt, etc.).
+   */
+  welcomeText?: (email: string) => string;
+  /**
    * Optional: log the signup to a database.
    * Called after the email is sent successfully.
    * Receives the subscriber email and the Resend email ID.
    */
   onSignup?: (email: string, resendEmailId: string | null) => Promise<void>;
+  /**
+   * Short slug identifying the site (e.g. "fazm", "mediar", "claude-meter").
+   * Attached to the server-side PostHog `newsletter_subscribed_server` event
+   * so the dashboard can bucket signups by site even if `$host` is blocked.
+   */
+  site?: string;
 }
 
 
@@ -139,7 +152,9 @@ export function createNewsletterHandler(config: NewsletterConfig) {
     apiKeyEnv = "RESEND_API_KEY",
     welcomeSubject,
     welcomeHtml,
+    welcomeText,
     onSignup,
+    site,
   } = config;
 
   return async function POST(req: NextRequest) {
@@ -204,6 +219,8 @@ export function createNewsletterHandler(config: NewsletterConfig) {
 
     let resendEmailId: string | null = null;
 
+    const text = welcomeText ? welcomeText(email) : undefined;
+
     const emailRes = await fetch("https://api.resend.com/emails", {
       method: "POST",
       headers: {
@@ -215,6 +232,7 @@ export function createNewsletterHandler(config: NewsletterConfig) {
         to: email,
         subject,
         html,
+        ...(text ? { text } : {}),
       }),
     });
 
@@ -235,6 +253,30 @@ export function createNewsletterHandler(config: NewsletterConfig) {
         console.error("[newsletter] onSignup callback error:", err);
       }
     }
+
+    // 4. Server-side PostHog capture (ground truth, not ad-blocked).
+    //    Fires once per successful signup. The dashboard's funnel_per_day.py
+    //    counts `newsletter_subscribed_server` for the "Email Signups" column.
+    //    Distinct from the client-side `newsletter_subscribed` event so we
+    //    don't double-count when both fire.
+    let host: string | undefined;
+    try {
+      host = req.headers.get("host") || new URL(siteUrl).hostname;
+    } catch {
+      host = undefined;
+    }
+    void capturePostHogServer({
+      event: "newsletter_subscribed_server",
+      distinctId: email,
+      host,
+      properties: {
+        email,
+        site: site || brand.toLowerCase(),
+        brand,
+        resend_email_id: resendEmailId,
+        component: "createNewsletterHandler",
+      },
+    });
 
     return new Response(
       JSON.stringify({ success: true }),

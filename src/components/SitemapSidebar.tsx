@@ -294,7 +294,7 @@ export function SitemapSidebar({
           </div>
           <div className="relative">
             <svg
-              className="absolute left-2.5 top-1/2 -translate-y-1/2 text-zinc-400"
+              className="absolute left-2.5 top-1/2 -translate-y-1/2 text-zinc-600 dark:text-zinc-400"
               width="14"
               height="14"
               viewBox="0 0 24 24"
@@ -312,7 +312,7 @@ export function SitemapSidebar({
               placeholder="Search pages..."
               value={query}
               onChange={(e) => setQuery(e.target.value)}
-              className="w-full pl-8 pr-3 py-2 text-sm border border-[color-mix(in_srgb,currentColor_14%,transparent)] rounded-lg bg-[color-mix(in_srgb,currentColor_4%,transparent)] text-zinc-900 dark:text-zinc-100 placeholder:text-zinc-400 dark:placeholder:text-zinc-500 focus:outline-none focus:ring-2 focus:border-transparent transition"
+              className="w-full pl-8 pr-3 py-2 text-sm border border-[color-mix(in_srgb,currentColor_14%,transparent)] rounded-lg bg-[color-mix(in_srgb,currentColor_4%,transparent)] text-zinc-900 dark:text-zinc-100 placeholder:text-zinc-600 dark:placeholder:text-zinc-400 focus:outline-none focus:ring-2 focus:border-transparent transition"
               style={
                 {
                   "--tw-ring-color":
@@ -326,14 +326,14 @@ export function SitemapSidebar({
         {/* Page list */}
         <nav ref={navRef} className="flex-1 overflow-y-auto p-3">
           {filtered.length === 0 && (
-            <p className="text-sm text-zinc-400 dark:text-zinc-400 px-3 py-4">No pages found</p>
+            <p className="text-sm text-zinc-600 dark:text-zinc-400 px-3 py-4">No pages found</p>
           )}
 
           {Array.from(groups.entries()).map(([category, categoryPages]) => (
             <div key={category} className="mb-4">
               {/* Category header (only show if more than one category) */}
               {groups.size > 1 && (
-                <div className="px-3 py-1.5 text-xs font-semibold text-zinc-400 dark:text-zinc-400 uppercase tracking-wider">
+                <div className="px-3 py-1.5 text-xs font-semibold text-zinc-600 dark:text-zinc-400 uppercase tracking-wider">
                   {getCategoryLabel(category, categoryLabels)}
                 </div>
               )}
@@ -349,7 +349,7 @@ export function SitemapSidebar({
                       className={`block px-3 py-2.5 rounded-lg transition-colors ${
                         isActive
                           ? "text-zinc-900 dark:text-zinc-100 font-medium"
-                          : "text-zinc-600 dark:text-zinc-300 hover:bg-[color-mix(in_srgb,currentColor_4%,transparent)] hover:text-zinc-900 dark:hover:text-zinc-100"
+                          : "text-zinc-800 dark:text-zinc-200 hover:bg-[color-mix(in_srgb,currentColor_4%,transparent)] hover:text-zinc-900 dark:hover:text-zinc-100"
                       }`}
                       style={
                         isActive
@@ -365,7 +365,7 @@ export function SitemapSidebar({
                         {page.title}
                       </span>
                       {page.datePublished && (
-                        <span className="text-[11px] text-zinc-400 dark:text-zinc-400 mt-0.5 block">
+                        <span className="text-[11px] text-zinc-600 dark:text-zinc-400 mt-0.5 block">
                           {page.datePublished}
                         </span>
                       )}

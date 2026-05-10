@@ -46,8 +46,17 @@ export interface DmShortLinkRedirectConfig {
  *     (Google publishes this; any real Android user is on a current device).
  *   - AI-Innovation-Radar, a named AI/news scraper.
  *   - AFMMainUI/Darwin, Apple's Ads-For-Messages link prefetch (no human tap).
+ *
+ * 2026-05-10: extended after a 24h click audit found four leak patterns
+ * sitting in the human pile:
+ *   - LinkResolver/1.0 and link-resolver/1.0 (named link-unfurl bots,
+ *     no "bot/crawler" token in the UA).
+ *   - Bare "Mozilla/5.0 (compatible)" with no engine info (no real browser
+ *     ever sends just this; spoofed minimal fingerprint).
+ *   - curl/<version> (generic HTTP client; "axios/" was already caught,
+ *     curl was missed).
  */
-const BOT_UA_RE = /bot|crawler|spider|Twitterbot|LinkedInBot|Slackbot|facebookexternalhit|Discordbot|TelegramBot|WhatsApp|Applebot|Googlebot|Bingbot|YandexBot|DuckDuckBot|redditbot|Pinterest|Embedly|Snapchat|axios\/|python-requests|python-urllib|node-fetch|^node$|dataminr|Anthill|^Mozilla\/5\.0$|Chrome\/70\.|Nexus 5X Build\/MMB29P|AI-Innovation-Radar|^AFMMainUI/i;
+const BOT_UA_RE = /bot|crawler|spider|Twitterbot|LinkedInBot|Slackbot|facebookexternalhit|Discordbot|TelegramBot|WhatsApp|Applebot|Googlebot|Bingbot|YandexBot|DuckDuckBot|redditbot|Pinterest|Embedly|Snapchat|axios\/|python-requests|python-urllib|node-fetch|^node$|dataminr|Anthill|^Mozilla\/5\.0$|Chrome\/70\.|Nexus 5X Build\/MMB29P|AI-Innovation-Radar|^AFMMainUI|LinkResolver|link-resolver|^Mozilla\/5\.0 \(compatible\)$|^curl\//i;
 
 /**
  * Factory for `GET /r/[code]`.

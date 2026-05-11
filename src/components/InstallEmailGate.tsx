@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { createPortal } from "react-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import { trackGetStartedClick } from "../lib/track";
 import { useCapture } from "../lib/analytics-context";
@@ -82,6 +83,21 @@ export interface InstallEmailGateProps {
   sentTitle?: string;
   /** Stage 2 (sent) body copy when emailOnly is true. Receives the submitted email. */
   sentDescription?: (email: string) => React.ReactNode;
+  /**
+   * Redirect-after-submit mode. When true, the submit POST is expected to
+   * return JSON `{ url: string }` (e.g. a Stripe Checkout session URL). On
+   * success the browser is redirected to that URL instead of advancing the
+   * modal to "command" or "sent". Used by paid-checkout flows where the
+   * email gate hands off to an external billing page. When set, takes
+   * precedence over `emailOnly`.
+   */
+  redirectOnSuccess?: boolean;
+  /**
+   * Extra fields merged into the submit POST body alongside `{ email }`.
+   * Useful for passing `section`, UTMs, or product identifiers to the
+   * checkout endpoint.
+   */
+  submitExtras?: Record<string, unknown>;
 }
 
 type Stage = "closed" | "email" | "command" | "sent";
@@ -108,6 +124,8 @@ export function InstallEmailGate({
   emailOnly = false,
   sentTitle = "Check your inbox",
   sentDescription,
+  redirectOnSuccess = false,
+  submitExtras,
 }: InstallEmailGateProps) {
   const capture = useCapture();
   const [stage, setStage] = useState<Stage>("closed");
@@ -116,6 +134,15 @@ export function InstallEmailGate({
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState("");
   const [copied, setCopied] = useState<"command" | "config" | null>(null);
+  // Mounted flag so we can portal the modal to document.body on the client
+  // without breaking SSR hydration. The modal escapes any transformed parent
+  // (e.g. .reveal-up) that would otherwise trap position: fixed inside that
+  // ancestor's stacking context, allowing clicks to leak through to the
+  // underlying page.
+  const [mounted, setMounted] = useState(false);
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
   useEffect(() => {
     if (stage === "closed") return;
@@ -166,10 +193,12 @@ export function InstallEmailGate({
     setSubmitting(true);
     setError("");
     try {
+      const body: Record<string, unknown> = { email: trimmed };
+      if (submitExtras) Object.assign(body, submitExtras);
       const res = await fetch(newsletterPath, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email: trimmed }),
+        body: JSON.stringify(body),
       });
       if (res.status >= 400 && res.status < 500) {
         const data = await res.json().catch(() => ({}));
@@ -178,9 +207,14 @@ export function InstallEmailGate({
         return;
       }
       if (!res.ok) {
-        console.warn("[InstallEmailGate] newsletter POST failed", res.status);
+        console.warn("[InstallEmailGate] submit POST failed", res.status);
       }
-      if (remember) markInstallEmailCaptured(trimmed, storageKey);
+      const delivery = redirectOnSuccess
+        ? "redirect"
+        : emailOnly
+          ? "email_only"
+          : "page_reveal";
+      if (remember && !redirectOnSuccess) markInstallEmailCaptured(trimmed, storageKey);
       capture("newsletter_subscribed", {
         component: "InstallEmailGate",
         email: trimmed,
@@ -188,25 +222,51 @@ export function InstallEmailGate({
         site,
         section,
         source: "install_gate",
-        delivery: emailOnly ? "email_only" : "page_reveal",
+        delivery,
       });
       trackGetStartedClick({
-        destination: emailOnly ? "email:install" : "modal:command",
+        destination: redirectOnSuccess
+          ? "redirect:checkout"
+          : emailOnly
+            ? "email:install"
+            : "modal:command",
         site,
         section,
         text: "email-submitted",
         component: "InstallEmailGate",
-        extra: { email: trimmed, delivery: emailOnly ? "email_only" : "page_reveal" },
+        extra: { email: trimmed, delivery },
       });
+
+      if (redirectOnSuccess) {
+        const data = (await res.json().catch(() => ({}))) as { url?: string };
+        if (data.url && typeof window !== "undefined") {
+          window.location.href = data.url;
+          // Keep the modal in the submitting state while the browser navigates
+          // away so the user does not see a flash of stale UI.
+          return;
+        }
+        setError("No checkout URL returned. Try again.");
+        setSubmitting(false);
+        return;
+      }
+
       setSubmittedEmail(trimmed);
       setStage(emailOnly ? "sent" : "command");
     } catch (err) {
-      console.warn("[InstallEmailGate] newsletter POST network error", err);
+      console.warn("[InstallEmailGate] submit POST network error", err);
+      if (redirectOnSuccess) {
+        setError("Network error. Try again.");
+        setSubmitting(false);
+        return;
+      }
       if (remember) markInstallEmailCaptured(trimmed, storageKey);
       setSubmittedEmail(trimmed);
       setStage(emailOnly ? "sent" : "command");
     } finally {
-      setSubmitting(false);
+      // For redirect mode we returned early above on success; the browser
+      // is navigating away so we intentionally do not flip submitting back
+      // to false. For other modes, the stage transition is enough.
+      if (!redirectOnSuccess) setSubmitting(false);
     }
   };
 
@@ -236,28 +296,8 @@ export function InstallEmailGate({
       ? "group inline-flex h-11 items-center gap-2 rounded-md bg-zinc-900 px-5 text-sm font-medium text-white transition-colors hover:bg-zinc-800"
       : "inline-flex items-center justify-center rounded-md border border-zinc-300 bg-white px-5 py-2.5 text-sm font-medium text-zinc-800 transition-colors hover:border-zinc-400";
 
-  return (
-    <>
-      {renderTrigger ? (
-        renderTrigger({ onClick: onOpen })
-      ) : (
-        <button type="button" onClick={onOpen} className={`${buttonClass} ${className}`.trim()}>
-          {label}
-          {variant === "primary" && (
-            <svg
-              className="h-4 w-4 transition-transform group-hover:translate-x-0.5"
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke="currentColor"
-              strokeWidth={2}
-            >
-              <path strokeLinecap="round" strokeLinejoin="round" d="M13 7l5 5m0 0l-5 5m5-5H6" />
-            </svg>
-          )}
-        </button>
-      )}
-
-      <AnimatePresence>
+  const overlay = (
+    <AnimatePresence>
         {stage !== "closed" && (
           <motion.div
             key="backdrop"
@@ -455,6 +495,35 @@ export function InstallEmailGate({
           </motion.div>
         )}
       </AnimatePresence>
+  );
+
+  return (
+    <>
+      {renderTrigger ? (
+        renderTrigger({ onClick: onOpen })
+      ) : (
+        <button type="button" onClick={onOpen} className={`${buttonClass} ${className}`.trim()}>
+          {label}
+          {variant === "primary" && (
+            <svg
+              className="h-4 w-4 transition-transform group-hover:translate-x-0.5"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+              strokeWidth={2}
+            >
+              <path strokeLinecap="round" strokeLinejoin="round" d="M13 7l5 5m0 0l-5 5m5-5H6" />
+            </svg>
+          )}
+        </button>
+      )}
+      {/* Portal the modal to document.body so a transformed ancestor (e.g.
+          `.reveal-up` with `transform: translateY`) can't trap position:fixed
+          inside its own stacking context, which would let clicks leak through
+          to elements layered on top of the modal at viewport level. */}
+      {mounted && typeof document !== "undefined"
+        ? createPortal(overlay, document.body)
+        : null}
     </>
   );
 }

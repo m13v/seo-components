@@ -145,7 +145,7 @@ export function createDownloadHandler(config: DownloadHandlerConfig) {
       } catch {
         host = undefined;
       }
-      void capturePostHogServer({
+      await capturePostHogServer({
         event: posthogEvent,
         distinctId: email,
         host,

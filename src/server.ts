@@ -48,6 +48,13 @@ export type { BookCallRedirectConfig } from "./lib/book-call-redirect";
 export { createDmShortLinkRedirectHandler } from "./lib/dm-short-link-redirect";
 export type { DmShortLinkRedirectConfig } from "./lib/dm-short-link-redirect";
 
+export { createDownloadHandler } from "./lib/download-route";
+export type {
+  DownloadHandlerConfig,
+  DownloadHandlerVerifyResult,
+  DownloadHandlerClickInfo,
+} from "./lib/download-route";
+
 export { createResendInboundHandler } from "./lib/resend-inbound-route";
 export type {
   ResendInboundConfig,

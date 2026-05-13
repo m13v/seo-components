@@ -255,17 +255,17 @@ export function createNewsletterHandler(config: NewsletterConfig) {
     }
 
     // 4. Server-side PostHog capture (ground truth, not ad-blocked).
-    //    Fires once per successful signup. The dashboard's funnel_per_day.py
-    //    counts `newsletter_subscribed_server` for the "Email Signups" column.
-    //    Distinct from the client-side `newsletter_subscribed` event so we
-    //    don't double-count when both fire.
+    //    Awaited (not `void`) so the fetch completes before the response is
+    //    returned. On Cloud Run / serverless runtimes the container can be
+    //    frozen the moment the response is sent, killing fire-and-forget
+    //    fetches. Adds ~50-150ms latency, worth it for reliable funnel data.
     let host: string | undefined;
     try {
       host = req.headers.get("host") || new URL(siteUrl).hostname;
     } catch {
       host = undefined;
     }
-    void capturePostHogServer({
+    await capturePostHogServer({
       event: "newsletter_subscribed_server",
       distinctId: email,
       host,

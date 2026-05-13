@@ -1,4 +1,5 @@
 import { NextRequest } from "next/server";
+import { capturePostHogServer } from "./posthog-capture";
 
 /* ------------------------------------------------------------------ */
 /*  Resend Inbound webhook handler                                     */
@@ -104,6 +105,26 @@ export interface ResendInboundConfig {
     timestamp: string;
   }) => Promise<void>;
   /**
+   * Optional: fire server-side PostHog events for delivery lifecycle
+   * (`email_sent_server`, `email_delivered_server`, `email_opened_server`,
+   * `email_clicked_server`, `email_bounced_server`, `email_complained_server`,
+   * `email_delayed_server`). When set, the webhook receives ALL delivery
+   * events for the connected Resend workspace, so use `fromDomainFilter` to
+   * scope to this site only.
+   */
+  posthog?: {
+    /** Site slug attached to the PostHog event (e.g. "claude-meter"). */
+    site: string;
+    /**
+     * Only fire PostHog events when the email's `from` address ends in this
+     * domain (e.g. "claude-meter.com"). Critical because Resend webhooks are
+     * registered at workspace level: every delivery event for every domain
+     * in the account hits every webhook. Without this filter, claude-meter's
+     * PostHog gets polluted by fazm / mediar / vipassana delivery events.
+     */
+    fromDomainFilter: string;
+  };
+  /**
    * Skip forwarding (only persist + return 200). Useful for tests, or for
    * sites where the DB log is the only consumer.
    */
@@ -145,6 +166,7 @@ export function createResendInboundHandler(config: ResendInboundConfig) {
     apiKeyEnv = "RESEND_API_KEY",
     onInbound,
     onDeliveryEvent,
+    posthog,
     skipForward = false,
     ignoredSenders = DEFAULT_IGNORED_SENDERS,
     ignoredSubjects = DEFAULT_IGNORED_SUBJECTS,
@@ -220,18 +242,55 @@ export function createResendInboundHandler(config: ResendInboundConfig) {
     }
   }
 
-  async function handleDelivery(payload: ResendInboundPayload) {
+  async function handleDelivery(payload: ResendInboundPayload, host?: string) {
     const status = DELIVERY_STATUS_MAP[payload.type];
-    if (!status || !onDeliveryEvent) return;
-    try {
-      await onDeliveryEvent({
-        type: payload.type,
-        status,
-        resendId: payload.data.email_id,
-        timestamp: payload.created_at,
+    if (!status) return;
+
+    if (onDeliveryEvent) {
+      try {
+        await onDeliveryEvent({
+          type: payload.type,
+          status,
+          resendId: payload.data.email_id,
+          timestamp: payload.created_at,
+        });
+      } catch (err) {
+        console.error(`${tag} onDeliveryEvent error`, err);
+      }
+    }
+
+    // Optional PostHog fire — only when configured AND the email originated
+    // from our domain (Resend webhooks are workspace-level, so filtering is
+    // mandatory to avoid cross-site pollution).
+    if (posthog) {
+      const fromAddr = parseEmail(payload.data.from || "");
+      const matchesDomain = fromAddr.endsWith(`@${posthog.fromDomainFilter.toLowerCase()}`);
+      if (!matchesDomain) {
+        console.log(
+          `${tag} posthog skip, from domain mismatch:`,
+          fromAddr,
+          "expected:",
+          posthog.fromDomainFilter,
+        );
+        return;
+      }
+      const recipient = payload.data.to?.[0]?.toLowerCase() || payload.data.email_id;
+      await capturePostHogServer({
+        event: `email_${status}_server`,
+        distinctId: recipient,
+        host,
+        properties: {
+          email: recipient,
+          site: posthog.site,
+          resend_email_id: payload.data.email_id,
+          type: payload.type,
+          status,
+          subject: payload.data.subject || null,
+          from: fromAddr,
+          timestamp: payload.created_at,
+          component: "createResendInboundHandler",
+        },
       });
-    } catch (err) {
-      console.error(`${tag} onDeliveryEvent error`, err);
     }
   }
 
@@ -257,11 +316,18 @@ export function createResendInboundHandler(config: ResendInboundConfig) {
 
     console.log(`${tag}`, payload.type, payload.data?.email_id);
 
+    let host: string | undefined;
+    try {
+      host = req.headers.get("host") || undefined;
+    } catch {
+      host = undefined;
+    }
+
     try {
       if (payload.type === "email.received") {
         await handleInbound(payload, apiKey);
       } else if (DELIVERY_STATUS_MAP[payload.type]) {
-        await handleDelivery(payload);
+        await handleDelivery(payload, host);
       }
     } catch (err) {
       console.error(`${tag} handler error`, err);

@@ -239,9 +239,10 @@ export function FounderChatPanel({
         threadId: threadId || undefined,
         text,
         email: email || undefined,
-        // Forwarded to the backend so founder replies via email can address
-        // the user by name; backend may ignore unknown fields safely.
-        senderName: userName || undefined,
+        // Forwarded to the backend so the visitor row gets a real display
+        // name (web_chat_threads.visitor_name); the route handler reads this
+        // as `name` per /api/web-chat/send/route.ts.
+        name: userName || undefined,
         pageUrl: typeof window !== "undefined" ? window.location.href : undefined,
         referrer: typeof document !== "undefined" ? document.referrer || undefined : undefined,
       };

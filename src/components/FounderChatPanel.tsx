@@ -24,6 +24,11 @@
  *   greeting    initial system bubble copy
  *   replyEta    "usually within 2 hours" line under greeting
  *   accent      tailwind color name for the bubble (default: "teal")
+ *   userEmail   pre-fill from consumer auth (Firebase/Clerk/NextAuth) so
+ *               authed users don't get re-asked for their email. Falls back
+ *               to the built-in prompt for anonymous users (undefined / "").
+ *   userName    pre-fill display name; used as sender_name on outgoing
+ *               messages and forwarded to backend for personalized replies.
  */
 
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
@@ -56,6 +61,23 @@ export interface FounderChatPanelProps {
   replyEta?: string;
   /** Whether to require email before allowing the first message (default: true). */
   requireEmail?: boolean;
+  /**
+   * Optional: pre-fill the visitor's email from the consumer app's auth system,
+   * so already-authenticated users (Firebase, Clerk, NextAuth, etc.) don't get
+   * asked again. When set to a non-empty value, the email gate is skipped on
+   * mount and the value is also persisted to localStorage so subsequent
+   * anonymous sessions on the same device reuse it.
+   *
+   * Pass undefined / empty string for anonymous users, the panel will fall back
+   * to its built-in email prompt.
+   */
+  userEmail?: string;
+  /**
+   * Optional: pre-fill the visitor's display name. Used as the optimistic
+   * "sender_name" on outgoing messages and forwarded to the backend so founder
+   * replies can address the user by name.
+   */
+  userName?: string;
 }
 
 function capture(event: string, props?: Record<string, unknown>) {
@@ -116,6 +138,8 @@ export function FounderChatPanel({
   greeting,
   replyEta = "usually replies within a couple hours",
   requireEmail = true,
+  userEmail,
+  userName,
 }: FounderChatPanelProps) {
   const [open, setOpen] = useState(false);
   const [messages, setMessages] = useState<ApiMessage[]>([]);
@@ -140,6 +164,19 @@ export function FounderChatPanel({
       setEmailSubmitted(true);
     }
   }, [project]);
+
+  // Prefer the consumer-supplied authed email over the localStorage one, and
+  // re-sync whenever the prop changes (e.g. the user signs in via Google
+  // popup after the panel was already mounted on the page).
+  useEffect(() => {
+    if (!userEmail) return;
+    const trimmed = userEmail.trim();
+    if (!trimmed) return;
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(trimmed)) return;
+    setEmail(trimmed);
+    setEmailSubmitted(true);
+    setStoredEmail(trimmed);
+  }, [userEmail]);
 
   // Auto-scroll to bottom on new messages.
   useEffect(() => {
@@ -188,7 +225,7 @@ export function FounderChatPanel({
     const optimistic: ApiMessage = {
       id: -Date.now(),
       sender: "visitor",
-      sender_name: email || "you",
+      sender_name: userName || email || "you",
       text,
       createdAt: new Date().toISOString(),
     };
@@ -202,6 +239,9 @@ export function FounderChatPanel({
         threadId: threadId || undefined,
         text,
         email: email || undefined,
+        // Forwarded to the backend so founder replies via email can address
+        // the user by name; backend may ignore unknown fields safely.
+        senderName: userName || undefined,
         pageUrl: typeof window !== "undefined" ? window.location.href : undefined,
         referrer: typeof document !== "undefined" ? document.referrer || undefined : undefined,
       };
@@ -229,7 +269,7 @@ export function FounderChatPanel({
     } finally {
       setSending(false);
     }
-  }, [apiOrigin, draft, email, emailSubmitted, fetchThread, project, requireEmail, sending, threadId]);
+  }, [apiOrigin, draft, email, emailSubmitted, fetchThread, project, requireEmail, sending, threadId, userName]);
 
   const onSubmitEmail = useCallback(() => {
     const trimmed = email.trim();

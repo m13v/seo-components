@@ -103,7 +103,24 @@ export function createDmShortLinkRedirectHandler(config: DmShortLinkRedirectConf
   ) {
     const { code: rawCode } = await ctx.params;
     const code = (rawCode || "").trim();
-    const homeUrl = new URL("/", req.url).toString();
+    // Build the public home URL using forwarded headers. On Cloud Run the
+    // container is served at `0.0.0.0:8080` internally and Next.js sets
+    // `req.url` from that host, so `new URL("/", req.url)` would 302 users to
+    // `https://0.0.0.0:8080/` (unreachable). Vercel doesn't have this problem
+    // because its proxy rewrites `req.url` to the public host, but we share
+    // this handler across Vercel + Cloud Run consumers, so always prefer the
+    // forwarded host headers when present.
+    const fwdHost =
+      req.headers.get("x-forwarded-host") ||
+      req.headers.get("host") ||
+      "";
+    const fwdProto =
+      req.headers.get("x-forwarded-proto") ||
+      (fwdHost && !fwdHost.includes("localhost") ? "https" : "http");
+    const homeUrl =
+      fwdHost && !/(?:^|\.)0\.0\.0\.0(?::\d+)?$/.test(fwdHost)
+        ? `${fwdProto}://${fwdHost}/`
+        : new URL("/", req.url).toString();
 
     if (!/^[a-z0-9]{4,32}$/i.test(code)) {
       return Response.redirect(homeUrl, 302);

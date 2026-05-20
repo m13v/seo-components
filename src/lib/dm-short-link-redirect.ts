@@ -143,6 +143,13 @@ export function createDmShortLinkRedirectHandler(config: DmShortLinkRedirectConf
     let replyId: number | null = null;
     let project: string | null = null;
     let platform: string | null = null;
+    // Newsletter rail attribution: the resolver returns broadcast_id +
+    // broadcast_product + recipient_email_hash when the code resolves to
+    // newsletter_links. We fire `newsletter_short_link_clicked` so PostHog
+    // can stitch the click back to the originating broadcast + recipient.
+    let broadcastId: number | null = null;
+    let broadcastProduct: string | null = null;
+    let recipientEmailHash: string | null = null;
 
     try {
       const params = new URLSearchParams();
@@ -169,6 +176,9 @@ export function createDmShortLinkRedirectHandler(config: DmShortLinkRedirectConf
           reply_id?: number;
           project?: string;
           platform?: string;
+          broadcast_id?: number;
+          broadcast_product?: string;
+          recipient_email_hash?: string;
         };
         if (body.target_url) {
           target = body.target_url;
@@ -177,6 +187,9 @@ export function createDmShortLinkRedirectHandler(config: DmShortLinkRedirectConf
           replyId = body.reply_id ?? null;
           project = body.project ?? null;
           platform = body.platform ?? null;
+          broadcastId = body.broadcast_id ?? null;
+          broadcastProduct = body.broadcast_product ?? null;
+          recipientEmailHash = body.recipient_email_hash ?? null;
         }
       }
     } catch (err) {
@@ -239,6 +252,34 @@ export function createDmShortLinkRedirectHandler(config: DmShortLinkRedirectConf
             reply_id: replyId,
             project,
             platform,
+            code,
+            site,
+          },
+        }),
+      }).catch((err) =>
+        console.error("[dm-short-link/redirect] posthog fetch failed:", err)
+      );
+    }
+
+    // Newsletter rail event. distinct_id is the recipient_email_hash so
+    // every click from the same recipient stitches under one identity in
+    // PostHog. Properties carry broadcast_id + product so HogQL queries
+    // can attribute clicks (and downstream signup events on the same
+    // session) back to a specific broadcast x recipient pair.
+    if (!isBot && target && posthogKey && broadcastId != null) {
+      fetch(`${posthogHost}/i/v0/e/`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          api_key: posthogKey,
+          event: "newsletter_short_link_clicked",
+          distinct_id: recipientEmailHash || `newsletter_${broadcastId}`,
+          timestamp: new Date().toISOString(),
+          properties: {
+            broadcast_id: broadcastId,
+            broadcast_product: broadcastProduct,
+            recipient_email_hash: recipientEmailHash,
+            project,
             code,
             site,
           },

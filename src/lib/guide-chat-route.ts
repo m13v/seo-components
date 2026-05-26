@@ -15,7 +15,7 @@ import { discoverGuides } from "./discover-guides";
 import { logAiUsage } from "./ai-usage";
 
 const MODEL_ID = "gemini-flash-latest";
-const MAX_TOOL_ROUNDS = 3;
+const MAX_TOOL_ROUNDS = 50;
 const RATE_LIMIT_MAX = 20;
 const RATE_LIMIT_WINDOW_MS = 60 * 60 * 1000;
 

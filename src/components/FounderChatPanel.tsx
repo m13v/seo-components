@@ -100,35 +100,53 @@ function nanoid(prefix: string, n = 16): string {
   return out;
 }
 
+// localStorage can throw (quota exceeded, disabled in private mode, blocked by
+// privacy settings). Never let storage access crash the host page: every read
+// and write is wrapped so the chat panel degrades gracefully instead of taking
+// down the entire site through its mount in the root layout.
+function safeGet(key: string): string | null {
+  if (typeof window === "undefined") return null;
+  try {
+    return window.localStorage.getItem(key);
+  } catch {
+    return null;
+  }
+}
+
+function safeSet(key: string, value: string): void {
+  if (typeof window === "undefined") return;
+  try {
+    window.localStorage.setItem(key, value);
+  } catch {
+    /* quota exceeded / storage disabled — ignore */
+  }
+}
+
 function getOrCreateVisitorId(): string {
   if (typeof window === "undefined") return "";
   const key = "fcp_visitor_id";
-  let v = window.localStorage.getItem(key);
+  let v = safeGet(key);
   if (!v) {
     v = nanoid("web_", 16);
-    window.localStorage.setItem(key, v);
+    safeSet(key, v);
   }
   return v;
 }
 
 function getStoredThreadId(project: string): string | null {
-  if (typeof window === "undefined") return null;
-  return window.localStorage.getItem(`fcp_thread_${project}`);
+  return safeGet(`fcp_thread_${project}`);
 }
 
 function setStoredThreadId(project: string, threadId: string): void {
-  if (typeof window === "undefined") return;
-  window.localStorage.setItem(`fcp_thread_${project}`, threadId);
+  safeSet(`fcp_thread_${project}`, threadId);
 }
 
 function getStoredEmail(): string | null {
-  if (typeof window === "undefined") return null;
-  return window.localStorage.getItem("fcp_email");
+  return safeGet("fcp_email");
 }
 
 function setStoredEmail(email: string): void {
-  if (typeof window === "undefined") return;
-  window.localStorage.setItem("fcp_email", email);
+  safeSet("fcp_email", email);
 }
 
 export function FounderChatPanel({

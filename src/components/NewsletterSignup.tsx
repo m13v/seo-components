@@ -87,7 +87,7 @@ export function NewsletterSignup({
         >
           <div className="mx-auto max-w-7xl flex items-center justify-between gap-3">
             {status === "success" ? (
-              <p className="text-sm font-medium text-teal-600 dark:text-teal-400 flex-1">
+              <p className="text-sm font-medium text-[var(--seo-accent,#0d9488)] flex-1">
                 {successMessage}
               </p>
             ) : (
@@ -105,13 +105,13 @@ export function NewsletterSignup({
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
                     placeholder={placeholder}
-                    className="flex-1 min-w-0 text-sm px-3 py-2 rounded-lg border border-[color-mix(in_srgb,currentColor_14%,transparent)] bg-[color-mix(in_srgb,currentColor_4%,transparent)] text-zinc-900 dark:text-zinc-100 placeholder-zinc-400 focus:outline-none focus:ring-2 focus:ring-teal-500/40 focus:border-teal-500 transition-shadow"
+                    className="flex-1 min-w-0 text-sm px-3 py-2 rounded-lg border border-[color-mix(in_srgb,currentColor_14%,transparent)] bg-[color-mix(in_srgb,currentColor_4%,transparent)] text-zinc-900 dark:text-zinc-100 placeholder-zinc-400 focus:outline-none focus:ring-2 focus:ring-[rgba(var(--seo-accent-rgb,20,184,166),0.4)] focus:border-[var(--seo-accent,#14b8a6)] transition-shadow"
                     disabled={status === "loading"}
                   />
                   <button
                     type="submit"
                     disabled={status === "loading"}
-                    className="text-sm font-medium px-4 py-2 rounded-lg bg-teal-500 text-white hover:bg-teal-600 transition-colors disabled:opacity-60 whitespace-nowrap"
+                    className="text-sm font-medium px-4 py-2 rounded-lg bg-[var(--seo-accent,#14b8a6)] text-[var(--seo-accent-contrast,#ffffff)] hover:bg-[var(--seo-accent-dark,#0d9488)] transition-colors disabled:opacity-60 whitespace-nowrap"
                   >
                     {status === "loading" ? "..." : buttonLabel}
                   </button>

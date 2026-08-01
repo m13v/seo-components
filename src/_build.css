@@ -17,4 +17,6 @@
   --seo-accent-rgb: 20, 184, 166;
   --seo-accent-gradient-from: #06b6d4;
   --seo-accent-gradient-to: #14b8a6;
+  /* Text color for content sitting on a --seo-accent background. */
+  --seo-accent-contrast: #ffffff;
 }

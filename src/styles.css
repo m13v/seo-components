@@ -12,6 +12,7 @@
  *     --seo-accent-rgb: 245, 158, 11;
  *     --seo-accent-gradient-from: #f59e0b;
  *     --seo-accent-gradient-to: #d97706;
+ *     --seo-accent-contrast: #ffffff;  (text color on accent backgrounds)
  *   }
  */
 :root {
@@ -21,6 +22,7 @@
   --seo-accent-rgb: 20, 184, 166;
   --seo-accent-gradient-from: #06b6d4;
   --seo-accent-gradient-to: #14b8a6;
+  --seo-accent-contrast: #ffffff;
   --seo-prose-text: #cbd5e1;
   --seo-prose-heading: #ffffff;
   --seo-prose-muted: #94a3b8;

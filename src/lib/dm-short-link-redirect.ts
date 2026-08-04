@@ -68,8 +68,10 @@ const BOT_UA_RE = /bot|crawler|spider|Twitterbot|LinkedInBot|Slackbot|facebookex
  *   DM produced the booking. Fires `dm_short_link_clicked` in PostHog.
  *
  *   Post rail: code is minted from post_links (public posts/comments). Target
- *   is typically the product homepage or a landing page. UTM params are injected
- *   at redirect time (utm_source, utm_medium, utm_campaign, utm_content) so
+ *   is typically the product homepage or a landing page. Canonical UTM params
+ *   are injected at redirect time when the target has none (utm_source='s4l',
+ *   utm_medium='post', utm_campaign=<project>, utm_term=<platform>,
+ *   utm_content=<code>) so
  *   PostHog can stitch the full funnel: post click -> get_started_click ->
  *   schedule_click -> checkout_success. Fires `post_short_link_clicked` in
  *   PostHog.

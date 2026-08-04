@@ -200,13 +200,23 @@ export function createDmShortLinkRedirectHandler(config: DmShortLinkRedirectConf
     // PostHog can stitch click -> conversion events. DM rail links already
     // have Cal.com metadata[utm_*] attribution embedded at mint time, so we
     // leave those URLs untouched.
+    //
+    // Canonical UTM scheme (matches _build_target_url_for_post in
+    // social-autoposter's dm_short_links.py): utm_source='s4l' identifies the
+    // agency, utm_medium='post' the public-post rail, utm_campaign the project
+    // slug (lowercase), utm_term the platform. utm_content uses the bare
+    // <code> shape (post_<session> is only known at mint time; bare code is
+    // the documented pool-rail shape and joins back via post_links.code).
+    // Only fires for targets minted without UTMs (kind 'other'/'github');
+    // booking/website targets arrive with canonical UTMs already baked in.
     if (target && (postId != null || replyId != null)) {
       try {
         const targetUrl = new URL(target);
         if (!targetUrl.searchParams.has("utm_source")) {
-          if (platform) targetUrl.searchParams.set("utm_source", platform);
-          targetUrl.searchParams.set("utm_medium", "social");
-          if (project) targetUrl.searchParams.set("utm_campaign", project);
+          targetUrl.searchParams.set("utm_source", "s4l");
+          targetUrl.searchParams.set("utm_medium", "post");
+          if (project) targetUrl.searchParams.set("utm_campaign", project.toLowerCase());
+          if (platform) targetUrl.searchParams.set("utm_term", platform);
           targetUrl.searchParams.set("utm_content", code);
           target = targetUrl.toString();
         }

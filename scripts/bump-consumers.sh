@@ -29,6 +29,9 @@ for pkg in "$HOME"/*/package.json "$HOME"/*/*/package.json; do
   case "$dir" in */node_modules/*) continue ;; esac
   if jq -e '((.dependencies // {}) + (.devDependencies // {}))["@m13v/seo-components"]' "$pkg" >/dev/null 2>&1; then
     git -C "$dir" rev-parse --git-dir >/dev/null 2>&1 || continue
+    # Skip detached-HEAD checkouts (e.g. parked snapshot worktrees): commits there
+    # land on no branch and can never be pushed.
+    [ "$(git -C "$dir" rev-parse --abbrev-ref HEAD 2>/dev/null)" = "HEAD" ] && { echo "skipping $dir (detached HEAD)"; continue; }
     consumers+=("$dir")
   fi
 done
